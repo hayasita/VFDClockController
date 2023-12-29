@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>HTMLファイルからPOSTでJSONデータを送信する</title>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+
+<script type="text/javascript">
+    $(function(){
+        $("#response").html("Response Values");
+
+        $("#button").click( function(){
+            var url = $("#url_post").val();
+
+                var JSONdata = {
+                    ntpSet: $("#ntpSet").val(),
+                    value2: $("#value2").val()      
+                };
+
+            alert(JSON.stringify(JSONdata));
+
+            $.ajax({
+                type : 'post',
+                url : url,
+                data : JSON.stringify(JSONdata),
+                contentType: 'application/JSON',
+                dataType : 'JSON',
+                scriptCharset: 'utf-8',
+                success : function(data) {
+
+                    // Success
+                    alert("success");
+                    alert(JSON.stringify(data));
+                    $("#response").html(JSON.stringify(data));
+                },
+                error : function(data) {
+
+                    // Error
+                    alert("error");
+                    alert(JSON.stringify(data));
+                    $("#response").html(JSON.stringify(data));
+                }
+            });
+        })
+    })
+</script>
+
+</head>
+<body>
+    <h1>HTMLファイルからPOSTでJSONデータを送信する</h1>
+    <p>URL: <input type="text" id="url_post" name="url" size="100" value="/"></p>
+    <p>ntpSet: <input type="text" id="ntpSet" size="30" value="true"></p>
+    <p>value2: <input type="text" id="value2" size="30" value="値2"></p>
+    <p><button id="button" type="button">submit</button></p>
+    <textarea id="response" cols=120 rows=10 disabled></textarea>
+
+    <h1>GETでデータを送信する</h1>
+      <form method="get" name="time">
+        <div id="rtc_dataset">
+            <table>
+            <tr><th>year</th><td><input type="text" name="year" value="1900" id="rtc_set_year" />1990-2099</td></tr>
+            <tr><th>mon</th><td><input type="text" name="mon" id="rtc_set_mon" value="1" />1-12</td></tr>
+            <tr><th>day</th><td><input type="text" name="day" id="rtc_set_day" value="1" />1-31</td></tr>
+            <tr><th>week</th><td><input type="text" name="week" id="rtc_set_week" value="0" />0-6</td></tr>
+            <tr><th>hour</th><td><input type="text" name="hour" id="rtc_set_hour" value="0" />0-23</td></tr>
+            <tr><th>min</th><td><input type="text" name="min" id="rtc_set_min" value="0" />0-59</td></tr>
+            <tr><th>sec</th><td><input type="text" name="sec" id="rtc_set_sec" value="0" />0-59</td></tr>
+            <tr><th></th><td><input type="button" value="ブラウザの時間をセットする" id="rtc_set_button" onclick="clickBtn()" /></td></tr>
+            <tr><th></th><td><input type="submit" value="更新" id="rtc_set_submit" /></td></tr>
+            </table>
+        </div>
+      </form>
+    
+</body>
+</html>
