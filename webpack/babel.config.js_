@@ -1,0 +1,30 @@
+module.exports = function (api) {
+
+  const isTest = api.env('test');
+  if(isTest){
+    const presets = [['@babel/preser-env',  {
+      targets: {
+        "ios":"12",
+        "ie": "11"
+      }}]]
+    return{
+      presets,
+    };
+  }else{
+    api.cache(true);
+    const presets = [['@babel/preser-env',  {
+      "useBuiltlns":"usage",
+      "corejs": 3,
+      targets: {
+        "ios":"12",
+        "ie": "11"
+      },
+      "modules" : false,
+      "debug" :false
+    }]]
+    return{
+      presets,
+    };
+
+  }
+}
