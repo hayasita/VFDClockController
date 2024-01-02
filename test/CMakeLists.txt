@@ -23,5 +23,7 @@ target_link_libraries(
     gtest_main
 )
 
+add_subdirectory(./main)
+
 include(GoogleTest)
 gtest_discover_tests(test000)
