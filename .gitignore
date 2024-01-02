@@ -41,3 +41,4 @@ webpack/dist/bundle.js
 webpack/dist/bundle.js.map
 .VSCodeCounter/*/*
 doxygen/*
+build/*
