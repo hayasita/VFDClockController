@@ -232,6 +232,70 @@ void oledDispTime(tm rtcTimeInfo,tm localTimeinfo)
   return;
 }
 
+// M5OLED Control
+
+/**
+ * @brief M5OLED初期化
+ * @details 表示文字サイズ、表示向き等を設定する。
+ */
+void M5OLED::init(void)
+{
+  oled.init(SDA_PIN,SCL_PIN,400000);
+//  oled.init();                  // SDA,SCL無しだとNG
+  oled.setRotation(1);            // テキストの表示方向を縦方向に設定
+  oled.setTextSize(1);
+  oled.setCursor(0, 0);           // テキストのカーソル位置を左上に設定。
+  oled.startWrite();
+  oled.print("hello world!!");
+  oled.endWrite();
+
+  return;
+}
+
+/**
+ * @brief M5OLED画面クリア
+ * 
+ */
+void M5OLED::clear(void)
+{
+  oled.clear();
+  return;
+}
+
+/**
+ * @brief M5OLEDセンサデータ表示
+ * 
+ */
+void M5OLED::printEnvSensorData(DebugData)
+{
+  char buffer[100];
+
+  // システム時刻
+  snprintf(buffer, sizeof(buffer),"S:%lu/%02d/%02d %02d:%02d:%02d"
+    ,debugData.timeInfo.tm_year+1900,debugData.timeInfo.tm_mon+1,debugData.timeInfo.tm_mday
+    ,debugData.timeInfo.tm_hour,debugData.timeInfo.tm_min,debugData.timeInfo.tm_sec);
+  oled.setCursor(0, 0);
+  oled.print(buffer);
+
+  //RTC時刻
+  snprintf(buffer, sizeof(buffer),"R:%lu/%02d/%02d %02d:%02d:%02d"
+    ,debugData.rtcTimeInfo.tm_year+1900,debugData.rtcTimeInfo.tm_mon+1,debugData.rtcTimeInfo.tm_mday
+    ,debugData.rtcTimeInfo.tm_hour,debugData.rtcTimeInfo.tm_min,debugData.rtcTimeInfo.tm_sec);
+  oled.setCursor(0, 8);
+  oled.print(buffer);
+
+  // デバッグ用データ：センサ情報
+  oled.setCursor(0, 16);
+  oled.printf("%f\n",debugData.temperature);  // 気温
+  oled.printf("%f\n",debugData.humidity);     // 湿度
+  oled.printf("%f\n",debugData.pressure);     // 気圧
+  oled.printf("%d\n",debugData.dcdcFdb);
+  oled.printf("%d\n",debugData.dcdcTrg);
+  oled.printf("%d\n",debugData.illumiData);
+
+  return;
+}
+
 // Input Terminal Man
 extern TaskHandle_t taskHandle;
 unsigned char sw_list[] = { BUTTON_0, BUTTON_1, BUTTON_2 , BUTTON_3};

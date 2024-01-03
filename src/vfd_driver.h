@@ -184,9 +184,14 @@ GLOBAL  DeviceChk deviceChk;
 // -- デバッグ用表示情報
 class DebugData{
   public:
+    struct tm timeInfo;
+    struct tm rtcTimeInfo;
     float temperature;      // 気温
     float humidity;         // 湿度
     float pressure;         // 気圧
+    uint16_t illumiData;    // 周辺輝度
+    uint16_t dcdcTrg;       // DCDC目標値
+    uint16_t dcdcFdb;       // DCDCフィードバック値
 };
 GLOBAL DebugData debugData;
 
@@ -304,10 +309,21 @@ class Dcdccont{
 GLOBAL void irDump(decode_results *results);
 
 // M5 OLED Unit
+/**
+ * @brief M5OLED操作クラス
+ * @details 
+ * 
+ */
 class M5OLED{
+  public:
+//    M5OLED(void);
+    void init(void);
+    void clear(void);
+    void printEnvSensorData(DebugData);
+  private:
+    M5UnitOLED oled;
 
 };
-GLOBAL M5UnitOLED oled;
 
 // BME680
 #include <Adafruit_Sensor.h>
