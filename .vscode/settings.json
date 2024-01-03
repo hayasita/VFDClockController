@@ -60,6 +60,32 @@
         "name": "build.flash_size",
         "value": "4MB"
       }
-    ]
+    ],
+    "editor.tokenColorCustomizations": {
+      "textMateRules": [
+        {
+          "scope": "googletest.failed",
+          "settings": {
+            "foreground": "#f00"
+          }
+        },
+        {
+          "scope": "googletest.passed",
+          "settings": {
+            "foreground": "#0f0"
+          }
+        },
+        {
+          "scope": "googletest.run",
+          "settings": {
+            "foreground": "#0f0"
+          }
+        }
+      ]
+    },
+    "gtest-adapter.debugConfig": [
+      "(gdb) 起動"
+    ],
+    "gtest-adapter.supportLocation": true
   
 }
