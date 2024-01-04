@@ -188,6 +188,35 @@ void OLEDDISP::printEnvSensorData(DebugData debugData)
 
   return;
 }
+
+/**
+ * @brief OLED イベントログ記録デバッグ情報表示
+ * 
+ * @param debugData 表示データ
+ */
+void OLEDDISP::printEventLog(DebugData debugData)
+{
+  char buffer[100];
+
+  display.clear();
+  display.setFont(ArialMT_Plain_10);
+
+  // システム時刻
+  dispDateTime(buffer,debugData.timeInfo,"SYS:");
+  display.drawString(0, 0, buffer);
+
+  // イベントLog前回書き込み時刻
+  dispDateTime(buffer,vfdevent.getLastWriteTimeEp(),"BWr:");
+  display.drawString(0, 10, buffer);
+
+  // イベントLogバッファサイズ表示
+  snprintf(buffer, sizeof(buffer),"LogBuf:%3d MAX:%3d",vfdevent.getEepromLogBufferSize(),vfdevent.getEepromLogBufferMaxSize());
+  display.drawString(0, 20, buffer);
+
+  display.display();
+
+  return;
+}
 #ifdef DELETE
 void oledDispInit(void)
 {

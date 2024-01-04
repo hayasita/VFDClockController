@@ -428,7 +428,8 @@ void taskDeviceCtrl(void *Parameters){
 
       //OLED 画面表示
       if(deviceChk.ssd1306()){
-        oledDisp.printEnvSensorData(debugData);
+//        oledDisp.printEnvSensorData(debugData);
+        oledDisp.printEventLog(debugData);
       }
 
       // M5OLED 画面表示 
