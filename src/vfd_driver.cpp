@@ -162,7 +162,27 @@ void OLEDDISP::printEnvSensorData(DebugData debugData)
   display.drawString(0, 0, buffer);
 
   dispDateTime(buffer,debugData.rtcTimeInfo,"RTC:");
-  display.drawString(0, 10, buffer);
+  display.drawString(0, 8, buffer);
+
+  // デバッグ用データ：センサ情報
+  DeviceData sensorData;
+  sensorData.env3Temperature = debugData.temperature;
+  sensorData.env3Humidity = debugData.humidity;
+  sensorData.env3Pressure = debugData.pressure;
+  sensorData.illumiData = debugData.illumiData;
+  sensorData.dcdcTrg = debugData.dcdcTrg;
+  sensorData.dcdcFdb = debugData.dcdcFdb;
+
+  dispDeviceData(buffer,sensorData,DEVICE_ENVIII_TEMP);
+  display.drawString(0, 16, buffer);    // 気温
+  dispDeviceData(buffer,sensorData,DEVICE_ENVIII_HUMI);
+  display.drawString(0, 24, buffer);    // 湿度
+  dispDeviceData(buffer,sensorData,DEVICE_ENVIII_PRESS);
+  display.drawString(0, 32, buffer);    // 気圧
+  dispDeviceData(buffer,sensorData,DEVICE_ILLUMI);
+  display.drawString(0, 40, buffer);    // 周辺輝度
+  dispDeviceData(buffer,sensorData,DEVICE_DCDC);
+  display.drawString(0, 48, buffer);    // DCDC目標値,DCDCフィードバック値
 
   display.display();
 
@@ -338,13 +358,25 @@ void M5OLED::printEnvSensorData(DebugData debugData)
   oled.print(buffer);
 
   // デバッグ用データ：センサ情報
+  DeviceData sensorData;
+  sensorData.env3Temperature = debugData.temperature;
+  sensorData.env3Humidity = debugData.humidity;
+  sensorData.env3Pressure = debugData.pressure;
+  sensorData.illumiData = debugData.illumiData;
+  sensorData.dcdcTrg = debugData.dcdcTrg;
+  sensorData.dcdcFdb = debugData.dcdcFdb;
+
   oled.setCursor(0, 16);
-  oled.printf("%f\n",debugData.temperature);  // 気温
-  oled.printf("%f\n",debugData.humidity);     // 湿度
-  oled.printf("%f\n",debugData.pressure);     // 気圧
-  oled.printf("%d\n",debugData.dcdcFdb);
-  oled.printf("%d\n",debugData.dcdcTrg);
-  oled.printf("%d\n",debugData.illumiData);
+  dispDeviceData(buffer,sensorData,DEVICE_ENVIII_TEMP);
+  oled.printf("%s\n",buffer);  // 気温
+  dispDeviceData(buffer,sensorData,DEVICE_ENVIII_HUMI);
+  oled.printf("%s\n",buffer);  // 湿度
+  dispDeviceData(buffer,sensorData,DEVICE_ENVIII_PRESS);
+  oled.printf("%s\n",buffer);  // 気圧
+  dispDeviceData(buffer,sensorData,DEVICE_ILLUMI);
+  oled.printf("%s\n",buffer);  // 周辺輝度
+  dispDeviceData(buffer,sensorData,DEVICE_DCDC);
+  oled.printf("%s\n",buffer);  // DCDC目標値,DCDCフィードバック値
 
   return;
 }
