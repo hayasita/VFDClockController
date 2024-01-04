@@ -266,7 +266,7 @@ void M5OLED::clear(void)
  * @brief M5OLEDセンサデータ表示
  * 
  */
-void M5OLED::printEnvSensorData(DebugData)
+void M5OLED::printEnvSensorData(DebugData debugData)
 {
   char buffer[100];
 
