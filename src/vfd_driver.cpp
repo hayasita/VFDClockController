@@ -12,14 +12,26 @@
 #include "vfd_conf.h"
 //#include "vfd_disp.h"
 #include "vfd_driver.h"
+#include "driver_sub.h"
 #include "sound.h"
 #include "vfd_web.h"
+
+extern unsigned long loopTime,loopTimeMax;
+extern unsigned long taskDeviceTime,taskDeviceTimeMax;
+extern unsigned long taskDeviceTime0,taskDeviceTimeMax0;
+extern unsigned long taskDeviceTime1,taskDeviceTimeMax1;
+extern unsigned long taskDeviceTime2,taskDeviceTimeMax2;
+extern unsigned long taskDeviceTime3,taskDeviceTimeMax3;
+
+extern unsigned long timerExecTime,timerExecTimeMax;
+extern unsigned long timerScanTime,timerScanTimeMax;
 
 // 画面表示初期化
 //SSD1306Wire display(0x3c, SDA_PIN, SCL_PIN);   // ADDRESS, SDA, SCL  -  SDA and SCL usually populate automatically based on your board's pins_arduino.h e.g. https://github.com/esp8266/Arduino/blob/master/variants/nodemcu/pins_arduino.h
 SSD1306Wire display(I2C_ADDRESS_SSD1306);   // ADDRESS, SDA, SCL  -  SDA and SCL usually populate automatically based on your board's pins_arduino.h e.g. https://github.com/esp8266/Arduino/blob/master/variants/nodemcu/pins_arduino.h
 
 // Adapted from Adafruit_SSD1306
+/*
 void drawLines() {
   for (int16_t i = 0; i < display.getWidth(); i += 4) {
     display.drawLine(0, 0, i, display.getHeight() - 1);
@@ -71,6 +83,8 @@ void drawLines() {
   }
   delay(250);
 }
+*/
+/*
 void printBuffer(void) {
   // Initialize the log buffer
   // allocate memory to store 8 lines of text and 30 chars per line.
@@ -102,7 +116,108 @@ void printBuffer(void) {
     delay(500);
   }
 }
+*/
 
+/**
+ * @brief OLED 初期化
+ * @details 表示文字サイズ、表示向き等を設定する。
+ */
+void OLEDDISP::init(void)
+{
+  // OLED設定
+  display.init();
+
+  display.setContrast(255);
+  display.setTextAlignment(TEXT_ALIGN_LEFT);
+  display.setFont(ArialMT_Plain_10);
+  display.drawString(0, 0, "Hello world");
+  display.display();
+
+  return;
+}
+
+/**
+ * @brief OLED画面クリア
+ * 
+ */
+void  OLEDDISP::clear(void)
+{
+  display.clear();
+  return;
+}
+
+/**
+ * @brief OLED センサデータ表示
+ * 
+ * @param debugData 表示データ
+ */
+void OLEDDISP::printEnvSensorData(DebugData debugData)
+{
+  char buffer[100];
+
+  display.clear();
+  display.setFont(ArialMT_Plain_10);
+
+  dispDateTime(buffer,debugData.timeInfo,"SYS:");
+  display.drawString(0, 0, buffer);
+
+  dispDateTime(buffer,debugData.rtcTimeInfo,"RTC:");
+  display.drawString(0, 8, buffer);
+
+  // デバッグ用データ：センサ情報
+  DeviceData sensorData;
+  sensorData.env3Temperature = debugData.temperature;
+  sensorData.env3Humidity = debugData.humidity;
+  sensorData.env3Pressure = debugData.pressure;
+  sensorData.illumiData = debugData.illumiData;
+  sensorData.dcdcTrg = debugData.dcdcTrg;
+  sensorData.dcdcFdb = debugData.dcdcFdb;
+
+  dispDeviceData(buffer,sensorData,DEVICE_ENVIII_TEMP);
+  display.drawString(0, 16, buffer);    // 気温
+  dispDeviceData(buffer,sensorData,DEVICE_ENVIII_HUMI);
+  display.drawString(0, 24, buffer);    // 湿度
+  dispDeviceData(buffer,sensorData,DEVICE_ENVIII_PRESS);
+  display.drawString(0, 32, buffer);    // 気圧
+  dispDeviceData(buffer,sensorData,DEVICE_ILLUMI);
+  display.drawString(0, 40, buffer);    // 周辺輝度
+  dispDeviceData(buffer,sensorData,DEVICE_DCDC);
+  display.drawString(0, 48, buffer);    // DCDC目標値,DCDCフィードバック値
+
+  display.display();
+
+  return;
+}
+
+/**
+ * @brief OLED イベントログ記録デバッグ情報表示
+ * 
+ * @param debugData 表示データ
+ */
+void OLEDDISP::printEventLog(DebugData debugData)
+{
+  char buffer[100];
+
+  display.clear();
+  display.setFont(ArialMT_Plain_10);
+
+  // システム時刻
+  dispDateTime(buffer,debugData.timeInfo,"SYS:");
+  display.drawString(0, 0, buffer);
+
+  // イベントLog前回書き込み時刻
+  dispDateTime(buffer,vfdevent.getLastWriteTimeEp(),"BWr:");
+  display.drawString(0, 10, buffer);
+
+  // イベントLogバッファサイズ表示
+  snprintf(buffer, sizeof(buffer),"LogBuf:%3d MAX:%3d",vfdevent.getEepromLogBufferSize(),vfdevent.getEepromLogBufferMaxSize());
+  display.drawString(0, 20, buffer);
+
+  display.display();
+
+  return;
+}
+#ifdef DELETE
 void oledDispInit(void)
 {
   if(!deviceChk.ssd1306()){
@@ -132,17 +247,6 @@ void oledDispInit(void)
 
   return;
 }
-
-extern unsigned long loopTime,loopTimeMax;
-extern unsigned long taskDeviceTime,taskDeviceTimeMax;
-extern unsigned long taskDeviceTime0,taskDeviceTimeMax0;
-extern unsigned long taskDeviceTime1,taskDeviceTimeMax1;
-extern unsigned long taskDeviceTime2,taskDeviceTimeMax2;
-extern unsigned long taskDeviceTime3,taskDeviceTimeMax3;
-
-extern unsigned long timerExecTime,timerExecTimeMax;
-extern unsigned long timerScanTime,timerScanTimeMax;
-
 void oledDispTime(tm rtcTimeInfo,tm localTimeinfo)
 {
   if(!deviceChk.ssd1306()){
@@ -228,6 +332,80 @@ void oledDispTime(tm rtcTimeInfo,tm localTimeinfo)
   display.drawString(0, 50, buffer);
 
   display.display();
+
+  return;
+}
+#endif
+
+// M5OLED Control
+
+/**
+ * @brief M5OLED初期化
+ * @details 表示文字サイズ、表示向き等を設定する。
+ */
+void M5OLED::init(void)
+{
+  oled.init(SDA_PIN,SCL_PIN,400000);
+//  oled.init();                  // SDA,SCL無しだとNG
+  oled.setRotation(1);            // テキストの表示方向を縦方向に設定
+  oled.setTextSize(1);
+  oled.setCursor(0, 0);           // テキストのカーソル位置を左上に設定。
+  oled.startWrite();
+  oled.print("hello world!!");
+  oled.endWrite();
+
+  return;
+}
+
+/**
+ * @brief M5OLED画面クリア
+ * 
+ */
+void M5OLED::clear(void)
+{
+  oled.clear();
+  return;
+}
+
+/**
+ * @brief M5OLEDセンサデータ表示
+ * 
+ * @param debugData 表示データ
+ */
+void M5OLED::printEnvSensorData(DebugData debugData)
+{
+  char buffer[100];
+
+  // システム時刻
+  dispDateTime(buffer,debugData.timeInfo,"S:");
+  oled.setCursor(0, 0);
+  oled.print(buffer);
+
+  //RTC時刻
+  dispDateTime(buffer,debugData.rtcTimeInfo,"R:");
+  oled.setCursor(0, 8);
+  oled.print(buffer);
+
+  // デバッグ用データ：センサ情報
+  DeviceData sensorData;
+  sensorData.env3Temperature = debugData.temperature;
+  sensorData.env3Humidity = debugData.humidity;
+  sensorData.env3Pressure = debugData.pressure;
+  sensorData.illumiData = debugData.illumiData;
+  sensorData.dcdcTrg = debugData.dcdcTrg;
+  sensorData.dcdcFdb = debugData.dcdcFdb;
+
+  oled.setCursor(0, 16);
+  dispDeviceData(buffer,sensorData,DEVICE_ENVIII_TEMP);
+  oled.printf("%s\n",buffer);  // 気温
+  dispDeviceData(buffer,sensorData,DEVICE_ENVIII_HUMI);
+  oled.printf("%s\n",buffer);  // 湿度
+  dispDeviceData(buffer,sensorData,DEVICE_ENVIII_PRESS);
+  oled.printf("%s\n",buffer);  // 気圧
+  dispDeviceData(buffer,sensorData,DEVICE_ILLUMI);
+  oled.printf("%s\n",buffer);  // 周辺輝度
+  dispDeviceData(buffer,sensorData,DEVICE_DCDC);
+  oled.printf("%s\n",buffer);  // DCDC目標値,DCDCフィードバック値
 
   return;
 }

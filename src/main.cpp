@@ -10,7 +10,6 @@
  */
 
 #include <M5Unified.h>
-#include <M5UnitOLED.h>
 #include <Wire.h>
 
 #include "jsdata.h"
@@ -286,7 +285,12 @@ void taskDisplayCtrl(void *pvParameters) {
   }
 }
 
-//
+/**
+ * @brief i2cデバイスの制御タスク
+ * 
+ * @param Parameters 
+ * @details i2c接続デバイスの初期設定完了後にループでデバイスの制御を行う。
+ */
 void taskDeviceCtrl(void *Parameters){
   unsigned long timetmp;      // millis()tmp
 
@@ -320,18 +324,15 @@ void taskDeviceCtrl(void *Parameters){
   bme680ini();
 
   // OLED Display
-  oledDispInit();
+  OLEDDISP oledDisp;
+  if(deviceChk.ssd1306()){
+    oledDisp.init();
+  }
 
 //  M5UnitOLED oled;                // QMP6988より下でなければならない？？
+  M5OLED m5Oled;
   if(deviceChk.m5oled()){
-    oled.init(SDA_PIN,SCL_PIN,400000);
-  //  oled.init();                  // SDA,SCL無しだとNG
-    oled.setRotation(1);            // テキストの表示方向を縦方向に設定
-    oled.setTextSize(1);
-    oled.setCursor(0, 0);           // テキストのカーソル位置を左上に設定。
-    oled.startWrite();
-    oled.print("hello world!!");
-    oled.endWrite();
+    m5Oled.init();
   }
 
   // == システム時刻初期化 ==
@@ -386,9 +387,14 @@ void taskDeviceCtrl(void *Parameters){
   Serial.print("/-/- Heap available : ");
   Serial.println(esp_get_free_heap_size());
 
+  //OLED 画面クリア
+  if(deviceChk.ssd1306()){
+    oledDisp.clear();
+  }
+
   // M5OLED 画面クリア
   if(deviceChk.m5oled()){
-    oled.clear();
+    m5Oled.clear();
   }
 
   while(1){
@@ -402,6 +408,10 @@ void taskDeviceCtrl(void *Parameters){
     ret = xQueueReceive(xQueueSysTimeData1, &mailboxDisplayCtrl, 0);   // taskDisplayCtrl()からシステム時刻情報を受信
     if(ret){
       *sysTimeInfo = mailboxDisplayCtrl.timeInfo;       // システム時刻設定
+      debugData.timeInfo = mailboxDisplayCtrl.timeInfo;
+      debugData.dcdcTrg = mailboxDisplayCtrl.dcdcTrg;
+      debugData.dcdcFdb = mailboxDisplayCtrl.dcdcFdb;
+      debugData.illumiData = mailboxDisplayCtrl.illumiData;
 //      Serial.print("syst:");
 //      Serial.println(mailboxDisplayCtrl.illumiData);
     }
@@ -414,34 +424,17 @@ void taskDeviceCtrl(void *Parameters){
 
       // OLED表示データ作成
       RtcContrl.timeRead(&rtcTimeInfo);   // RTC 時刻読み込み
-      oledDispTime(rtcTimeInfo,*sysTimeInfo);
+      debugData.rtcTimeInfo = rtcTimeInfo;
+
+      //OLED 画面表示
+      if(deviceChk.ssd1306()){
+//        oledDisp.printEnvSensorData(debugData);
+        oledDisp.printEventLog(debugData);
+      }
 
       // M5OLED 画面表示 
       if(deviceChk.m5oled()){
-        char buffer[100];
-
-        // システム時刻
-        snprintf(buffer, sizeof(buffer),"S:%lu/%02d/%02d %02d:%02d:%02d"
-          ,sysTimeInfo->tm_year+1900,sysTimeInfo->tm_mon+1,sysTimeInfo->tm_mday
-          ,sysTimeInfo->tm_hour,sysTimeInfo->tm_min,sysTimeInfo->tm_sec);
-        oled.setCursor(0, 0);
-        oled.print(buffer);
-
-        //RTC時刻
-        snprintf(buffer, sizeof(buffer),"R:%lu/%02d/%02d %02d:%02d:%02d"
-          ,rtcTimeInfo.tm_year+1900,rtcTimeInfo.tm_mon+1,rtcTimeInfo.tm_mday
-          ,rtcTimeInfo.tm_hour,rtcTimeInfo.tm_min,rtcTimeInfo.tm_sec);
-        oled.setCursor(0, 8);
-        oled.print(buffer);
-
-        // デバッグ用データ：センサ情報
-        oled.setCursor(0, 16);
-        oled.printf("%f\n",debugData.temperature);  // 気温
-        oled.printf("%f\n",debugData.humidity);     // 湿度
-        oled.printf("%f\n",debugData.pressure);     // 気圧
-        oled.printf("%d\n",mailboxDisplayCtrl.dcdcFdb);
-        oled.printf("%d\n",mailboxDisplayCtrl.dcdcTrg);
-        oled.printf("%d\n",mailboxDisplayCtrl.illumiData);
+        m5Oled.printEnvSensorData(debugData);
       }
 
       // 処理時間測定
