@@ -8,6 +8,15 @@
  * @copyright Copyright (c) 2024
  * 
  */
+#ifndef driver_sub_h
+#define driver_sub_h
+
+#ifdef GLOBAL_VAL_DEF
+#define GLOBAL
+#else
+#define GLOBAL extern
+#endif
+
 #include <cstdio>
 #include <ctime>
 #include <cstring>
@@ -30,3 +39,6 @@ class DeviceData{
 #define DEVICE_DCDC           4
 
 bool dispDeviceData(char* buffer,DeviceData devData,uint8_t sensor);
+
+#undef GLOBAL
+#endif
