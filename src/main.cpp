@@ -324,7 +324,10 @@ void taskDeviceCtrl(void *Parameters){
   bme680ini();
 
   // OLED Display
-  oledDispInit();
+  OLEDDISP oledDisp;
+  if(deviceChk.ssd1306()){
+    oledDisp.init();
+  }
 
 //  M5UnitOLED oled;                // QMP6988より下でなければならない？？
   M5OLED m5Oled;
@@ -384,6 +387,11 @@ void taskDeviceCtrl(void *Parameters){
   Serial.print("/-/- Heap available : ");
   Serial.println(esp_get_free_heap_size());
 
+  //OLED 画面クリア
+  if(deviceChk.ssd1306()){
+    oledDisp.clear();
+  }
+
   // M5OLED 画面クリア
   if(deviceChk.m5oled()){
     m5Oled.clear();
@@ -418,7 +426,10 @@ void taskDeviceCtrl(void *Parameters){
       RtcContrl.timeRead(&rtcTimeInfo);   // RTC 時刻読み込み
       debugData.rtcTimeInfo = rtcTimeInfo;
 
-      oledDispTime(rtcTimeInfo,*sysTimeInfo);
+      //OLED 画面表示
+      if(deviceChk.ssd1306()){
+        oledDisp.printEnvSensorData(debugData);
+      }
 
       // M5OLED 画面表示 
       if(deviceChk.m5oled()){

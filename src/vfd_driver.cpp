@@ -12,14 +12,26 @@
 #include "vfd_conf.h"
 //#include "vfd_disp.h"
 #include "vfd_driver.h"
+#include "driver_sub.h"
 #include "sound.h"
 #include "vfd_web.h"
+
+extern unsigned long loopTime,loopTimeMax;
+extern unsigned long taskDeviceTime,taskDeviceTimeMax;
+extern unsigned long taskDeviceTime0,taskDeviceTimeMax0;
+extern unsigned long taskDeviceTime1,taskDeviceTimeMax1;
+extern unsigned long taskDeviceTime2,taskDeviceTimeMax2;
+extern unsigned long taskDeviceTime3,taskDeviceTimeMax3;
+
+extern unsigned long timerExecTime,timerExecTimeMax;
+extern unsigned long timerScanTime,timerScanTimeMax;
 
 // 画面表示初期化
 //SSD1306Wire display(0x3c, SDA_PIN, SCL_PIN);   // ADDRESS, SDA, SCL  -  SDA and SCL usually populate automatically based on your board's pins_arduino.h e.g. https://github.com/esp8266/Arduino/blob/master/variants/nodemcu/pins_arduino.h
 SSD1306Wire display(I2C_ADDRESS_SSD1306);   // ADDRESS, SDA, SCL  -  SDA and SCL usually populate automatically based on your board's pins_arduino.h e.g. https://github.com/esp8266/Arduino/blob/master/variants/nodemcu/pins_arduino.h
 
 // Adapted from Adafruit_SSD1306
+/*
 void drawLines() {
   for (int16_t i = 0; i < display.getWidth(); i += 4) {
     display.drawLine(0, 0, i, display.getHeight() - 1);
@@ -71,6 +83,8 @@ void drawLines() {
   }
   delay(250);
 }
+*/
+/*
 void printBuffer(void) {
   // Initialize the log buffer
   // allocate memory to store 8 lines of text and 30 chars per line.
@@ -102,7 +116,59 @@ void printBuffer(void) {
     delay(500);
   }
 }
+*/
 
+/**
+ * @brief OLED 初期化
+ * @details 表示文字サイズ、表示向き等を設定する。
+ */
+void OLEDDISP::init(void)
+{
+  // OLED設定
+  display.init();
+
+  display.setContrast(255);
+  display.setTextAlignment(TEXT_ALIGN_LEFT);
+  display.setFont(ArialMT_Plain_10);
+  display.drawString(0, 0, "Hello world");
+  display.display();
+
+  return;
+}
+
+/**
+ * @brief OLED画面クリア
+ * 
+ */
+void  OLEDDISP::clear(void)
+{
+  display.clear();
+  return;
+}
+
+/**
+ * @brief OLED センサデータ表示
+ * 
+ * @param debugData 表示データ
+ */
+void OLEDDISP::printEnvSensorData(DebugData debugData)
+{
+  char buffer[100];
+
+  display.clear();
+  display.setFont(ArialMT_Plain_10);
+
+  dispDateTime(buffer,debugData.timeInfo,"SYS:");
+  display.drawString(0, 0, buffer);
+
+  dispDateTime(buffer,debugData.rtcTimeInfo,"RTC:");
+  display.drawString(0, 10, buffer);
+
+  display.display();
+
+  return;
+}
+#ifdef DELETE
 void oledDispInit(void)
 {
   if(!deviceChk.ssd1306()){
@@ -132,17 +198,6 @@ void oledDispInit(void)
 
   return;
 }
-
-extern unsigned long loopTime,loopTimeMax;
-extern unsigned long taskDeviceTime,taskDeviceTimeMax;
-extern unsigned long taskDeviceTime0,taskDeviceTimeMax0;
-extern unsigned long taskDeviceTime1,taskDeviceTimeMax1;
-extern unsigned long taskDeviceTime2,taskDeviceTimeMax2;
-extern unsigned long taskDeviceTime3,taskDeviceTimeMax3;
-
-extern unsigned long timerExecTime,timerExecTimeMax;
-extern unsigned long timerScanTime,timerScanTimeMax;
-
 void oledDispTime(tm rtcTimeInfo,tm localTimeinfo)
 {
   if(!deviceChk.ssd1306()){
@@ -231,6 +286,7 @@ void oledDispTime(tm rtcTimeInfo,tm localTimeinfo)
 
   return;
 }
+#endif
 
 // M5OLED Control
 

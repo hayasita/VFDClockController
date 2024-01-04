@@ -308,6 +308,20 @@ class Dcdccont{
 
 GLOBAL void irDump(decode_results *results);
 
+// OLED Disp
+/**
+ * @brief OLED操作クラス
+ * @details SSD1306 OLEDの操作Class
+ * 
+ */
+class OLEDDISP{
+  public:
+    void init(void);
+    void clear(void);
+    void printEnvSensorData(DebugData);
+  private:
+};
+
 // M5 OLED Unit
 /**
  * @brief M5OLED操作クラス
