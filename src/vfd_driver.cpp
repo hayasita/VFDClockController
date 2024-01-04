@@ -327,16 +327,12 @@ void M5OLED::printEnvSensorData(DebugData debugData)
   char buffer[100];
 
   // システム時刻
-  snprintf(buffer, sizeof(buffer),"S:%lu/%02d/%02d %02d:%02d:%02d"
-    ,debugData.timeInfo.tm_year+1900,debugData.timeInfo.tm_mon+1,debugData.timeInfo.tm_mday
-    ,debugData.timeInfo.tm_hour,debugData.timeInfo.tm_min,debugData.timeInfo.tm_sec);
+  dispDateTime(buffer,debugData.timeInfo,"S:");
   oled.setCursor(0, 0);
   oled.print(buffer);
 
   //RTC時刻
-  snprintf(buffer, sizeof(buffer),"R:%lu/%02d/%02d %02d:%02d:%02d"
-    ,debugData.rtcTimeInfo.tm_year+1900,debugData.rtcTimeInfo.tm_mon+1,debugData.rtcTimeInfo.tm_mday
-    ,debugData.rtcTimeInfo.tm_hour,debugData.rtcTimeInfo.tm_min,debugData.rtcTimeInfo.tm_sec);
+  dispDateTime(buffer,debugData.rtcTimeInfo,"R:");
   oled.setCursor(0, 8);
   oled.print(buffer);
 
