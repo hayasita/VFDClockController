@@ -10,7 +10,6 @@
  */
 
 #include <M5Unified.h>
-#include <M5UnitOLED.h>
 #include <Wire.h>
 
 #include "jsdata.h"
@@ -286,7 +285,12 @@ void taskDisplayCtrl(void *pvParameters) {
   }
 }
 
-//
+/**
+ * @brief i2cデバイスの制御タスク
+ * 
+ * @param Parameters 
+ * @details i2c接続デバイスの初期設定完了後にループでデバイスの制御を行う。
+ */
 void taskDeviceCtrl(void *Parameters){
   unsigned long timetmp;      // millis()tmp
 
