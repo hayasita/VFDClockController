@@ -321,6 +321,7 @@ void M5OLED::clear(void)
 /**
  * @brief M5OLEDセンサデータ表示
  * 
+ * @param debugData 表示データ
  */
 void M5OLED::printEnvSensorData(DebugData debugData)
 {
