@@ -23,20 +23,28 @@
 
 bool dispDateTime(char* buffer,tm timeinfo,const char* title);
 
-class DeviceData{
+class SensorENVIIIData{
   public:
+    bool sensorActive;
     float env3Temperature;      // ENVIII SENSOR 気温
     float env3Humidity;         // ENVIII SENSOR 湿度
     float env3Pressure;         // ENVIII SENSOR 気圧
-    uint16_t illumiData;        // 周辺輝度
-    uint16_t dcdcTrg;           // DCDC目標値
-    uint16_t dcdcFdb;           // DCDCフィードバック値
+};
+
+class DeviceData{
+  public:
+    SensorENVIIIData enviiiData;  // ENVIII SENSOR情報
+    uint16_t illumiData;          // 周辺輝度
+    uint16_t dcdcTrg;             // DCDC目標値
+    uint16_t dcdcFdb;             // DCDCフィードバック値
 };
 #define DEVICE_ENVIII_TEMP    0
 #define DEVICE_ENVIII_HUMI    1
 #define DEVICE_ENVIII_PRESS   2
 #define DEVICE_ILLUMI         3
 #define DEVICE_DCDC           4
+#define DEVICE_DCDC2          5   // DEVICE_DCDCで使用するので欠番
+
 
 bool dispDeviceData(char* buffer,DeviceData devData,uint8_t sensor);
 

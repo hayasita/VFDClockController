@@ -421,7 +421,7 @@ void SensorEnviii::init()
 //  Wire.begin(SDA_PIN,SCL_PIN);
   qmp6988.init();
   Serial.println("ENVIII Unit(SHT30 and QMP6988) init.");
-
+//  sht30.init();
   return;
 }
 
@@ -430,12 +430,16 @@ void SensorEnviii::init()
  * 
  * @param deviceDat 読み出しデータ格納
  */
-void SensorEnviii::read(DeviceData *deviceDat)
+void SensorEnviii::read(SensorENVIIIData *sensorDat)
 {
-  deviceDat->env3Pressure = qmp6988.calcPressure();   // 気圧
+  sensorDat->env3Pressure = qmp6988.calcPressure();   // 気圧
   if (sht30.get() == 0) {
-    deviceDat->env3Temperature = sht30.cTemp;         // 気温
-    deviceDat->env3Humidity = sht30.humidity;         // 湿度
+    sensorDat->env3Temperature = sht30.cTemp;         // 気温
+    sensorDat->env3Humidity = sht30.humidity;         // 湿度
+    sensorDat->sensorActive = true;
+  }
+  else{
+    sensorDat->sensorActive = false;
   }
   return;
 } 

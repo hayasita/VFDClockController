@@ -348,11 +348,10 @@ class M5OLED{
 class SensorEnviii{
   public:
     void init();
-    void read(DeviceData *deviceDat);
+    void read(SensorENVIIIData *sensorDat);
   private:
     SHT3X sht30;
     QMP6988 qmp6988;
-
 };
 
 // BME680

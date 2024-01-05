@@ -313,16 +313,13 @@ void taskDeviceCtrl(void *Parameters){
   // RTC control instance
   RtcCont RtcContrl;
 
-//  Wire.end();
+  // M5ENVIII Sensor Init
   SensorEnviii enviii;
-  enviii.init();     // xQueueMailboxの処理よりも下でないと失敗する。？？
-/*
-  SHT3X sht30;
-  QMP6988 qmp6988;
-  Wire.begin(SDA_PIN,SCL_PIN);
-  qmp6988.init();     // xQueueMailboxの処理よりも下でないと失敗する。？？
-  Serial.println("ENVIII Unit(SHT30 and QMP6988) test");
-*/
+  debugData.deviceDat.enviiiData.sensorActive = false;
+  if(deviceChk.sht30() && deviceChk.qmp6988()){
+    enviii.init();     // xQueueMailboxの処理よりも下でないと失敗する。？？
+  }
+
   // bme680 Sensor Init
   bme680ini();
 
@@ -459,38 +456,12 @@ void taskDeviceCtrl(void *Parameters){
         Serial.print("\t\tHum: "); Serial.println(hdc.readHumidity());
       }
 */
+      // ENVIII Seneorデータ取得
       if(deviceChk.sht30() && deviceChk.qmp6988()){
-//        DeviceData sensorData;
-//        enviii.read(&sensorData);
-//        debugData.deviceDat = sensorData;
-//        mailboxDat.temp = (uint16_t)(sensorData.env3Temperature * 10);
-//        mailboxDat.humi = (uint16_t)(sensorData.env3Humidity * 10);
-//        mailboxDat.pressure = (uint16_t)(sensorData.env3Pressure / 100);
-
-        enviii.read(&debugData.deviceDat);
-        mailboxDat.temp = (uint16_t)(debugData.deviceDat.env3Temperature * 10);
-        mailboxDat.humi = (uint16_t)(debugData.deviceDat.env3Humidity * 10);
-        mailboxDat.pressure = (uint16_t)(debugData.deviceDat.env3Pressure / 100);
-
-/*
-//      if(deviceChk.qmp6988()){
-        float tmp      = 0.0;
-        float hum      = 0.0;
-        float pressure = 0.0;
-        pressure = qmp6988.calcPressure();
-        mailboxDat.pressure = (uint16_t)(pressure/100);
-        debugData.deviceDat.env3Pressure = pressure;                  // デバッグ情報：気圧
-        if (sht30.get() == 0) {  // Obtain the data of shT30.  获取sht30的数据
-            tmp = sht30.cTemp;   // Store the temperature obtained from shT30.
-            hum = sht30.humidity;  // Store the humidity obtained from the SHT30.
-            mailboxDat.temp = (uint16_t)(tmp * 10);
-            mailboxDat.humi = (uint16_t)(hum * 10);
-            debugData.deviceDat.env3Temperature = tmp;                  // デバッグ情報：気温
-            debugData.deviceDat.env3Humidity = hum;                     // デバッグ情報：湿度
-        } else {
-            tmp = 0, hum = 0;
-        }
-*/
+        enviii.read(&debugData.deviceDat.enviiiData);
+        mailboxDat.temp = (uint16_t)(debugData.deviceDat.enviiiData.env3Temperature * 10);
+        mailboxDat.humi = (uint16_t)(debugData.deviceDat.enviiiData.env3Humidity * 10);
+        mailboxDat.pressure = (uint16_t)(debugData.deviceDat.enviiiData.env3Pressure / 100);
       }
 
       // BME680 Data Read

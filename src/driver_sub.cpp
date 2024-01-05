@@ -55,22 +55,44 @@ bool dispDeviceData(char* buffer,DeviceData devData,uint8_t device)
 {
   bool ret = true;
   char tmp[50];
+  char title[][5] = {"TEMP","HUMI","PRES","ILLU","DCTR","DCFB"};
+  char sensorDat1[8],sensorDat2[8];
+  char noData6[6] = "--.--";
+  char noData8[8] = "----.--";
   int writtenChars;
 
   if(device == DEVICE_ENVIII_TEMP){
-    writtenChars = snprintf(tmp, sizeof(tmp),"TEMP:%.2f",devData.env3Temperature);
+    if(devData.enviiiData.sensorActive == true){
+      writtenChars = snprintf(sensorDat1, sizeof(sensorDat1),"%2.2f",devData.enviiiData.env3Temperature);
+    }
+    else{
+      writtenChars = snprintf(sensorDat1, sizeof(sensorDat1),"%s",noData6);
+    }
+    writtenChars = snprintf(tmp, sizeof(tmp),"%s:%s",title[device],sensorDat1);
   }
   else if(device == DEVICE_ENVIII_HUMI){
-    writtenChars = snprintf(tmp, sizeof(tmp),"HUMI:%.2f",devData.env3Humidity);
+    if(devData.enviiiData.sensorActive == true){
+      writtenChars = snprintf(sensorDat1, sizeof(sensorDat1),"%2.2f",devData.enviiiData.env3Humidity);
+    }
+    else{
+      writtenChars = snprintf(sensorDat1, sizeof(sensorDat1),"%s",noData6);
+    }
+    writtenChars = snprintf(tmp, sizeof(tmp),"%s:%s",title[device],sensorDat1);
   }
   else if(device == DEVICE_ENVIII_PRESS){
-    writtenChars = snprintf(tmp, sizeof(tmp),"PRES:%.2f",(devData.env3Pressure / 100));
+    if(devData.enviiiData.sensorActive == true){
+      writtenChars = snprintf(sensorDat1, sizeof(sensorDat1),"%4.2f",(devData.enviiiData.env3Pressure / 100));
+    }
+    else{
+      writtenChars = snprintf(sensorDat1, sizeof(sensorDat1),"%s",noData8);
+    }
+    writtenChars = snprintf(tmp, sizeof(tmp),"%s:%s",title[device],sensorDat1);
   }
   else if(device == DEVICE_ILLUMI){
-    writtenChars = snprintf(tmp, sizeof(tmp),"ILLU:%d",devData.illumiData);
+    writtenChars = snprintf(tmp, sizeof(tmp),"ILLU:%4d",devData.illumiData);
   }
   else if(device == DEVICE_DCDC){
-    writtenChars = snprintf(tmp, sizeof(tmp),"DCTR:%d DCFB:%d",devData.dcdcTrg,devData.dcdcFdb);
+    writtenChars = snprintf(tmp, sizeof(tmp),"DCTR:%4d DCFB:%4d",devData.dcdcTrg,devData.dcdcFdb);
   }
   else{
     writtenChars = -1;
