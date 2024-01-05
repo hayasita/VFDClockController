@@ -12,7 +12,6 @@
 #include "vfd_conf.h"
 //#include "vfd_disp.h"
 #include "vfd_driver.h"
-#include "driver_sub.h"
 #include "sound.h"
 #include "vfd_web.h"
 
@@ -166,12 +165,13 @@ void OLEDDISP::printEnvSensorData(DebugData debugData)
 
   // デバッグ用データ：センサ情報
   DeviceData sensorData;
-  sensorData.env3Temperature = debugData.temperature;
-  sensorData.env3Humidity = debugData.humidity;
-  sensorData.env3Pressure = debugData.pressure;
-  sensorData.illumiData = debugData.illumiData;
-  sensorData.dcdcTrg = debugData.dcdcTrg;
-  sensorData.dcdcFdb = debugData.dcdcFdb;
+  sensorData = debugData.deviceDat;
+//  sensorData.env3Temperature = debugData.temperature;
+//  sensorData.env3Humidity = debugData.humidity;
+//  sensorData.env3Pressure = debugData.pressure;
+//  sensorData.illumiData = debugData.illumiData;
+//  sensorData.dcdcTrg = debugData.dcdcTrg;
+//  sensorData.dcdcFdb = debugData.dcdcFdb;
 
   dispDeviceData(buffer,sensorData,DEVICE_ENVIII_TEMP);
   display.drawString(0, 16, buffer);    // 気温
@@ -388,12 +388,13 @@ void M5OLED::printEnvSensorData(DebugData debugData)
 
   // デバッグ用データ：センサ情報
   DeviceData sensorData;
-  sensorData.env3Temperature = debugData.temperature;
-  sensorData.env3Humidity = debugData.humidity;
-  sensorData.env3Pressure = debugData.pressure;
-  sensorData.illumiData = debugData.illumiData;
-  sensorData.dcdcTrg = debugData.dcdcTrg;
-  sensorData.dcdcFdb = debugData.dcdcFdb;
+  sensorData = debugData.deviceDat;
+//  sensorData.env3Temperature = debugData.temperature;
+//  sensorData.env3Humidity = debugData.humidity;
+//  sensorData.env3Pressure = debugData.pressure;
+//  sensorData.illumiData = debugData.illumiData;
+//  sensorData.dcdcTrg = debugData.dcdcTrg;
+//  sensorData.dcdcFdb = debugData.dcdcFdb;
 
   oled.setCursor(0, 16);
   dispDeviceData(buffer,sensorData,DEVICE_ENVIII_TEMP);
@@ -409,6 +410,35 @@ void M5OLED::printEnvSensorData(DebugData debugData)
 
   return;
 }
+
+// M5 ENVIII Sensor
+/**
+ * @brief M5 ENVIIISensor初期化
+ * 
+ */
+void SensorEnviii::init()
+{
+//  Wire.begin(SDA_PIN,SCL_PIN);
+  qmp6988.init();
+  Serial.println("ENVIII Unit(SHT30 and QMP6988) init.");
+
+  return;
+}
+
+/**
+ * @brief M5 ENVIIISensorデータ読み出し
+ * 
+ * @param deviceDat 読み出しデータ格納
+ */
+void SensorEnviii::read(DeviceData *deviceDat)
+{
+  deviceDat->env3Pressure = qmp6988.calcPressure();   // 気圧
+  if (sht30.get() == 0) {
+    deviceDat->env3Temperature = sht30.cTemp;         // 気温
+    deviceDat->env3Humidity = sht30.humidity;         // 湿度
+  }
+  return;
+} 
 
 // Input Terminal Man
 extern TaskHandle_t taskHandle;

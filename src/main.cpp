@@ -313,13 +313,16 @@ void taskDeviceCtrl(void *Parameters){
   // RTC control instance
   RtcCont RtcContrl;
 
-  Wire.end();
+//  Wire.end();
+  SensorEnviii enviii;
+  enviii.init();     // xQueueMailboxの処理よりも下でないと失敗する。？？
+/*
   SHT3X sht30;
   QMP6988 qmp6988;
   Wire.begin(SDA_PIN,SCL_PIN);
   qmp6988.init();     // xQueueMailboxの処理よりも下でないと失敗する。？？
   Serial.println("ENVIII Unit(SHT30 and QMP6988) test");
-
+*/
   // bme680 Sensor Init
   bme680ini();
 
@@ -409,9 +412,12 @@ void taskDeviceCtrl(void *Parameters){
     if(ret){
       *sysTimeInfo = mailboxDisplayCtrl.timeInfo;       // システム時刻設定
       debugData.timeInfo = mailboxDisplayCtrl.timeInfo;
-      debugData.dcdcTrg = mailboxDisplayCtrl.dcdcTrg;
-      debugData.dcdcFdb = mailboxDisplayCtrl.dcdcFdb;
-      debugData.illumiData = mailboxDisplayCtrl.illumiData;
+      debugData.deviceDat.dcdcTrg = mailboxDisplayCtrl.dcdcTrg;
+      debugData.deviceDat.dcdcFdb = mailboxDisplayCtrl.dcdcFdb;
+      debugData.deviceDat.illumiData = mailboxDisplayCtrl.illumiData;
+//      debugData.dcdcTrg = mailboxDisplayCtrl.dcdcTrg;
+//      debugData.dcdcFdb = mailboxDisplayCtrl.dcdcFdb;
+//      debugData.illumiData = mailboxDisplayCtrl.illumiData;
 //      Serial.print("syst:");
 //      Serial.println(mailboxDisplayCtrl.illumiData);
     }
@@ -454,23 +460,37 @@ void taskDeviceCtrl(void *Parameters){
       }
 */
       if(deviceChk.sht30() && deviceChk.qmp6988()){
+//        DeviceData sensorData;
+//        enviii.read(&sensorData);
+//        debugData.deviceDat = sensorData;
+//        mailboxDat.temp = (uint16_t)(sensorData.env3Temperature * 10);
+//        mailboxDat.humi = (uint16_t)(sensorData.env3Humidity * 10);
+//        mailboxDat.pressure = (uint16_t)(sensorData.env3Pressure / 100);
+
+        enviii.read(&debugData.deviceDat);
+        mailboxDat.temp = (uint16_t)(debugData.deviceDat.env3Temperature * 10);
+        mailboxDat.humi = (uint16_t)(debugData.deviceDat.env3Humidity * 10);
+        mailboxDat.pressure = (uint16_t)(debugData.deviceDat.env3Pressure / 100);
+
+/*
 //      if(deviceChk.qmp6988()){
         float tmp      = 0.0;
         float hum      = 0.0;
         float pressure = 0.0;
         pressure = qmp6988.calcPressure();
         mailboxDat.pressure = (uint16_t)(pressure/100);
-        debugData.pressure = pressure;                  // デバッグ情報：気圧
+        debugData.deviceDat.env3Pressure = pressure;                  // デバッグ情報：気圧
         if (sht30.get() == 0) {  // Obtain the data of shT30.  获取sht30的数据
             tmp = sht30.cTemp;   // Store the temperature obtained from shT30.
             hum = sht30.humidity;  // Store the humidity obtained from the SHT30.
             mailboxDat.temp = (uint16_t)(tmp * 10);
             mailboxDat.humi = (uint16_t)(hum * 10);
-            debugData.temperature = tmp;                  // デバッグ情報：気温
-            debugData.humidity = hum;                     // デバッグ情報：湿度
+            debugData.deviceDat.env3Temperature = tmp;                  // デバッグ情報：気温
+            debugData.deviceDat.env3Humidity = hum;                     // デバッグ情報：湿度
         } else {
             tmp = 0, hum = 0;
         }
+*/
       }
 
       // BME680 Data Read

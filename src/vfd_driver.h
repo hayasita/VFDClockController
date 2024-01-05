@@ -1,6 +1,9 @@
 #ifndef vfd_driver_h
 #define vfd_driver_h
 
+// GLOBALを使用するヘッダはここでincludeする。
+#include "driver_sub.h"
+
 #ifdef GLOBAL_VAL_DEF
 #define GLOBAL
 #else
@@ -186,12 +189,13 @@ class DebugData{
   public:
     struct tm timeInfo;
     struct tm rtcTimeInfo;
-    float temperature;      // 気温
-    float humidity;         // 湿度
-    float pressure;         // 気圧
-    uint16_t illumiData;    // 周辺輝度
-    uint16_t dcdcTrg;       // DCDC目標値
-    uint16_t dcdcFdb;       // DCDCフィードバック値
+    DeviceData deviceDat;
+//    float temperature;      // 気温
+//    float humidity;         // 湿度
+//    float pressure;         // 気圧
+//    uint16_t illumiData;    // 周辺輝度
+//    uint16_t dcdcTrg;       // DCDC目標値
+//    uint16_t dcdcFdb;       // DCDCフィードバック値
 };
 GLOBAL DebugData debugData;
 
@@ -337,6 +341,17 @@ class M5OLED{
     void printEnvSensorData(DebugData);
   private:
     M5UnitOLED oled;
+
+};
+
+// M5 ENVIII Sensor
+class SensorEnviii{
+  public:
+    void init();
+    void read(DeviceData *deviceDat);
+  private:
+    SHT3X sht30;
+    QMP6988 qmp6988;
 
 };
 

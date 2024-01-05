@@ -25,9 +25,9 @@ bool dispDateTime(char* buffer,tm timeinfo,const char* title);
 
 class DeviceData{
   public:
-    float env3Temperature;      // 気温
-    float env3Humidity;         // 湿度
-    float env3Pressure;         // 気圧
+    float env3Temperature;      // ENVIII SENSOR 気温
+    float env3Humidity;         // ENVIII SENSOR 湿度
+    float env3Pressure;         // ENVIII SENSOR 気圧
     uint16_t illumiData;        // 周辺輝度
     uint16_t dcdcTrg;           // DCDC目標値
     uint16_t dcdcFdb;           // DCDCフィードバック値
