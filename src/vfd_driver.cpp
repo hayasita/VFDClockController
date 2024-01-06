@@ -1338,6 +1338,7 @@ void irDump(decode_results *results) {
   }
   Serial.println("};");
 }
+#endif
 
 // BME680
 
@@ -1347,14 +1348,12 @@ void irDump(decode_results *results) {
  * @return true 初期化成功
  * @return false 初期化失敗
  */
-bool bme680ini(void)
+bool SensorBme680::init(SensorBME680Data *bme680Data)
 {
   bool ret = true;
 
-// BME680 init
   if (!bme.begin()) {
     Serial.println(F("Could not find a valid BME680 sensor, check wiring!"));
-//    while (1);
   }
 
   // Set up oversampling and filter initialization
@@ -1364,7 +1363,12 @@ bool bme680ini(void)
   bme.setIIRFilterSize(BME680_FILTER_SIZE_3);
   bme.setGasHeater(320, 150); // 320*C for 150 ms
 
-//  bme680Sqf = 0;
+  bme680Data->sensorActive = false;
+  bme680Data->temperature = 0;
+  bme680Data->pressure = 0;
+  bme680Data->humidity = 0;
+  bme680Data->gasResistance = 0;
+  bme680Data->altitude = 0;
 
   return ret;
 }
@@ -1372,11 +1376,11 @@ bool bme680ini(void)
 /**
  * @brief BME680のデータ取得
  * 
- * @param bme680SensorData データ格納要構造体
+ * @param bme680Data  データ格納用
  * @return true 取得成功
  * @return false 取得失敗
  */
-bool bme680Scan(struct bme680Data *bme680SensorData)
+bool SensorBme680::read(SensorBME680Data *bme680Data)
 {
   if (! bme.performReading()) {
     Serial.println("Failed to perform reading :(");
@@ -1405,12 +1409,16 @@ bool bme680Scan(struct bme680Data *bme680SensorData)
 
   Serial.println();
 */
-  bme680SensorData->temperature = bme.temperature;
-  bme680SensorData->pressure = bme.pressure;
-  bme680SensorData->humidity = bme.humidity;
-  bme680SensorData->gas_resistance = bme.gas_resistance;
-  bme680SensorData->altitude = bme.readAltitude(SEALEVELPRESSURE_HPA);
+  bme680Data->temperature = bme.temperature;
+  bme680Data->pressure = bme.pressure;
+  bme680Data->humidity = bme.humidity;
+  bme680Data->gasResistance = bme.gas_resistance;
+  bme680Data->altitude = bme.readAltitude(SEALEVELPRESSURE_HPA);
+
+  if(bme680Data->pressure > 0){
+    bme680Data->sensorActive = true;
+  }
 
   return true;
 }
-#endif
+

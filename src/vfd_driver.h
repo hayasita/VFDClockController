@@ -360,21 +360,15 @@ class SensorEnviii{
 // BME680
 #include <Adafruit_Sensor.h>
 #include "Adafruit_BME680.h"
-
 #define SEALEVELPRESSURE_HPA (1013.25)
-GLOBAL Adafruit_BME680 bme; // I2C
-//GLOBAL uint8_t bme680Sqf;
 
-struct bme680Data{
-  float temperature;        
-  uint32_t pressure;
-  float humidity;
-  uint32_t gas_resistance;
-  float altitude;
+class SensorBme680{
+  public:
+    bool init(SensorBME680Data *bme680Data);
+    bool read(SensorBME680Data *bme680Data);
+  private:
+    Adafruit_BME680 bme;
 };
-
-GLOBAL bool bme680ini(void);                                  // 初期化
-GLOBAL bool bme680Scan(struct bme680Data *bme680SensorData);  // データ取得
 
 #undef GLOBAL
 #endif
