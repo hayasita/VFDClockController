@@ -475,7 +475,7 @@ void taskDeviceCtrl(void *Parameters){
         if(bme680Scan(&bme680SensorData)){
           i2cDeviceData.bme680Data.temperature = bme680SensorData.temperature;
           i2cDeviceData.bme680Data.humidity = bme680SensorData.humidity;
-          i2cDeviceData.bme680Data.pressure = (bme680SensorData.pressure / 100.0);
+          i2cDeviceData.bme680Data.pressure = bme680SensorData.pressure;
           i2cDeviceData.bme680Data.gasResistance = (bme680SensorData.gas_resistance);
           i2cDeviceData.bme680Data.altitude = bme680SensorData.altitude;
         }

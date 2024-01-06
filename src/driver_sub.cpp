@@ -88,7 +88,7 @@ bool dispDeviceData(char* buffer,DeviceData devData,uint8_t device)
     else{
       writtenChars = snprintf(sensorDat1, sizeof(sensorDat1),"%s",noData8);
     }
-    writtenChars = snprintf(sensorDat2, sizeof(sensorDat2),"%4.2f",(devData.bme680Data.pressure));
+    writtenChars = snprintf(sensorDat2, sizeof(sensorDat2),"%4.2f",(devData.bme680Data.pressure/100.0));
     writtenChars = snprintf(tmp, sizeof(tmp),"%s:%s:%s",title[device],sensorDat1,sensorDat2);
   }
   else if(device == DEVICE_GAS){

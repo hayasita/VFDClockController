@@ -36,7 +36,7 @@ class SensorBME680Data{
     bool sensorActive;
     float temperature;      // BME680 SENSOR 気温
     float humidity;         // BME680 SENSOR 湿度
-    float pressure;         // BME680 SENSOR 気圧
+    uint32_t pressure;      // BME680 SENSOR 気圧
     uint32_t gasResistance; // BME680 SENSOR ガス
     float altitude;         // 
 };
