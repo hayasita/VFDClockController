@@ -692,6 +692,7 @@ void DeviceChk::init(void){
   datQMP6988 = false;
   datSSD1306 = false;
   datM5OLED = false;
+  datBME680 = false;
 
   for (int i = 0; i < i2cDevice.size(); i++) {
 /*
@@ -729,6 +730,11 @@ void DeviceChk::init(void){
       datQMP6988 = true;
       status = status + "I2C_ADDRESS_QMP6988 : True!\n";
     }
+    else if(i2cDevice[i] == I2C_ADDRESS_BME680){
+      datBME680 = true;
+      status = status + "I2C_ADDRESS_BME680 : True!\n";
+    }
+
   }
   Serial.println(status);
 
@@ -855,6 +861,9 @@ bool DeviceChk::ssd1306(void){
 }
 bool DeviceChk::m5oled(void){
   return datM5OLED;
+}
+bool DeviceChk::bme680(void){
+  return datBME680;
 }
 
 void DeviceChk::i2cScan(void){

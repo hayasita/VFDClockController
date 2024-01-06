@@ -323,7 +323,10 @@ void taskDeviceCtrl(void *Parameters){
   }
 
   // bme680 Sensor Init
-  bme680ini();
+  debugData.deviceDat.bme680Data.sensorActive = false;
+  if(deviceChk.bme680()){
+    bme680ini();
+  }
 
   // OLED Display
   OLEDDISP oledDisp;
@@ -468,12 +471,14 @@ void taskDeviceCtrl(void *Parameters){
       }
 
       // BME680 Data データ取得
-      if(bme680Scan(&bme680SensorData)){
-        i2cDeviceData.bme680Data.temperature = bme680SensorData.temperature;
-        i2cDeviceData.bme680Data.humidity = bme680SensorData.humidity;
-        i2cDeviceData.bme680Data.pressure = (bme680SensorData.pressure / 100.0);
-        i2cDeviceData.bme680Data.gasResistance = (bme680SensorData.gas_resistance);
-        i2cDeviceData.bme680Data.altitude = bme680SensorData.altitude;
+      if(deviceChk.bme680()){
+        if(bme680Scan(&bme680SensorData)){
+          i2cDeviceData.bme680Data.temperature = bme680SensorData.temperature;
+          i2cDeviceData.bme680Data.humidity = bme680SensorData.humidity;
+          i2cDeviceData.bme680Data.pressure = (bme680SensorData.pressure / 100.0);
+          i2cDeviceData.bme680Data.gasResistance = (bme680SensorData.gas_resistance);
+          i2cDeviceData.bme680Data.altitude = bme680SensorData.altitude;
+        }
       }
 
 

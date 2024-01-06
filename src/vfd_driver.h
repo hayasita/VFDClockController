@@ -120,6 +120,7 @@ GLOBAL void oledDispTime(tm rtcTimeInfo,tm localTimeinfo);
   #define I2C_ADDRESS_HDC1000   0x40    //I2C address for HDC1000
   #define I2C_ADDRESS_SHT30     0x44    //I2C address for SHT30
   #define I2C_ADDRESS_QMP6988   0x70    //I2C address for QMP6988
+  #define I2C_ADDRESS_BME680    0x77    //I2C address for BME680
 
   #define USE_IR                // 赤外線リモコンユニット使用
   #define IRRCV_PIN     46
@@ -166,6 +167,7 @@ class DeviceChk{
     bool qmp6988(void);
     bool ssd1306(void);
     bool m5oled(void);
+    bool bme680(void);
 
     void i2cScan();
     std::vector<uint8_t> i2cDevice;
@@ -180,6 +182,7 @@ class DeviceChk{
     bool datQMP6988;      // QMP6988
     bool datSSD1306;      // SSD1306 OLED Display
     bool datM5OLED;       // M5 OLED Unit
+    bool datBME680;       // BME680
 
 };
 GLOBAL  DeviceChk deviceChk;
