@@ -299,6 +299,8 @@ void taskDeviceCtrl(void *Parameters){
   unsigned long illumiLasttime;   // 照度読み込み前回時間(millis)
   unsigned long sensor2Lasttime;  // センサスキャン処理前回時間(millis)
 
+  DeviceData i2cDeviceData;       // i2c接続デバイス情報
+
   struct tm rtcTimeInfo;
   struct tm *sysTimeInfo;
 
@@ -428,6 +430,7 @@ void taskDeviceCtrl(void *Parameters){
       // OLED表示データ作成
       RtcContrl.timeRead(&rtcTimeInfo);   // RTC 時刻読み込み
       debugData.rtcTimeInfo = rtcTimeInfo;
+      debugData.deviceDat.bme680Data = i2cDeviceData.bme680Data;
 
       //OLED 画面表示
       if(deviceChk.ssd1306()){
@@ -461,34 +464,16 @@ void taskDeviceCtrl(void *Parameters){
         enviii.read(&debugData.deviceDat.enviiiData);
         mailboxDat.temp = (uint16_t)(debugData.deviceDat.enviiiData.env3Temperature * 10);
         mailboxDat.humi = (uint16_t)(debugData.deviceDat.enviiiData.env3Humidity * 10);
-        mailboxDat.pressure = (uint16_t)(debugData.deviceDat.enviiiData.env3Pressure / 100);
+        mailboxDat.pressure = (uint16_t)(debugData.deviceDat.enviiiData.env3Pressure);
       }
 
-      // BME680 Data Read
+      // BME680 Data データ取得
       if(bme680Scan(&bme680SensorData)){
-
-        Serial.print("Temperature = ");
-        Serial.print(bme680SensorData.temperature);
-        Serial.println(" *C");
-
-        Serial.print("Pressure = ");
-        Serial.print(bme680SensorData.pressure / 100.0);
-        Serial.println(" hPa");
-
-        Serial.print("Humidity = ");
-        Serial.print(bme680SensorData.humidity);
-        Serial.println(" %");
-
-        Serial.print("Gas = ");
-        Serial.print(bme680SensorData.gas_resistance / 1000.0);
-        Serial.println(" KOhms");
-
-        Serial.print("Approx. Altitude = ");
-        Serial.print(bme680SensorData.altitude);
-        Serial.println(" m");
-
-        Serial.println();
-
+        i2cDeviceData.bme680Data.temperature = bme680SensorData.temperature;
+        i2cDeviceData.bme680Data.humidity = bme680SensorData.humidity;
+        i2cDeviceData.bme680Data.pressure = (bme680SensorData.pressure / 100.0);
+        i2cDeviceData.bme680Data.gasResistance = (bme680SensorData.gas_resistance);
+        i2cDeviceData.bme680Data.altitude = bme680SensorData.altitude;
       }
 
 

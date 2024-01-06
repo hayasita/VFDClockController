@@ -389,12 +389,6 @@ void M5OLED::printEnvSensorData(DebugData debugData)
   // デバッグ用データ：センサ情報
   DeviceData sensorData;
   sensorData = debugData.deviceDat;
-//  sensorData.env3Temperature = debugData.temperature;
-//  sensorData.env3Humidity = debugData.humidity;
-//  sensorData.env3Pressure = debugData.pressure;
-//  sensorData.illumiData = debugData.illumiData;
-//  sensorData.dcdcTrg = debugData.dcdcTrg;
-//  sensorData.dcdcFdb = debugData.dcdcFdb;
 
   oled.setCursor(0, 16);
   dispDeviceData(buffer,sensorData,DEVICE_ENVIII_TEMP);
@@ -403,10 +397,14 @@ void M5OLED::printEnvSensorData(DebugData debugData)
   oled.printf("%s\n",buffer);  // 湿度
   dispDeviceData(buffer,sensorData,DEVICE_ENVIII_PRESS);
   oled.printf("%s\n",buffer);  // 気圧
-  dispDeviceData(buffer,sensorData,DEVICE_ILLUMI);
-  oled.printf("%s\n",buffer);  // 周辺輝度
-  dispDeviceData(buffer,sensorData,DEVICE_DCDC);
-  oled.printf("%s\n",buffer);  // DCDC目標値,DCDCフィードバック値
+  dispDeviceData(buffer,sensorData,DEVICE_GAS);
+  oled.printf("%s\n",buffer);  // ガス
+  dispDeviceData(buffer,sensorData,DEVICE_ALTITUBE);
+  oled.printf("%s\n",buffer);  // 高度
+//  dispDeviceData(buffer,sensorData,DEVICE_ILLUMI);
+//  oled.printf("%s\n",buffer);  // 周辺輝度
+//  dispDeviceData(buffer,sensorData,DEVICE_DCDC);
+//  oled.printf("%s\n",buffer);  // DCDC目標値,DCDCフィードバック値
 
   return;
 }
@@ -432,7 +430,7 @@ void SensorEnviii::init()
  */
 void SensorEnviii::read(SensorENVIIIData *sensorDat)
 {
-  sensorDat->env3Pressure = qmp6988.calcPressure();   // 気圧
+  sensorDat->env3Pressure = qmp6988.calcPressure()/100.0;   // 気圧
   if (sht30.get() == 0) {
     sensorDat->env3Temperature = sht30.cTemp;         // 気温
     sensorDat->env3Humidity = sht30.humidity;         // 湿度
