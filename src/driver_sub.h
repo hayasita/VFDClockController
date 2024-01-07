@@ -23,20 +23,43 @@
 
 bool dispDateTime(char* buffer,tm timeinfo,const char* title);
 
+class SensorENVIIIData{
+  public:
+    SensorENVIIIData(void); // コンストラクタ
+    bool sensorActive;
+    float env3Temperature;      // ENVIII SENSOR 気温
+    float env3Humidity;         // ENVIII SENSOR 湿度
+    float env3Pressure;         // ENVIII SENSOR 気圧
+};
+
+class SensorBME680Data{
+  public:
+    SensorBME680Data(void); // コンストラクタ
+    bool sensorActive;
+    float temperature;      // BME680 SENSOR 気温
+    float humidity;         // BME680 SENSOR 湿度
+    uint32_t pressure;      // BME680 SENSOR 気圧
+    uint32_t gasResistance; // BME680 SENSOR ガス
+    float altitude;         // 
+};
+
 class DeviceData{
   public:
-    float env3Temperature;      // 気温
-    float env3Humidity;         // 湿度
-    float env3Pressure;         // 気圧
-    uint16_t illumiData;        // 周辺輝度
-    uint16_t dcdcTrg;           // DCDC目標値
-    uint16_t dcdcFdb;           // DCDCフィードバック値
+    SensorENVIIIData enviiiData;  // ENVIII SENSOR情報
+    SensorBME680Data bme680Data;  // BME680 SENSOR情報
+    uint16_t illumiData;          // 周辺輝度
+    uint16_t dcdcTrg;             // DCDC目標値
+    uint16_t dcdcFdb;             // DCDCフィードバック値
 };
 #define DEVICE_ENVIII_TEMP    0
 #define DEVICE_ENVIII_HUMI    1
 #define DEVICE_ENVIII_PRESS   2
 #define DEVICE_ILLUMI         3
-#define DEVICE_DCDC           4
+#define DEVICE_GAS            4
+#define DEVICE_ALTITUBE       5
+#define DEVICE_DCDC           6
+#define DEVICE_DCDC2          7   // DEVICE_DCDCで使用するので欠番
+
 
 bool dispDeviceData(char* buffer,DeviceData devData,uint8_t sensor);
 

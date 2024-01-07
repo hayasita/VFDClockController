@@ -43,6 +43,33 @@ bool dispDateTime(char* buffer,tm timeinfo,const char* title)
 }
 
 /**
+ * @brief Construct a new Sensor ENVIII Data:: SensorENVIII Data object
+ * 
+ */
+SensorENVIIIData::SensorENVIIIData(void)
+{
+  sensorActive = false;
+  env3Temperature = 0;    // ENVIII SENSOR 気温
+  env3Humidity = 0;       // ENVIII SENSOR 湿度
+  env3Pressure = 0;       // ENVIII SENSOR 気圧
+}
+
+/**
+ * @brief Construct a new Sensor BME680 Data:: Sensor BME680 Data object
+ * 
+ */
+SensorBME680Data::SensorBME680Data(void)
+{
+  sensorActive = false;
+  temperature = 0;      // BME680 SENSOR 気温
+  humidity = 0;         // BME680 SENSOR 湿度
+  pressure = 0;         // BME680 SENSOR 気圧
+  gasResistance = 0;    // BME680 SENSOR ガス
+  altitude = 0;         // 
+  return;
+}
+
+/**
  * @brief デバイス情報の表示データを作成する。
  * 
  * @param buffer 作製した表示データを入れる
@@ -55,22 +82,69 @@ bool dispDeviceData(char* buffer,DeviceData devData,uint8_t device)
 {
   bool ret = true;
   char tmp[50];
+  char title[][5] = {"TEMP","HUMI","PRES","ILLU","Gas ","Alti","DCTR","DCFB"};
+  const char noData6[6] = "--.--";
+  const char noData8[8] = "----.--";
+  char sensorDat1[8] = "--.--";
+  char sensorDat2[8] = "--.--";
   int writtenChars;
 
   if(device == DEVICE_ENVIII_TEMP){
-    writtenChars = snprintf(tmp, sizeof(tmp),"TEMP:%.2f",devData.env3Temperature);
+    if(devData.enviiiData.sensorActive){
+      snprintf(sensorDat1, sizeof(sensorDat1),"%2.2f",devData.enviiiData.env3Temperature);
+    }
+    if(devData.bme680Data.sensorActive){
+      snprintf(sensorDat2, sizeof(sensorDat2),"%2.2f",devData.bme680Data.temperature);
+    }
+    writtenChars = snprintf(tmp, sizeof(tmp),"%s:%s:%s *c",title[device],sensorDat1,sensorDat2);
   }
   else if(device == DEVICE_ENVIII_HUMI){
-    writtenChars = snprintf(tmp, sizeof(tmp),"HUMI:%.2f",devData.env3Humidity);
+    if(devData.enviiiData.sensorActive){
+      snprintf(sensorDat1, sizeof(sensorDat1),"%2.2f",devData.enviiiData.env3Humidity);
+    }
+    if(devData.bme680Data.sensorActive){
+      snprintf(sensorDat2, sizeof(sensorDat2),"%2.2f",devData.bme680Data.humidity);
+    }
+    writtenChars = snprintf(tmp, sizeof(tmp),"%s:%s:%s %%",title[device],sensorDat1,sensorDat2);
   }
   else if(device == DEVICE_ENVIII_PRESS){
-    writtenChars = snprintf(tmp, sizeof(tmp),"PRES:%.2f",(devData.env3Pressure / 100));
+    if(devData.enviiiData.sensorActive){
+      snprintf(sensorDat1, sizeof(sensorDat1),"%4.2f",(devData.enviiiData.env3Pressure));
+    }
+    else{
+      strcpy(sensorDat1,noData8);
+    }
+    if(devData.bme680Data.sensorActive){
+      snprintf(sensorDat2, sizeof(sensorDat2),"%4.2f",(devData.bme680Data.pressure/100.0));
+    }
+    else{
+      strcpy(sensorDat2,noData8);
+    }
+    writtenChars = snprintf(tmp, sizeof(tmp),"%s:%s:%s",title[device],sensorDat1,sensorDat2);
+  }
+  else if(device == DEVICE_GAS){
+    if(devData.bme680Data.sensorActive){
+      snprintf(sensorDat2, sizeof(sensorDat2),"%5.2f",devData.bme680Data.gasResistance/1000.0);
+    }
+    else{
+      strcpy(sensorDat2,"---.--");
+    }
+    writtenChars = snprintf(tmp, sizeof(tmp),"%s:%s KOhms",title[device],sensorDat2);
+  }
+  else if(device == DEVICE_ALTITUBE){
+    if(devData.bme680Data.sensorActive){
+      snprintf(sensorDat2, sizeof(sensorDat2),"%.2f",devData.bme680Data.altitude);
+    }
+    else{
+      strcpy(sensorDat2,"-.--");
+    }
+    writtenChars = snprintf(tmp, sizeof(tmp),"%s:%s m",title[device],sensorDat2);
   }
   else if(device == DEVICE_ILLUMI){
-    writtenChars = snprintf(tmp, sizeof(tmp),"ILLU:%d",devData.illumiData);
+    writtenChars = snprintf(tmp, sizeof(tmp),"ILLU:%4d",devData.illumiData);
   }
   else if(device == DEVICE_DCDC){
-    writtenChars = snprintf(tmp, sizeof(tmp),"DCTR:%d DCFB:%d",devData.dcdcTrg,devData.dcdcFdb);
+    writtenChars = snprintf(tmp, sizeof(tmp),"DCTR:%4d DCFB:%4d",devData.dcdcTrg,devData.dcdcFdb);
   }
   else{
     writtenChars = -1;

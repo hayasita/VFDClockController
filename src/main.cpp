@@ -299,6 +299,8 @@ void taskDeviceCtrl(void *Parameters){
   unsigned long illumiLasttime;   // 照度読み込み前回時間(millis)
   unsigned long sensor2Lasttime;  // センサスキャン処理前回時間(millis)
 
+  DeviceData i2cDeviceData;       // i2c接続デバイス情報
+
   struct tm rtcTimeInfo;
   struct tm *sysTimeInfo;
 
@@ -313,15 +315,17 @@ void taskDeviceCtrl(void *Parameters){
   // RTC control instance
   RtcCont RtcContrl;
 
-  Wire.end();
-  SHT3X sht30;
-  QMP6988 qmp6988;
-  Wire.begin(SDA_PIN,SCL_PIN);
-  qmp6988.init();     // xQueueMailboxの処理よりも下でないと失敗する。？？
-  Serial.println("ENVIII Unit(SHT30 and QMP6988) test");
+  // M5ENVIII Sensor Init
+  SensorEnviii enviii;
+  if(deviceChk.sht30() && deviceChk.qmp6988()){
+    enviii.init();     // xQueueMailboxの処理よりも下でないと失敗する。？？
+  }
 
   // bme680 Sensor Init
-  bme680ini();
+  SensorBme680 bme680;
+  if(deviceChk.bme680()){
+    bme680.init(&i2cDeviceData.bme680Data);
+  }
 
   // OLED Display
   OLEDDISP oledDisp;
@@ -409,9 +413,12 @@ void taskDeviceCtrl(void *Parameters){
     if(ret){
       *sysTimeInfo = mailboxDisplayCtrl.timeInfo;       // システム時刻設定
       debugData.timeInfo = mailboxDisplayCtrl.timeInfo;
-      debugData.dcdcTrg = mailboxDisplayCtrl.dcdcTrg;
-      debugData.dcdcFdb = mailboxDisplayCtrl.dcdcFdb;
-      debugData.illumiData = mailboxDisplayCtrl.illumiData;
+      debugData.deviceDat.dcdcTrg = mailboxDisplayCtrl.dcdcTrg;
+      debugData.deviceDat.dcdcFdb = mailboxDisplayCtrl.dcdcFdb;
+      debugData.deviceDat.illumiData = mailboxDisplayCtrl.illumiData;
+//      debugData.dcdcTrg = mailboxDisplayCtrl.dcdcTrg;
+//      debugData.dcdcFdb = mailboxDisplayCtrl.dcdcFdb;
+//      debugData.illumiData = mailboxDisplayCtrl.illumiData;
 //      Serial.print("syst:");
 //      Serial.println(mailboxDisplayCtrl.illumiData);
     }
@@ -425,6 +432,7 @@ void taskDeviceCtrl(void *Parameters){
       // OLED表示データ作成
       RtcContrl.timeRead(&rtcTimeInfo);   // RTC 時刻読み込み
       debugData.rtcTimeInfo = rtcTimeInfo;
+      debugData.deviceDat.bme680Data = i2cDeviceData.bme680Data;
 
       //OLED 画面表示
       if(deviceChk.ssd1306()){
@@ -443,7 +451,6 @@ void taskDeviceCtrl(void *Parameters){
     }
 
     if(timetmp - sensor2Lasttime >2000){   // 2000mSecごとに実行
-      struct bme680Data bme680SensorData;   // BME680からの取得データ
       sensor2Lasttime = timetmp;
     
       // 環境センサデータ取得
@@ -453,51 +460,17 @@ void taskDeviceCtrl(void *Parameters){
         Serial.print("\t\tHum: "); Serial.println(hdc.readHumidity());
       }
 */
+      // ENVIII Seneorデータ取得
       if(deviceChk.sht30() && deviceChk.qmp6988()){
-//      if(deviceChk.qmp6988()){
-        float tmp      = 0.0;
-        float hum      = 0.0;
-        float pressure = 0.0;
-        pressure = qmp6988.calcPressure();
-        mailboxDat.pressure = (uint16_t)(pressure/100);
-        debugData.pressure = pressure;                  // デバッグ情報：気圧
-        if (sht30.get() == 0) {  // Obtain the data of shT30.  获取sht30的数据
-            tmp = sht30.cTemp;   // Store the temperature obtained from shT30.
-            hum = sht30.humidity;  // Store the humidity obtained from the SHT30.
-            mailboxDat.temp = (uint16_t)(tmp * 10);
-            mailboxDat.humi = (uint16_t)(hum * 10);
-            debugData.temperature = tmp;                  // デバッグ情報：気温
-            debugData.humidity = hum;                     // デバッグ情報：湿度
-        } else {
-            tmp = 0, hum = 0;
-        }
+        enviii.read(&debugData.deviceDat.enviiiData);
+        mailboxDat.temp = (uint16_t)(debugData.deviceDat.enviiiData.env3Temperature * 10);
+        mailboxDat.humi = (uint16_t)(debugData.deviceDat.enviiiData.env3Humidity * 10);
+        mailboxDat.pressure = (uint16_t)(debugData.deviceDat.enviiiData.env3Pressure);
       }
 
-      // BME680 Data Read
-      if(bme680Scan(&bme680SensorData)){
-
-        Serial.print("Temperature = ");
-        Serial.print(bme680SensorData.temperature);
-        Serial.println(" *C");
-
-        Serial.print("Pressure = ");
-        Serial.print(bme680SensorData.pressure / 100.0);
-        Serial.println(" hPa");
-
-        Serial.print("Humidity = ");
-        Serial.print(bme680SensorData.humidity);
-        Serial.println(" %");
-
-        Serial.print("Gas = ");
-        Serial.print(bme680SensorData.gas_resistance / 1000.0);
-        Serial.println(" KOhms");
-
-        Serial.print("Approx. Altitude = ");
-        Serial.print(bme680SensorData.altitude);
-        Serial.println(" m");
-
-        Serial.println();
-
+      // BME680 Data データ取得
+      if(deviceChk.bme680()){
+        bme680.read(&i2cDeviceData.bme680Data);
       }
 
 

@@ -12,7 +12,6 @@
 #include "vfd_conf.h"
 //#include "vfd_disp.h"
 #include "vfd_driver.h"
-#include "driver_sub.h"
 #include "sound.h"
 #include "vfd_web.h"
 
@@ -166,12 +165,13 @@ void OLEDDISP::printEnvSensorData(DebugData debugData)
 
   // デバッグ用データ：センサ情報
   DeviceData sensorData;
-  sensorData.env3Temperature = debugData.temperature;
-  sensorData.env3Humidity = debugData.humidity;
-  sensorData.env3Pressure = debugData.pressure;
-  sensorData.illumiData = debugData.illumiData;
-  sensorData.dcdcTrg = debugData.dcdcTrg;
-  sensorData.dcdcFdb = debugData.dcdcFdb;
+  sensorData = debugData.deviceDat;
+//  sensorData.env3Temperature = debugData.temperature;
+//  sensorData.env3Humidity = debugData.humidity;
+//  sensorData.env3Pressure = debugData.pressure;
+//  sensorData.illumiData = debugData.illumiData;
+//  sensorData.dcdcTrg = debugData.dcdcTrg;
+//  sensorData.dcdcFdb = debugData.dcdcFdb;
 
   dispDeviceData(buffer,sensorData,DEVICE_ENVIII_TEMP);
   display.drawString(0, 16, buffer);    // 気温
@@ -388,12 +388,7 @@ void M5OLED::printEnvSensorData(DebugData debugData)
 
   // デバッグ用データ：センサ情報
   DeviceData sensorData;
-  sensorData.env3Temperature = debugData.temperature;
-  sensorData.env3Humidity = debugData.humidity;
-  sensorData.env3Pressure = debugData.pressure;
-  sensorData.illumiData = debugData.illumiData;
-  sensorData.dcdcTrg = debugData.dcdcTrg;
-  sensorData.dcdcFdb = debugData.dcdcFdb;
+  sensorData = debugData.deviceDat;
 
   oled.setCursor(0, 16);
   dispDeviceData(buffer,sensorData,DEVICE_ENVIII_TEMP);
@@ -402,13 +397,50 @@ void M5OLED::printEnvSensorData(DebugData debugData)
   oled.printf("%s\n",buffer);  // 湿度
   dispDeviceData(buffer,sensorData,DEVICE_ENVIII_PRESS);
   oled.printf("%s\n",buffer);  // 気圧
-  dispDeviceData(buffer,sensorData,DEVICE_ILLUMI);
-  oled.printf("%s\n",buffer);  // 周辺輝度
-  dispDeviceData(buffer,sensorData,DEVICE_DCDC);
-  oled.printf("%s\n",buffer);  // DCDC目標値,DCDCフィードバック値
+  dispDeviceData(buffer,sensorData,DEVICE_GAS);
+  oled.printf("%s\n",buffer);  // ガス
+  dispDeviceData(buffer,sensorData,DEVICE_ALTITUBE);
+  oled.printf("%s\n",buffer);  // 高度
+//  dispDeviceData(buffer,sensorData,DEVICE_ILLUMI);
+//  oled.printf("%s\n",buffer);  // 周辺輝度
+//  dispDeviceData(buffer,sensorData,DEVICE_DCDC);
+//  oled.printf("%s\n",buffer);  // DCDC目標値,DCDCフィードバック値
 
   return;
 }
+
+// M5 ENVIII Sensor
+/**
+ * @brief M5 ENVIIISensor初期化
+ * 
+ */
+void SensorEnviii::init()
+{
+//  Wire.begin(SDA_PIN,SCL_PIN);
+  qmp6988.init();
+  Serial.println("ENVIII Unit(SHT30 and QMP6988) init.");
+//  sht30.init();
+  return;
+}
+
+/**
+ * @brief M5 ENVIIISensorデータ読み出し
+ * 
+ * @param deviceDat 読み出しデータ格納
+ */
+void SensorEnviii::read(SensorENVIIIData *sensorDat)
+{
+  sensorDat->env3Pressure = qmp6988.calcPressure()/100.0;   // 気圧
+  if (sht30.get() == 0) {
+    sensorDat->env3Temperature = sht30.cTemp;         // 気温
+    sensorDat->env3Humidity = sht30.humidity;         // 湿度
+    sensorDat->sensorActive = true;
+  }
+  else{
+    sensorDat->sensorActive = false;
+  }
+  return;
+} 
 
 // Input Terminal Man
 extern TaskHandle_t taskHandle;
@@ -660,6 +692,7 @@ void DeviceChk::init(void){
   datQMP6988 = false;
   datSSD1306 = false;
   datM5OLED = false;
+  datBME680 = false;
 
   for (int i = 0; i < i2cDevice.size(); i++) {
 /*
@@ -697,6 +730,11 @@ void DeviceChk::init(void){
       datQMP6988 = true;
       status = status + "I2C_ADDRESS_QMP6988 : True!\n";
     }
+    else if(i2cDevice[i] == I2C_ADDRESS_BME680){
+      datBME680 = true;
+      status = status + "I2C_ADDRESS_BME680 : True!\n";
+    }
+
   }
   Serial.println(status);
 
@@ -823,6 +861,9 @@ bool DeviceChk::ssd1306(void){
 }
 bool DeviceChk::m5oled(void){
   return datM5OLED;
+}
+bool DeviceChk::bme680(void){
+  return datBME680;
 }
 
 void DeviceChk::i2cScan(void){
@@ -1297,6 +1338,7 @@ void irDump(decode_results *results) {
   }
   Serial.println("};");
 }
+#endif
 
 // BME680
 
@@ -1306,14 +1348,12 @@ void irDump(decode_results *results) {
  * @return true 初期化成功
  * @return false 初期化失敗
  */
-bool bme680ini(void)
+bool SensorBme680::init(SensorBME680Data *bme680Data)
 {
   bool ret = true;
 
-// BME680 init
   if (!bme.begin()) {
     Serial.println(F("Could not find a valid BME680 sensor, check wiring!"));
-//    while (1);
   }
 
   // Set up oversampling and filter initialization
@@ -1323,19 +1363,17 @@ bool bme680ini(void)
   bme.setIIRFilterSize(BME680_FILTER_SIZE_3);
   bme.setGasHeater(320, 150); // 320*C for 150 ms
 
-//  bme680Sqf = 0;
-
   return ret;
 }
 
 /**
  * @brief BME680のデータ取得
  * 
- * @param bme680SensorData データ格納要構造体
+ * @param bme680Data  データ格納用
  * @return true 取得成功
  * @return false 取得失敗
  */
-bool bme680Scan(struct bme680Data *bme680SensorData)
+bool SensorBme680::read(SensorBME680Data *bme680Data)
 {
   if (! bme.performReading()) {
     Serial.println("Failed to perform reading :(");
@@ -1364,12 +1402,16 @@ bool bme680Scan(struct bme680Data *bme680SensorData)
 
   Serial.println();
 */
-  bme680SensorData->temperature = bme.temperature;
-  bme680SensorData->pressure = bme.pressure;
-  bme680SensorData->humidity = bme.humidity;
-  bme680SensorData->gas_resistance = bme.gas_resistance;
-  bme680SensorData->altitude = bme.readAltitude(SEALEVELPRESSURE_HPA);
+  bme680Data->temperature = bme.temperature;
+  bme680Data->pressure = bme.pressure;
+  bme680Data->humidity = bme.humidity;
+  bme680Data->gasResistance = bme.gas_resistance;
+  bme680Data->altitude = bme.readAltitude(SEALEVELPRESSURE_HPA);
+
+  if(bme680Data->pressure > 0){
+    bme680Data->sensorActive = true;
+  }
 
   return true;
 }
-#endif
+

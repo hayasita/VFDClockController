@@ -1,6 +1,9 @@
 #ifndef vfd_driver_h
 #define vfd_driver_h
 
+// GLOBALを使用するヘッダはここでincludeする。
+#include "driver_sub.h"
+
 #ifdef GLOBAL_VAL_DEF
 #define GLOBAL
 #else
@@ -117,6 +120,7 @@ GLOBAL void oledDispTime(tm rtcTimeInfo,tm localTimeinfo);
   #define I2C_ADDRESS_HDC1000   0x40    //I2C address for HDC1000
   #define I2C_ADDRESS_SHT30     0x44    //I2C address for SHT30
   #define I2C_ADDRESS_QMP6988   0x70    //I2C address for QMP6988
+  #define I2C_ADDRESS_BME680    0x77    //I2C address for BME680
 
   #define USE_IR                // 赤外線リモコンユニット使用
   #define IRRCV_PIN     46
@@ -163,6 +167,7 @@ class DeviceChk{
     bool qmp6988(void);
     bool ssd1306(void);
     bool m5oled(void);
+    bool bme680(void);
 
     void i2cScan();
     std::vector<uint8_t> i2cDevice;
@@ -177,6 +182,7 @@ class DeviceChk{
     bool datQMP6988;      // QMP6988
     bool datSSD1306;      // SSD1306 OLED Display
     bool datM5OLED;       // M5 OLED Unit
+    bool datBME680;       // BME680
 
 };
 GLOBAL  DeviceChk deviceChk;
@@ -186,12 +192,13 @@ class DebugData{
   public:
     struct tm timeInfo;
     struct tm rtcTimeInfo;
-    float temperature;      // 気温
-    float humidity;         // 湿度
-    float pressure;         // 気圧
-    uint16_t illumiData;    // 周辺輝度
-    uint16_t dcdcTrg;       // DCDC目標値
-    uint16_t dcdcFdb;       // DCDCフィードバック値
+    DeviceData deviceDat;
+//    float temperature;      // 気温
+//    float humidity;         // 湿度
+//    float pressure;         // 気圧
+//    uint16_t illumiData;    // 周辺輝度
+//    uint16_t dcdcTrg;       // DCDC目標値
+//    uint16_t dcdcFdb;       // DCDCフィードバック値
 };
 GLOBAL DebugData debugData;
 
@@ -340,24 +347,28 @@ class M5OLED{
 
 };
 
+// M5 ENVIII Sensor
+class SensorEnviii{
+  public:
+    void init();
+    void read(SensorENVIIIData *sensorDat);
+  private:
+    SHT3X sht30;
+    QMP6988 qmp6988;
+};
+
 // BME680
 #include <Adafruit_Sensor.h>
 #include "Adafruit_BME680.h"
-
 #define SEALEVELPRESSURE_HPA (1013.25)
-GLOBAL Adafruit_BME680 bme; // I2C
-//GLOBAL uint8_t bme680Sqf;
 
-struct bme680Data{
-  float temperature;        
-  uint32_t pressure;
-  float humidity;
-  uint32_t gas_resistance;
-  float altitude;
+class SensorBme680{
+  public:
+    bool init(SensorBME680Data *bme680Data);
+    bool read(SensorBME680Data *bme680Data);
+  private:
+    Adafruit_BME680 bme;
 };
-
-GLOBAL bool bme680ini(void);                                  // 初期化
-GLOBAL bool bme680Scan(struct bme680Data *bme680SensorData);  // データ取得
 
 #undef GLOBAL
 #endif
