@@ -16,7 +16,6 @@
 #include <M5UnitOLED.h>
 #include "InputTerminal.h"
 #include "M5_ENV.h"
-#include "Adafruit_HDC1000.h"
 // OLED設定
 #include "SSD1306Wire.h" // legacy include: `#include "SSD1306.h"`
 
@@ -117,7 +116,6 @@ GLOBAL void oledDispTime(tm rtcTimeInfo,tm localTimeinfo);
   #define I2C_ADDRESS_SSD1306   0x3D    //I2C address for SSD1306 OLED Display
   #define I2C_ADDRESS_DS1307    0x68    //I2C address for DS1307
   #define I2C_ADDRESS_24C32     0x50    //I2C address for 24C32
-  #define I2C_ADDRESS_HDC1000   0x40    //I2C address for HDC1000
   #define I2C_ADDRESS_SHT30     0x44    //I2C address for SHT30
   #define I2C_ADDRESS_QMP6988   0x70    //I2C address for QMP6988
   #define I2C_ADDRESS_BME680    0x77    //I2C address for BME680
@@ -162,7 +160,6 @@ class DeviceChk{
     void init(void);
     uint8_t rtc(void);
     bool e2rom(void);
-    bool hdc1000(void);
     bool sht30(void);
     bool qmp6988(void);
     bool ssd1306(void);
@@ -177,7 +174,6 @@ class DeviceChk{
 
     uint8_t datRtc;
     bool datE2ROM;
-    bool datHDC1000;      // HDC1000
     bool datSHT30;        // SHT30
     bool datQMP6988;      // QMP6988
     bool datSSD1306;      // SSD1306 OLED Display
