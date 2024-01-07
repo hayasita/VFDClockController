@@ -1363,13 +1363,6 @@ bool SensorBme680::init(SensorBME680Data *bme680Data)
   bme.setIIRFilterSize(BME680_FILTER_SIZE_3);
   bme.setGasHeater(320, 150); // 320*C for 150 ms
 
-  bme680Data->sensorActive = false;
-  bme680Data->temperature = 0;
-  bme680Data->pressure = 0;
-  bme680Data->humidity = 0;
-  bme680Data->gasResistance = 0;
-  bme680Data->altitude = 0;
-
   return ret;
 }
 

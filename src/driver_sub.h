@@ -25,6 +25,7 @@ bool dispDateTime(char* buffer,tm timeinfo,const char* title);
 
 class SensorENVIIIData{
   public:
+    SensorENVIIIData(void); // コンストラクタ
     bool sensorActive;
     float env3Temperature;      // ENVIII SENSOR 気温
     float env3Humidity;         // ENVIII SENSOR 湿度
@@ -33,6 +34,7 @@ class SensorENVIIIData{
 
 class SensorBME680Data{
   public:
+    SensorBME680Data(void); // コンストラクタ
     bool sensorActive;
     float temperature;      // BME680 SENSOR 気温
     float humidity;         // BME680 SENSOR 湿度

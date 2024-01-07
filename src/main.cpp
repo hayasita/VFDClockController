@@ -317,7 +317,6 @@ void taskDeviceCtrl(void *Parameters){
 
   // M5ENVIII Sensor Init
   SensorEnviii enviii;
-  debugData.deviceDat.enviiiData.sensorActive = false;
   if(deviceChk.sht30() && deviceChk.qmp6988()){
     enviii.init();     // xQueueMailboxの処理よりも下でないと失敗する。？？
   }

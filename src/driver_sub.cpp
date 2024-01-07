@@ -43,6 +43,33 @@ bool dispDateTime(char* buffer,tm timeinfo,const char* title)
 }
 
 /**
+ * @brief Construct a new Sensor ENVIII Data:: SensorENVIII Data object
+ * 
+ */
+SensorENVIIIData::SensorENVIIIData(void)
+{
+  sensorActive = false;
+  env3Temperature = 0;    // ENVIII SENSOR 気温
+  env3Humidity = 0;       // ENVIII SENSOR 湿度
+  env3Pressure = 0;       // ENVIII SENSOR 気圧
+}
+
+/**
+ * @brief Construct a new Sensor BME680 Data:: Sensor BME680 Data object
+ * 
+ */
+SensorBME680Data::SensorBME680Data(void)
+{
+  sensorActive = false;
+  temperature = 0;      // BME680 SENSOR 気温
+  humidity = 0;         // BME680 SENSOR 湿度
+  pressure = 0;         // BME680 SENSOR 気圧
+  gasResistance = 0;    // BME680 SENSOR ガス
+  altitude = 0;         // 
+  return;
+}
+
+/**
  * @brief デバイス情報の表示データを作成する。
  * 
  * @param buffer 作製した表示データを入れる
