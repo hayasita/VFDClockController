@@ -56,51 +56,62 @@ bool dispDeviceData(char* buffer,DeviceData devData,uint8_t device)
   bool ret = true;
   char tmp[50];
   char title[][5] = {"TEMP","HUMI","PRES","ILLU","Gas ","Alti","DCTR","DCFB"};
-  char sensorDat1[8],sensorDat2[8];
-  char noData6[6] = "--.--";
-  char noData8[8] = "----.--";
+  const char noData6[6] = "--.--";
+  const char noData8[8] = "----.--";
+  char sensorDat1[8] = "--.--";
+  char sensorDat2[8] = "--.--";
   int writtenChars;
 
   if(device == DEVICE_ENVIII_TEMP){
-    if(devData.enviiiData.sensorActive == true){
-      writtenChars = snprintf(sensorDat1, sizeof(sensorDat1),"%2.2f",devData.enviiiData.env3Temperature);
+    if(devData.enviiiData.sensorActive){
+      snprintf(sensorDat1, sizeof(sensorDat1),"%2.2f",devData.enviiiData.env3Temperature);
     }
-    else{
-      writtenChars = snprintf(sensorDat1, sizeof(sensorDat1),"%s",noData6);
+    if(devData.bme680Data.sensorActive){
+      snprintf(sensorDat2, sizeof(sensorDat2),"%2.2f",devData.bme680Data.temperature);
     }
-    writtenChars = snprintf(sensorDat2, sizeof(sensorDat2),"%2.2f",devData.bme680Data.temperature);
     writtenChars = snprintf(tmp, sizeof(tmp),"%s:%s:%s *c",title[device],sensorDat1,sensorDat2);
   }
   else if(device == DEVICE_ENVIII_HUMI){
-    if(devData.enviiiData.sensorActive == true){
-      writtenChars = snprintf(sensorDat1, sizeof(sensorDat1),"%2.2f",devData.enviiiData.env3Humidity);
+    if(devData.enviiiData.sensorActive){
+      snprintf(sensorDat1, sizeof(sensorDat1),"%2.2f",devData.enviiiData.env3Humidity);
     }
-    else{
-      writtenChars = snprintf(sensorDat1, sizeof(sensorDat1),"%s",noData6);
+    if(devData.bme680Data.sensorActive){
+      snprintf(sensorDat2, sizeof(sensorDat2),"%2.2f",devData.bme680Data.humidity);
     }
-    writtenChars = snprintf(sensorDat2, sizeof(sensorDat2),"%2.2f",devData.bme680Data.humidity);
-    writtenChars = snprintf(tmp, sizeof(tmp),"%s:%s:%s",title[device],sensorDat1,sensorDat2);
+    writtenChars = snprintf(tmp, sizeof(tmp),"%s:%s:%s %%",title[device],sensorDat1,sensorDat2);
   }
   else if(device == DEVICE_ENVIII_PRESS){
-    if(devData.enviiiData.sensorActive == true){
-      writtenChars = snprintf(sensorDat1, sizeof(sensorDat1),"%4.2f",(devData.enviiiData.env3Pressure));
+    if(devData.enviiiData.sensorActive){
+      snprintf(sensorDat1, sizeof(sensorDat1),"%4.2f",(devData.enviiiData.env3Pressure));
     }
     else{
-      writtenChars = snprintf(sensorDat1, sizeof(sensorDat1),"%s",noData8);
+      strcpy(sensorDat1,noData8);
     }
-    writtenChars = snprintf(sensorDat2, sizeof(sensorDat2),"%4.2f",(devData.bme680Data.pressure/100.0));
+    if(devData.bme680Data.sensorActive){
+      snprintf(sensorDat2, sizeof(sensorDat2),"%4.2f",(devData.bme680Data.pressure/100.0));
+    }
+    else{
+      strcpy(sensorDat2,noData8);
+    }
     writtenChars = snprintf(tmp, sizeof(tmp),"%s:%s:%s",title[device],sensorDat1,sensorDat2);
   }
   else if(device == DEVICE_GAS){
-    if(devData.bme680Data.pressure > 0){
-      writtenChars = snprintf(tmp, sizeof(tmp),"%s:%5.2f KOhms",title[device],devData.bme680Data.gasResistance/1000.0);
+    if(devData.bme680Data.sensorActive){
+      snprintf(sensorDat2, sizeof(sensorDat2),"%5.2f",devData.bme680Data.gasResistance/1000.0);
     }
     else{
-      writtenChars = snprintf(tmp, sizeof(tmp),"%s:000.00 KOhms",title[device]);
+      strcpy(sensorDat2,"---.--");
     }
+    writtenChars = snprintf(tmp, sizeof(tmp),"%s:%s KOhms",title[device],sensorDat2);
   }
   else if(device == DEVICE_ALTITUBE){
-    writtenChars = snprintf(tmp, sizeof(tmp),"%s:%.2fm",title[device],devData.bme680Data.altitude);
+    if(devData.bme680Data.sensorActive){
+      snprintf(sensorDat2, sizeof(sensorDat2),"%.2f",devData.bme680Data.altitude);
+    }
+    else{
+      strcpy(sensorDat2,"-.--");
+    }
+    writtenChars = snprintf(tmp, sizeof(tmp),"%s:%s m",title[device],sensorDat2);
   }
   else if(device == DEVICE_ILLUMI){
     writtenChars = snprintf(tmp, sizeof(tmp),"ILLU:%4d",devData.illumiData);
