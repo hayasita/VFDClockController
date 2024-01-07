@@ -637,15 +637,6 @@ void DeviceChk::init(void){
         status = status + "I2C_ADDRESS_24C32 : False!\n";
     }
 
-    if(wireChk(I2C_ADDRESS_HDC1000) == 0){
-        datHDC1000 = true;
-        status = status + "I2C_ADDRESS_HDC1000 : True!\n";
-    }
-    else{
-        datHDC1000 = false;
-        status = status + "I2C_ADDRESS_HDC1000 : False!\n";
-    }
-
     if(wireChk(I2C_ADDRESS_SHT30) == 0){
         datSHT30 = true;
         status = status + "I2C_ADDRESS_SHT30 : True!\n";
@@ -687,7 +678,6 @@ void DeviceChk::init(void){
 
   datRtc = false;
   datE2ROM = false;
-  datHDC1000 = false;
   datSHT30 = false;
   datQMP6988 = false;
   datSSD1306 = false;
@@ -718,10 +708,6 @@ void DeviceChk::init(void){
       datE2ROM = true;
       status = status + "I2C_ADDRESS_24C32 : True!\n";
    }
-    else if(i2cDevice[i] == I2C_ADDRESS_HDC1000){
-      datHDC1000 = false;
-      status = status + "I2C_ADDRESS_HDC1000 : False!\n";
-    }
     else if(i2cDevice[i] == I2C_ADDRESS_SHT30){
       datSHT30 = true;
       status = status + "I2C_ADDRESS_SHT30 : True!\n";
@@ -844,9 +830,6 @@ uint8_t DeviceChk::rtc(void){
 }
 bool DeviceChk::e2rom(void){
   return datE2ROM;
-}
-bool DeviceChk::hdc1000(void){
-  return datHDC1000;
 }
 bool DeviceChk::sht30(void){
   return datSHT30;

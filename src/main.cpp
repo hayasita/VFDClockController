@@ -453,13 +453,6 @@ void taskDeviceCtrl(void *Parameters){
     if(timetmp - sensor2Lasttime >2000){   // 2000mSecごとに実行
       sensor2Lasttime = timetmp;
     
-      // 環境センサデータ取得
-/*
-      if(deviceChk.hdc1000()){
-        Serial.print("Temp: "); Serial.print(hdc.readTemperature());
-        Serial.print("\t\tHum: "); Serial.println(hdc.readHumidity());
-      }
-*/
       // ENVIII Seneorデータ取得
       if(deviceChk.sht30() && deviceChk.qmp6988()){
         enviii.read(&debugData.deviceDat.enviiiData);
