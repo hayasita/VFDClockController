@@ -53,6 +53,13 @@ struct mailboxData{
   uint16_t Data1;
 };
 
+struct i2cStartData{
+  // Display Mode Ctrl
+  bool ssd1306Valid;          // OLED有無
+  bool m5oledValid;           // M5OLED有無
+  struct tm rtcTimeInfo;      // RTC時刻
+};
+
 // イベント送信キュー(Mailboxとは別) taskDeviceCtrl() -> loop()
 QueueHandle_t xQueueEvent;
 #define QUEUE_LENGTH 4
@@ -119,7 +126,7 @@ TaskHandle_t taskDisplayHandle;
 void taskDisplayCtrl(void *pvParameters) {
   BaseType_t ret;
 
-  struct tm rtcTimeInfo;
+  i2cStartData i2cStartDat;       // 起動時RTC,i2c情報
   static uint8_t lastSecw;        //  前回秒
   unsigned long timetmp;          // millis()tmp
   unsigned long illumiLasttime;   // 照度読み込み前回時間(millis)
@@ -178,18 +185,22 @@ void taskDisplayCtrl(void *pvParameters) {
 
   // taskDeviceCtrl()から時刻受信
   do{
-    ret = xQueueReceive(xQueueRtcDataInit, &rtcTimeInfo, 0);
+    ret = xQueueReceive(xQueueRtcDataInit, &i2cStartDat, 0);
   }while(!ret);
   Serial.print("xQueueRtcData:");
-  Serial.print(rtcTimeInfo.tm_hour);
-  Serial.print(rtcTimeInfo.tm_min);
-  Serial.println(rtcTimeInfo.tm_sec);
+  Serial.print(i2cStartDat.rtcTimeInfo.tm_hour);
+  Serial.print(i2cStartDat.rtcTimeInfo.tm_min);
+  Serial.println(i2cStartDat.rtcTimeInfo.tm_sec);
+  Serial.print("deviceChk.ssd1306():");
+  Serial.println(i2cStartDat.ssd1306Valid);
+  Serial.print("deviceChk.m5oled():");
+  Serial.println(i2cStartDat.m5oledValid);
 
   // システム時刻初期化
   SystemTimeCont sysTimCnt;           // システム時刻管理
-  sysTimCnt.init(&rtcTimeInfo);       // システム時刻初期化
+  sysTimCnt.init(&i2cStartDat.rtcTimeInfo);       // システム時刻初期化
   sysTimCnt.read();                   // システム時刻読み出し
-  lastSecw = rtcTimeInfo.tm_sec;
+  lastSecw = i2cStartDat.rtcTimeInfo.tm_sec;
 
   mailboxDat2Loop.Data0 = 0;
   mailboxDat2Loop.Data1 = 0;
@@ -199,7 +210,7 @@ void taskDisplayCtrl(void *pvParameters) {
   mailboxDat2Loop.illumiData = 0;
   mailboxDat2Loop.pressure = 0;
   mailboxDat2Loop.temp = 0;
-  mailboxDat2Loop.timeInfo = rtcTimeInfo;
+  mailboxDat2Loop.timeInfo = i2cStartDat.rtcTimeInfo;
 
   // 内部タイマ初期化
   dcdcLasttime = millis();
@@ -207,6 +218,7 @@ void taskDisplayCtrl(void *pvParameters) {
 
   while (1) {
     struct tm *sysTimeInfo;
+    struct tm rtcTimeInfo;
 
     timetmp = millis();
 
@@ -302,7 +314,7 @@ void taskDeviceCtrl(void *Parameters){
 
   DeviceData sensorDeviceData;       // センサデバイス値情報
 
-  struct tm rtcTimeInfo;
+  i2cStartData i2cStartDat;       // 起動時RTC,i2c情報
   struct tm *sysTimeInfo;
 
   BaseType_t ret;
@@ -341,13 +353,13 @@ void taskDeviceCtrl(void *Parameters){
   }
 
   // == システム時刻初期化 ==
-  RtcContrl.timeRead(&rtcTimeInfo);   // RTC 時刻読み込み
-  lastSecw = rtcTimeInfo.tm_sec;      // 前回秒 設定
-  sysTimeInfo = &rtcTimeInfo;         // 仮初期化
+  RtcContrl.timeRead(&i2cStartDat.rtcTimeInfo);   // RTC 時刻読み込み
+  lastSecw = i2cStartDat.rtcTimeInfo.tm_sec;      // 前回秒 設定
+  sysTimeInfo = &i2cStartDat.rtcTimeInfo;         // 仮初期化
 
   // RTC時刻をtaskDisplayCtrlへ通知
   // この通知でtaskDisplayCtrl処理開始するので、タイミング注意
-  xQueueOverwrite(xQueueRtcDataInit, &rtcTimeInfo);
+  xQueueOverwrite(xQueueRtcDataInit, &i2cStartDat);
 
   vfdevent.setEventlogDeviceCtrl(EVENT_BOOT_TASKDEVICECTRL);   // 起動
 
@@ -403,6 +415,7 @@ void taskDeviceCtrl(void *Parameters){
   }
 
   while(1){
+    struct tm rtcTimeInfo;
     struct tm tmpTimeInfo;            // 時刻処理用Tmp
     struct mailboxData mailboxDisplayCtrl;
 
