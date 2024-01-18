@@ -58,6 +58,7 @@ QueueHandle_t xQueueEvent;
 #define QUEUE_LENGTH 4
 
 // RTC情報送信キュー taskDeviceCtrl() -> taskDisplayCtrl()
+QueueHandle_t xQueueRtcDataInit;
 QueueHandle_t xQueueRtcData;
 
 // sysTime送信キュー
@@ -177,7 +178,7 @@ void taskDisplayCtrl(void *pvParameters) {
 
   // taskDeviceCtrl()から時刻受信
   do{
-    ret = xQueueReceive(xQueueRtcData, &rtcTimeInfo, 0);
+    ret = xQueueReceive(xQueueRtcDataInit, &rtcTimeInfo, 0);
   }while(!ret);
   Serial.print("xQueueRtcData:");
   Serial.print(rtcTimeInfo.tm_hour);
@@ -346,7 +347,7 @@ void taskDeviceCtrl(void *Parameters){
 
   // RTC時刻をtaskDisplayCtrlへ通知
   // この通知でtaskDisplayCtrl処理開始するので、タイミング注意
-  xQueueOverwrite(xQueueRtcData, &rtcTimeInfo);
+  xQueueOverwrite(xQueueRtcDataInit, &rtcTimeInfo);
 
   vfdevent.setEventlogDeviceCtrl(EVENT_BOOT_TASKDEVICECTRL);   // 起動
 
@@ -610,6 +611,7 @@ void setup(void){
   xQueueSensData2 = xQueueCreate(1, sizeof(mailboxData));
 
   xQueueEvent = xQueueCreate(QUEUE_LENGTH, sizeof(eventQueData));
+  xQueueRtcDataInit = xQueueCreate(1, sizeof(tm));
   xQueueRtcData = xQueueCreate(1, sizeof(tm));
   xQueueSysTimeData1 = xQueueCreate(1, sizeof(mailboxData));
   xQueueSysTimeData2 = xQueueCreate(1, sizeof(mailboxData));
