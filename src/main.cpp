@@ -299,7 +299,7 @@ void taskDeviceCtrl(void *Parameters){
   unsigned long illumiLasttime;   // 照度読み込み前回時間(millis)
   unsigned long sensor2Lasttime;  // センサスキャン処理前回時間(millis)
 
-  DeviceData i2cDeviceData;       // i2c接続デバイス情報
+  DeviceData sensorDeviceData;       // センサデバイス値情報
 
   struct tm rtcTimeInfo;
   struct tm *sysTimeInfo;
@@ -324,7 +324,7 @@ void taskDeviceCtrl(void *Parameters){
   // bme680 Sensor Init
   SensorBme680 bme680;
   if(deviceChk.bme680()){
-    bme680.init(&i2cDeviceData.bme680Data);
+    bme680.init(&sensorDeviceData.bme680Data);
   }
 
   // OLED Display
@@ -432,7 +432,7 @@ void taskDeviceCtrl(void *Parameters){
       // OLED表示データ作成
       RtcContrl.timeRead(&rtcTimeInfo);   // RTC 時刻読み込み
       debugData.rtcTimeInfo = rtcTimeInfo;
-      debugData.deviceDat.bme680Data = i2cDeviceData.bme680Data;
+      debugData.deviceDat.bme680Data = sensorDeviceData.bme680Data;
 
       //OLED 画面表示
       if(deviceChk.ssd1306()){
@@ -463,7 +463,7 @@ void taskDeviceCtrl(void *Parameters){
 
       // BME680 Data データ取得
       if(deviceChk.bme680()){
-        bme680.read(&i2cDeviceData.bme680Data);
+        bme680.read(&sensorDeviceData.bme680Data);
       }
 
 
