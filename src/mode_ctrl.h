@@ -47,6 +47,13 @@
 #define KEY_UP_S    0x04  // SW2 Short ON
 #define KEY_DOWN_S  0x08  // SW3 Short ON
 
+struct dispMode{
+    uint8_t ctrlMode;           // 操作モード
+    uint8_t dispModeVfd;        // VFD表示モード
+    uint8_t dispModeM5OLED;     // M5OLED表示モード
+    uint8_t dispModeOLED;       // OLED表示モード
+
+};
 
 class modeCtrl{
   public:
@@ -57,7 +64,8 @@ class modeCtrl{
     uint8_t getDispModeM5OLED(void);        // M5OLED表示モード取得
     uint8_t getDispModeOLED(void);          // OLED表示モード取得
 
-    void modeSet(uint8_t setKey);           // 操作モード設定
+//    void modeSet(uint8_t setKey);           // 操作モード設定
+    dispMode modeSet(uint8_t setKey);           // 操作モード設定
 
   private:
     bool ssd1306Valid;          // OLED有無

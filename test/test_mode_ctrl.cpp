@@ -1,3 +1,13 @@
+/**
+ * @file test_mode_ctrl.cpp
+ * @author hayasita04@gmail.com
+ * @brief CtrlMode testfile
+ * @version 0.1
+ * @date 2024-01-19
+ * 
+ * @copyright Copyright (c) 2024
+ * 
+ */
 #include <gtest/gtest.h>
 #include "../src/mode_ctrl.h"
 
@@ -8,96 +18,163 @@
  * M5OLED　あり
  */
 TEST(ModeCtrl, ctrlModechg_Full){
+  dispMode modeData;
+
   modeCtrl mode(true,true);
   // 初期値確認
   EXPECT_EQ(mode.getCtrlMode(), ctrlMode_VfdDisp);            // 操作モード取得：VFD表示
   EXPECT_EQ(mode.getDispModeVfd(), dispModeVfd_Default);      // VFD表示モード取得：初期値
   EXPECT_EQ(mode.getDispModeM5OLED(), dispModeOled_Default);  // M5OLED表示モード取得：初期値
   EXPECT_EQ(mode.getDispModeOLED(), dispModeOled_Default);    // OLED表示モード取得：初期値
-
+/*
+  EXPECT_EQ(modeData.ctrlMode, ctrlMode_VfdDisp);             // 操作モード取得：VFD表示
+  EXPECT_EQ(modeData.dispModeVfd, dispModeVfd_Default);       // VFD表示モード取得：初期値
+  EXPECT_EQ(modeData.dispModeM5OLED, dispModeOled_Default);   // M5OLED表示モード取得：初期値
+  EXPECT_EQ(modeData.dispModeOLED, dispModeOled_Default);     // OLED表示モード取得：初期値
+*/
   // SETKey SW1 Long ON
-  mode.modeSet(kEY_SET_L);    // -> VFD設定
+  modeData = mode.modeSet(kEY_SET_L);    // -> VFD設定
   EXPECT_EQ(mode.getCtrlMode(), ctrlMode_VfdCtrl);            // 操作モード取得：VFD設定
   EXPECT_EQ(mode.getDispModeVfd(), dispModeVfd_Default);      // VFD表示モード取得：初期値
   EXPECT_EQ(mode.getDispModeM5OLED(), dispModeOled_Default);  // M5OLED表示モード取得：初期値
   EXPECT_EQ(mode.getDispModeOLED(), dispModeOled_Default);    // OLED表示モード取得：初期値
 
+  EXPECT_EQ(modeData.ctrlMode, ctrlMode_VfdCtrl);            // 操作モード取得：VFD設定
+  EXPECT_EQ(modeData.dispModeVfd, dispModeVfd_Default);      // VFD表示モード取得：初期値
+  EXPECT_EQ(modeData.dispModeM5OLED, dispModeOled_Default);  // M5OLED表示モード取得：初期値
+  EXPECT_EQ(modeData.dispModeOLED, dispModeOled_Default);    // OLED表示モード取得：初期値
+
   // SETKey SW1 Long ON
-  mode.modeSet(kEY_SET_L);    // -> M5OLED設定
+  modeData = mode.modeSet(kEY_SET_L);    // -> M5OLED設定
   EXPECT_EQ(mode.getCtrlMode(), ctrlMode_M5oled);               // 操作モード取得：M5OLED設定
   EXPECT_EQ(mode.getDispModeVfd(), dispModeVfd_Default);        // VFD表示モード取得：初期値
   EXPECT_EQ(mode.getDispModeM5OLED(), dispModeOled_SensorData); // M5OLED表示モード取得：環境センサデータ表示
   EXPECT_EQ(mode.getDispModeOLED(), dispModeOled_Default);      // OLED表示モード取得：初期値
 
+  EXPECT_EQ(modeData.ctrlMode, ctrlMode_M5oled);                // 操作モード取得：M5OLED設定
+  EXPECT_EQ(modeData.dispModeVfd, dispModeVfd_Default);         // VFD表示モード取得：初期値
+  EXPECT_EQ(modeData.dispModeM5OLED, dispModeOled_SensorData);  // M5OLED表示モード取得：環境センサデータ表示
+  EXPECT_EQ(modeData.dispModeOLED, dispModeOled_Default);       // OLED表示モード取得：初期値
+
     // ▲Key SW2 Short ON
-    mode.modeSet(KEY_UP_S);
+    modeData = mode.modeSet(KEY_UP_S);
     EXPECT_EQ(mode.getCtrlMode(), ctrlMode_M5oled);                 // 操作モード取得：M5OLED設定
     EXPECT_EQ(mode.getDispModeVfd(), dispModeVfd_Default);          // VFD表示モード取得：初期値
     EXPECT_EQ(mode.getDispModeM5OLED(), dispModeOled_EventLogCtrl); // M5OLED表示モード取得：EventLog操作情報
     EXPECT_EQ(mode.getDispModeOLED(), dispModeOled_Default);        // OLED表示モード取得：初期値
 
+    EXPECT_EQ(modeData.ctrlMode, ctrlMode_M5oled);                  // 操作モード取得：M5OLED設定
+    EXPECT_EQ(modeData.dispModeVfd, dispModeVfd_Default);           // VFD表示モード取得：初期値
+    EXPECT_EQ(modeData.dispModeM5OLED, dispModeOled_EventLogCtrl);  // M5OLED表示モード取得：EventLog操作情報
+    EXPECT_EQ(modeData.dispModeOLED, dispModeOled_Default);         // OLED表示モード取得：初期値
+
     // ▲Key SW2 Short ON
-    mode.modeSet(KEY_UP_S);
+    modeData = mode.modeSet(KEY_UP_S);
     EXPECT_EQ(mode.getCtrlMode(), ctrlMode_M5oled);                 // 操作モード取得：M5OLED設定
     EXPECT_EQ(mode.getDispModeVfd(), dispModeVfd_Default);          // VFD表示モード取得：初期値
     EXPECT_EQ(mode.getDispModeM5OLED(), dispModeOled_SensorData);   // M5OLED表示モード取得：環境センサデータ表示
     EXPECT_EQ(mode.getDispModeOLED(), dispModeOled_Default);        // OLED表示モード取得：初期値
 
+    EXPECT_EQ(modeData.ctrlMode, ctrlMode_M5oled);                  // 操作モード取得：M5OLED設定
+    EXPECT_EQ(modeData.dispModeVfd, dispModeVfd_Default);           // VFD表示モード取得：初期値
+    EXPECT_EQ(modeData.dispModeM5OLED, dispModeOled_SensorData);    // M5OLED表示モード取得：環境センサデータ表示
+    EXPECT_EQ(modeData.dispModeOLED, dispModeOled_Default);         // OLED表示モード取得：初期値
+
     // ▼Key SW3 Short ON
-    mode.modeSet(KEY_DOWN_S);
+    modeData = mode.modeSet(KEY_DOWN_S);
     EXPECT_EQ(mode.getCtrlMode(), ctrlMode_M5oled);                 // 操作モード取得：M5OLED設定
     EXPECT_EQ(mode.getDispModeVfd(), dispModeVfd_Default);          // VFD表示モード取得：初期値
     EXPECT_EQ(mode.getDispModeM5OLED(), dispModeOled_EventLogCtrl); // M5OLED表示モード取得：EventLog操作情報
     EXPECT_EQ(mode.getDispModeOLED(), dispModeOled_Default);        // OLED表示モード取得：初期値
 
+    EXPECT_EQ(modeData.ctrlMode, ctrlMode_M5oled);                  // 操作モード取得：M5OLED設定
+    EXPECT_EQ(modeData.dispModeVfd, dispModeVfd_Default);           // VFD表示モード取得：初期値
+    EXPECT_EQ(modeData.dispModeM5OLED, dispModeOled_EventLogCtrl);  // M5OLED表示モード取得：EventLog操作情報
+    EXPECT_EQ(modeData.dispModeOLED, dispModeOled_Default);         // OLED表示モード取得：初期値
+
     // ▼Key SW3 Short ON
-    mode.modeSet(KEY_DOWN_S);
+    modeData = mode.modeSet(KEY_DOWN_S);
     EXPECT_EQ(mode.getCtrlMode(), ctrlMode_M5oled);                 // 操作モード取得：M5OLED設定
     EXPECT_EQ(mode.getDispModeVfd(), dispModeVfd_Default);          // VFD表示モード取得：初期値
     EXPECT_EQ(mode.getDispModeM5OLED(), dispModeOled_SensorData);   // M5OLED表示モード取得：環境センサデータ表示
     EXPECT_EQ(mode.getDispModeOLED(), dispModeOled_Default);        // OLED表示モード取得：初期値
+
+    EXPECT_EQ(modeData.ctrlMode, ctrlMode_M5oled);                  // 操作モード取得：M5OLED設定
+    EXPECT_EQ(modeData.dispModeVfd, dispModeVfd_Default);           // VFD表示モード取得：初期値
+    EXPECT_EQ(modeData.dispModeM5OLED, dispModeOled_SensorData);    // M5OLED表示モード取得：環境センサデータ表示
+    EXPECT_EQ(modeData.dispModeOLED, dispModeOled_Default);         // OLED表示モード取得：初期値
 
   // SETKey SW1 Long ON
-  mode.modeSet(kEY_SET_L);    // 操作モード：-> OLED設定
+  modeData = mode.modeSet(kEY_SET_L);    // 操作モード：-> OLED設定
   EXPECT_EQ(mode.getCtrlMode(), ctrlMode_Oled);                 // 操作モード取得：OLED設定
   EXPECT_EQ(mode.getDispModeVfd(), dispModeVfd_Default);        // VFD表示モード取得：初期値
   EXPECT_EQ(mode.getDispModeM5OLED(), dispModeOled_SensorData); // M5OLED表示モード取得：環境センサデータ表示
   EXPECT_EQ(mode.getDispModeOLED(), dispModeOled_Default);      // OLED表示モード取得：初期値
 
+  EXPECT_EQ(modeData.ctrlMode, ctrlMode_Oled);                  // 操作モード取得：OLED設定
+  EXPECT_EQ(modeData.dispModeVfd, dispModeVfd_Default);         // VFD表示モード取得：初期値
+  EXPECT_EQ(modeData.dispModeM5OLED, dispModeOled_SensorData);  // M5OLED表示モード取得：環境センサデータ表示
+  EXPECT_EQ(modeData.dispModeOLED, dispModeOled_Default);       // OLED表示モード取得：初期値
+
     // ▲Key SW2 Short ON
-    mode.modeSet(KEY_UP_S);
+    modeData = mode.modeSet(KEY_UP_S);
     EXPECT_EQ(mode.getCtrlMode(), ctrlMode_Oled);                   // 操作モード取得：OLED設定
     EXPECT_EQ(mode.getDispModeVfd(), dispModeVfd_Default);          // VFD表示モード取得：初期値
     EXPECT_EQ(mode.getDispModeM5OLED(), dispModeOled_SensorData);   // M5OLED表示モード取得：環境センサデータ表示
     EXPECT_EQ(mode.getDispModeOLED(), dispModeOled_EventLogCtrl);   // OLED表示モード取得：EventLog操作情報
 
+    EXPECT_EQ(modeData.ctrlMode, ctrlMode_Oled);                    // 操作モード取得：OLED設定
+    EXPECT_EQ(modeData.dispModeVfd, dispModeVfd_Default);           // VFD表示モード取得：初期値
+    EXPECT_EQ(modeData.dispModeM5OLED, dispModeOled_SensorData);    // M5OLED表示モード取得：環境センサデータ表示
+    EXPECT_EQ(modeData.dispModeOLED, dispModeOled_EventLogCtrl);    // OLED表示モード取得：EventLog操作情報
+
     // ▲Key SW2 Short ON
-    mode.modeSet(KEY_UP_S);
+    modeData = mode.modeSet(KEY_UP_S);
     EXPECT_EQ(mode.getCtrlMode(), ctrlMode_Oled);                   // 操作モード取得：OLED設定
     EXPECT_EQ(mode.getDispModeVfd(), dispModeVfd_Default);          // VFD表示モード取得：初期値
     EXPECT_EQ(mode.getDispModeM5OLED(), dispModeOled_SensorData);   // M5OLED表示モード取得：環境センサデータ表示
     EXPECT_EQ(mode.getDispModeOLED(), dispModeOled_SensorData);
 
+    EXPECT_EQ(modeData.ctrlMode, ctrlMode_Oled);                    // 操作モード取得：OLED設定
+    EXPECT_EQ(modeData.dispModeVfd, dispModeVfd_Default);           // VFD表示モード取得：初期値
+    EXPECT_EQ(modeData.dispModeM5OLED, dispModeOled_SensorData);    // M5OLED表示モード取得：環境センサデータ表示
+    EXPECT_EQ(modeData.dispModeOLED, dispModeOled_SensorData);
+
     // ▼Key SW3 Short ON
-    mode.modeSet(KEY_DOWN_S);
+    modeData = mode.modeSet(KEY_DOWN_S);
     EXPECT_EQ(mode.getCtrlMode(), ctrlMode_Oled);                   // 操作モード取得：OLED設定
     EXPECT_EQ(mode.getDispModeVfd(), dispModeVfd_Default);          // VFD表示モード取得：初期値
     EXPECT_EQ(mode.getDispModeM5OLED(), dispModeOled_SensorData);   // M5OLED表示モード取得：環境センサデータ表示
     EXPECT_EQ(mode.getDispModeOLED(), dispModeOled_EventLogCtrl);   // OLED表示モード取得：EventLog操作情報
 
+    EXPECT_EQ(modeData.ctrlMode, ctrlMode_Oled);                    // 操作モード取得：OLED設定
+    EXPECT_EQ(modeData.dispModeVfd, dispModeVfd_Default);           // VFD表示モード取得：初期値
+    EXPECT_EQ(modeData.dispModeM5OLED, dispModeOled_SensorData);    // M5OLED表示モード取得：環境センサデータ表示
+    EXPECT_EQ(modeData.dispModeOLED, dispModeOled_EventLogCtrl);    // OLED表示モード取得：EventLog操作情報
+
     // ▼Key SW3 Short ON
-    mode.modeSet(KEY_DOWN_S);
+    modeData = mode.modeSet(KEY_DOWN_S);
     EXPECT_EQ(mode.getCtrlMode(), ctrlMode_Oled);                   // 操作モード取得：OLED設定
     EXPECT_EQ(mode.getDispModeVfd(), dispModeVfd_Default);          // VFD表示モード取得：初期値
     EXPECT_EQ(mode.getDispModeM5OLED(), dispModeOled_SensorData);   // M5OLED表示モード取得：環境センサデータ表示
     EXPECT_EQ(mode.getDispModeOLED(), dispModeOled_SensorData);
+
+    EXPECT_EQ(modeData.ctrlMode, ctrlMode_Oled);                    // 操作モード取得：OLED設定
+    EXPECT_EQ(modeData.dispModeVfd, dispModeVfd_Default);           // VFD表示モード取得：初期値
+    EXPECT_EQ(modeData.dispModeM5OLED, dispModeOled_SensorData);    // M5OLED表示モード取得：環境センサデータ表示
+    EXPECT_EQ(modeData.dispModeOLED, dispModeOled_SensorData);
 
   // SETKey SW1 Long ON
-  mode.modeSet(kEY_SET_L);    // 操作モード：-> VFD表示
+  modeData = mode.modeSet(kEY_SET_L);    // 操作モード：-> VFD表示
   EXPECT_EQ(mode.getCtrlMode(), ctrlMode_VfdDisp);              // 操作モード取得：VFD表示
   EXPECT_EQ(mode.getDispModeVfd(), dispModeVfd_Default);        // VFD表示モード取得：初期値
   EXPECT_EQ(mode.getDispModeM5OLED(), dispModeOled_SensorData); // M5OLED表示モード取得：環境センサデータ表示
   EXPECT_EQ(mode.getDispModeOLED(), dispModeOled_Default);      // OLED表示モード取得：初期値
+
+  EXPECT_EQ(modeData.ctrlMode, ctrlMode_VfdDisp);               // 操作モード取得：VFD表示
+  EXPECT_EQ(modeData.dispModeVfd, dispModeVfd_Default);         // VFD表示モード取得：初期値
+  EXPECT_EQ(modeData.dispModeM5OLED, dispModeOled_SensorData);  // M5OLED表示モード取得：環境センサデータ表示
+  EXPECT_EQ(modeData.dispModeOLED, dispModeOled_Default);       // OLED表示モード取得：初期値
 
 }
 

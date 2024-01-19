@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2024
  * 
  */
-
+//#include <M5Unified.h>
 #include "mode_ctrl.h"
 
 /**
@@ -28,7 +28,13 @@ modeCtrl::modeCtrl(bool ssd1306,bool m5oled)
 
 //  dispCtrlTrg = dispCtrlTrg_Vfd;            // ディスプレイ操作ターゲット初期化
   ctrlMode = ctrlMode_VfdDisp;              // 操作モード初期化
-
+/*
+  Serial.println("modeCtrl::modeCtrl");
+  Serial.print("ssd1306Valid:");
+  Serial.println(ssd1306Valid);
+  Serial.print("m5oled:");
+  Serial.println(m5oled);
+*/
   return;
 }
 
@@ -77,7 +83,8 @@ uint8_t modeCtrl::getDispModeOLED(void)       // OLED表示モード取得
  * 
  * @param setKey 
  */
-void modeCtrl::modeSet(uint8_t setKey)        // モード設定
+//void modeCtrl::modeSet(uint8_t setKey)        // モード設定
+dispMode modeCtrl::modeSet(uint8_t setKey)        // モード設定
 {
   if(ctrlMode == ctrlMode_VfdDisp){   // 操作モード：VFD表示
     if(setKey == kEY_SET_L){        // SETKey SW1 Long ON
@@ -161,8 +168,13 @@ void modeCtrl::modeSet(uint8_t setKey)        // モード設定
 
   }
 
+  dispMode ret;
+  ret.ctrlMode = ctrlMode;           // 操作モード
+  ret.dispModeVfd = dispModeVfd;        // VFD表示モード
+  ret.dispModeOLED = dispModeOLED;       // OLED表示モード
+  ret.dispModeM5OLED = dispModeM5OLED;     // M5OLED表示モード
 
-  return;
+  return ret;
 }
 /*
 void DispCtr::dispModeSet(uint8_t setKey)
