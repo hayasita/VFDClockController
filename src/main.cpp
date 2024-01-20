@@ -43,17 +43,11 @@ QueueHandle_t xQueueSensData2;    // taskDeviceCtrl() -> loop()
  * 
  */
 struct mailboxData{
-  uint16_t temp;
-  uint16_t humi;
-  uint16_t pressure;
   struct tm timeInfo;
-  uint16_t illumiData;
-  uint16_t dcdcTrg;
-  uint16_t dcdcFdb;
+  DeviceData device;          // Devaice Data
+  dispMode displayMode;       // Display Mode Ctrl
   uint16_t Data0;
   uint16_t Data1;
-
-  dispMode displayMode;       // Display Mode Ctrl
 
 };
 
@@ -208,12 +202,6 @@ void taskDisplayCtrl(void *pvParameters) {
 
   mailboxDat2Loop.Data0 = 0;
   mailboxDat2Loop.Data1 = 0;
-  mailboxDat2Loop.dcdcFdb = 0;
-  mailboxDat2Loop.dcdcTrg = 0;
-  mailboxDat2Loop.humi = 0;
-  mailboxDat2Loop.illumiData = 0;
-  mailboxDat2Loop.pressure = 0;
-  mailboxDat2Loop.temp = 0;
   mailboxDat2Loop.timeInfo = i2cStartDat.rtcTimeInfo;
 
   // 内部タイマ初期化
@@ -255,8 +243,8 @@ void taskDisplayCtrl(void *pvParameters) {
       // DCDCコンバータ制御
       dcdcLasttime = timetmp;
       dcdcContrl.ctr(dcdcV);
-      mailboxDat2Loop.dcdcFdb = dcdcContrl.getaddat();
-      mailboxDat2Loop.dcdcTrg = dcdcV;
+      mailboxDat2Loop.device.dcdcFdb = dcdcContrl.getaddat();
+      mailboxDat2Loop.device.dcdcTrg = dcdcV;
 #endif
 
     }
@@ -265,7 +253,7 @@ void taskDisplayCtrl(void *pvParameters) {
       illumiLasttime = timetmp;
 
       dcdcV = dcdcContrl.getTarget(illumi.read());      // DCDC目標値を外光取込値から作成
-      mailboxDat2Loop.illumiData = illumi.getaddat();   // 外光取込値をタスク間通信用データに積む
+      mailboxDat2Loop.device.illumiData = illumi.getaddat();   // 外光取込値をタスク間通信用データに積む
     }
 
     // LED表示マネージャ
@@ -289,9 +277,9 @@ void taskDisplayCtrl(void *pvParameters) {
     // センサ情報受信
     ret = xQueueReceive(xQueueSensData1, &mailboxDispDat, 0);
     if(ret){
-      dispInputData.temp = mailboxDispDat.temp;
-      dispInputData.humi = mailboxDispDat.humi;
-      dispInputData.pressure = mailboxDispDat.pressure;
+      dispInputData.temp = (uint16_t)(mailboxDispDat.device.enviiiData.env3Temperature * 10);
+      dispInputData.humi = (uint16_t)(mailboxDispDat.device.enviiiData.env3Humidity * 10);
+      dispInputData.pressure = (uint16_t)(mailboxDispDat.device.enviiiData.env3Pressure);
     }
 
 #ifdef USE_VFD
@@ -449,9 +437,9 @@ void taskDeviceCtrl(void *Parameters){
     if(ret){
       *sysTimeInfo = mailboxDisplayCtrl.timeInfo;       // システム時刻設定
       dispDat.timeInfo = mailboxDisplayCtrl.timeInfo;
-      dispDat.deviceDat.dcdcTrg = mailboxDisplayCtrl.dcdcTrg;
-      dispDat.deviceDat.dcdcFdb = mailboxDisplayCtrl.dcdcFdb;
-      dispDat.deviceDat.illumiData = mailboxDisplayCtrl.illumiData;
+      dispDat.deviceDat.dcdcTrg = mailboxDisplayCtrl.device.dcdcTrg;
+      dispDat.deviceDat.dcdcFdb = mailboxDisplayCtrl.device.dcdcFdb;
+      dispDat.deviceDat.illumiData = mailboxDisplayCtrl.device.illumiData;
 
       i2cDeviceDat.displayMode = mailboxDisplayCtrl.displayMode;
 //      Serial.print("ctrlMode:");
@@ -462,7 +450,7 @@ void taskDeviceCtrl(void *Parameters){
     if(timetmp - illumiLasttime >ILLUMI_SCAN_TIME){   // 500mSecごとに実行
       illumiLasttime = timetmp;
 
-      mailboxDat.illumiData = 0;   // Debug
+      mailboxDat.device.illumiData = 0;   // Debug
 
       // OLED表示データ作成
       RtcContrl.timeRead(&rtcTimeInfo);   // RTC 時刻読み込み
@@ -492,14 +480,13 @@ void taskDeviceCtrl(void *Parameters){
       // ENVIII Seneorデータ取得
       if(deviceChk.sht30() && deviceChk.qmp6988()){
         enviii.read(&dispDat.deviceDat.enviiiData);
-        mailboxDat.temp = (uint16_t)(dispDat.deviceDat.enviiiData.env3Temperature * 10);
-        mailboxDat.humi = (uint16_t)(dispDat.deviceDat.enviiiData.env3Humidity * 10);
-        mailboxDat.pressure = (uint16_t)(dispDat.deviceDat.enviiiData.env3Pressure);
+        mailboxDat.device.enviiiData = dispDat.deviceDat.enviiiData;
       }
 
       // BME680 Data データ取得
       if(deviceChk.bme680()){
         bme680.read(&sensorDeviceData.bme680Data);
+        mailboxDat.device.bme680Data = sensorDeviceData.bme680Data;
       }
 
 
@@ -817,12 +804,12 @@ void loop(void){
       // WebSocket Data送信
       if(websocketDataSend.getReady() && websocketConnect){   // websocket通信準備完了
 //        websocketDataSend.timeInfo = mailboxDat.timeInfo;
-        websocketDataSend.sensorData[0] = mailboxDat.temp;
-        websocketDataSend.sensorData[1] = mailboxDat.humi;
-        websocketDataSend.sensorData[2] = mailboxDat.pressure;
-        websocketDataSend.sensorData[3] = mailboxDisplayCtrl.illumiData;
-        websocketDataSend.sensorData[4] = mailboxDisplayCtrl.dcdcFdb;
-        websocketDataSend.sensorData[5] = mailboxDisplayCtrl.dcdcTrg;
+        websocketDataSend.sensorData[0] = (uint16_t)(mailboxDat.device.enviiiData.env3Temperature * 10);
+        websocketDataSend.sensorData[1] = (uint16_t)(mailboxDat.device.enviiiData.env3Humidity * 10);
+        websocketDataSend.sensorData[2] = (uint16_t)(mailboxDat.device.enviiiData.env3Pressure);
+        websocketDataSend.sensorData[3] = mailboxDisplayCtrl.device.illumiData;
+        websocketDataSend.sensorData[4] = mailboxDisplayCtrl.device.dcdcFdb;
+        websocketDataSend.sensorData[5] = mailboxDisplayCtrl.device.dcdcTrg;
         websocketDataSend.sensorData[6] = mailboxDat.Data0;
         websocketDataSend.sensorData[7] = mailboxDat.Data1;
 //        websocketDataSend.sensorData[7] = mailboxDat.timeInfo.tm_sec;
