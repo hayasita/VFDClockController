@@ -200,20 +200,12 @@ class DevicePresence{
 };
 
 // -- デバッグ用表示情報
-class DebugData{
+class DisplayData{
   public:
     struct tm timeInfo;
     struct tm rtcTimeInfo;
     DeviceData deviceDat;
-//    float temperature;      // 気温
-//    float humidity;         // 湿度
-//    float pressure;         // 気圧
-//    uint16_t illumiData;    // 周辺輝度
-//    uint16_t dcdcTrg;       // DCDC目標値
-//    uint16_t dcdcFdb;       // DCDCフィードバック値
 };
-GLOBAL DebugData debugData;
-
 
 // -- LED制御 --
 
@@ -337,9 +329,9 @@ class OLEDDISP{
   public:
     void init(void);
     void clear(void);
-    void printEnvSensorData(DebugData);   // OLED センサデータ表示
-    void printEventLog(DebugData);        // OLED イベントログ記録デバッグ情報表示
-    void printDeviceData(DevicePresence);      // OLED Device情報表示
+    void printEnvSensorData(DisplayData);   // OLED センサデータ表示
+    void printEventLog(DisplayData);        // OLED イベントログ記録デバッグ情報表示
+    void printDeviceData(DevicePresence);   // OLED Device情報表示
   private:
 };
 
@@ -354,7 +346,7 @@ class M5OLED{
 //    M5OLED(void);
     void init(void);
     void clear(void);
-    void printEnvSensorData(DebugData);
+    void printEnvSensorData(DisplayData);
   private:
     M5UnitOLED oled;
 

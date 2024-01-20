@@ -324,7 +324,8 @@ void taskDeviceCtrl(void *Parameters){
   unsigned long illumiLasttime;   // 照度読み込み前回時間(millis)
   unsigned long sensor2Lasttime;  // センサスキャン処理前回時間(millis)
 
-  DeviceData sensorDeviceData;       // センサデバイス値情報
+  DeviceData sensorDeviceData;    // センサデバイス値情報
+  DisplayData dispDat;            // 表示情報
 
   i2cStartData i2cStartDat;       // 起動時RTC,i2c情報
   struct tm *sysTimeInfo;
@@ -447,15 +448,12 @@ void taskDeviceCtrl(void *Parameters){
     ret = xQueueReceive(xQueueSysTimeData1, &mailboxDisplayCtrl, 0);   // taskDisplayCtrl()からシステム時刻情報を受信
     if(ret){
       *sysTimeInfo = mailboxDisplayCtrl.timeInfo;       // システム時刻設定
-      debugData.timeInfo = mailboxDisplayCtrl.timeInfo;
-      debugData.deviceDat.dcdcTrg = mailboxDisplayCtrl.dcdcTrg;
-      debugData.deviceDat.dcdcFdb = mailboxDisplayCtrl.dcdcFdb;
-      debugData.deviceDat.illumiData = mailboxDisplayCtrl.illumiData;
+      dispDat.timeInfo = mailboxDisplayCtrl.timeInfo;
+      dispDat.deviceDat.dcdcTrg = mailboxDisplayCtrl.dcdcTrg;
+      dispDat.deviceDat.dcdcFdb = mailboxDisplayCtrl.dcdcFdb;
+      dispDat.deviceDat.illumiData = mailboxDisplayCtrl.illumiData;
 
       i2cDeviceDat.displayMode = mailboxDisplayCtrl.displayMode;
-//      debugData.dcdcTrg = mailboxDisplayCtrl.dcdcTrg;
-//      debugData.dcdcFdb = mailboxDisplayCtrl.dcdcFdb;
-//      debugData.illumiData = mailboxDisplayCtrl.illumiData;
 //      Serial.print("ctrlMode:");
 //      Serial.println(mailboxDisplayCtrl.ctrlMode);
     }
@@ -468,19 +466,19 @@ void taskDeviceCtrl(void *Parameters){
 
       // OLED表示データ作成
       RtcContrl.timeRead(&rtcTimeInfo);   // RTC 時刻読み込み
-      debugData.rtcTimeInfo = rtcTimeInfo;
-      debugData.deviceDat.bme680Data = sensorDeviceData.bme680Data;
+      dispDat.rtcTimeInfo = rtcTimeInfo;
+      dispDat.deviceDat.bme680Data = sensorDeviceData.bme680Data;
 
       //OLED 画面表示
       if(deviceChk.ssd1306()){
-//        oledDisp.printEnvSensorData(debugData);
-//        oledDisp.printEventLog(debugData);
+//        oledDisp.printEnvSensorData(dispDat);
+//        oledDisp.printEventLog(dispDat);
         oledDisp.printDeviceData(i2cDeviceDat);
       }
 
       // M5OLED 画面表示 
       if(deviceChk.m5oled()){
-        m5Oled.printEnvSensorData(debugData);
+        m5Oled.printEnvSensorData(dispDat);
       }
 
       // 処理時間測定
@@ -493,10 +491,10 @@ void taskDeviceCtrl(void *Parameters){
     
       // ENVIII Seneorデータ取得
       if(deviceChk.sht30() && deviceChk.qmp6988()){
-        enviii.read(&debugData.deviceDat.enviiiData);
-        mailboxDat.temp = (uint16_t)(debugData.deviceDat.enviiiData.env3Temperature * 10);
-        mailboxDat.humi = (uint16_t)(debugData.deviceDat.enviiiData.env3Humidity * 10);
-        mailboxDat.pressure = (uint16_t)(debugData.deviceDat.enviiiData.env3Pressure);
+        enviii.read(&dispDat.deviceDat.enviiiData);
+        mailboxDat.temp = (uint16_t)(dispDat.deviceDat.enviiiData.env3Temperature * 10);
+        mailboxDat.humi = (uint16_t)(dispDat.deviceDat.enviiiData.env3Humidity * 10);
+        mailboxDat.pressure = (uint16_t)(dispDat.deviceDat.enviiiData.env3Pressure);
       }
 
       // BME680 Data データ取得
