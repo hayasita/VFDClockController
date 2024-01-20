@@ -3,6 +3,7 @@
 
 // GLOBALを使用するヘッダはここでincludeする。
 #include "driver_sub.h"
+#include "mode_ctrl.h"
 
 #ifdef GLOBAL_VAL_DEF
 #define GLOBAL
@@ -154,6 +155,19 @@ uint8_t itmMan(void);
 // i2c Scan
 GLOBAL void i2cScan(void);
 
+// --Device検出情報
+class I2CDeviceDetection{
+  public:
+    bool datRtc;          // RTC
+    bool datE2ROM;        // EEPROM
+    bool datSHT30;        // SHT30
+    bool datQMP6988;      // QMP6988
+    bool datSSD1306;      // SSD1306 OLED Display
+    bool datM5OLED;       // M5 OLED Unit
+    bool datBME680;       // BME680
+
+};
+
 // -- Device有無確認
 class DeviceChk{
   public:
@@ -168,20 +182,22 @@ class DeviceChk{
 
     void i2cScan();
     std::vector<uint8_t> i2cDevice;
+    I2CDeviceDetection detection;   // i2cDevice 検出情報
+
   private:
     uint8_t wireChk(uint8_t address);
     String getBoardName(void);
 
-    uint8_t datRtc;
-    bool datE2ROM;
-    bool datSHT30;        // SHT30
-    bool datQMP6988;      // QMP6988
-    bool datSSD1306;      // SSD1306 OLED Display
-    bool datM5OLED;       // M5 OLED Unit
-    bool datBME680;       // BME680
-
 };
 GLOBAL  DeviceChk deviceChk;
+
+// i2cdevice ステータス表示用
+class DevicePresence{
+  public:
+    I2CDeviceDetection i2c;   // i2cDevice 検出情報
+    dispMode displayMode; // Display Mode Ctrl
+
+};
 
 // -- デバッグ用表示情報
 class DebugData{
@@ -323,6 +339,7 @@ class OLEDDISP{
     void clear(void);
     void printEnvSensorData(DebugData);   // OLED センサデータ表示
     void printEventLog(DebugData);        // OLED イベントログ記録デバッグ情報表示
+    void printDeviceData(DevicePresence);      // OLED Device情報表示
   private:
 };
 
