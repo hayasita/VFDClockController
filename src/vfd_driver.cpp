@@ -218,7 +218,7 @@ void OLEDDISP::printEventLog(DebugData debugData)
   return;
 }
 
-void OLEDDISP::printDeviceData(i2cDevicePresence deviceDat)
+void OLEDDISP::printDeviceData(DevicePresence deviceDat)
 {
   char buffer[100];
 
@@ -234,9 +234,9 @@ void OLEDDISP::printDeviceData(i2cDevicePresence deviceDat)
 //  display.drawString(0, 10, buffer);
 
   // OLED有無表示
-  snprintf(buffer, sizeof(buffer),"ssd1306:%d",deviceDat.datSSD1306);
+  snprintf(buffer, sizeof(buffer),"ssd1306:%d",deviceDat.i2c.datSSD1306);
   display.drawString(0, 0, buffer);
-  snprintf(buffer, sizeof(buffer),"m5oled:%d",deviceDat.datM5OLED);
+  snprintf(buffer, sizeof(buffer),"m5oled:%d",deviceDat.i2c.datM5OLED);
   display.drawString(0, 10, buffer);
 
   snprintf(buffer, sizeof(buffer),"ctrlMode:%d",deviceDat.displayMode.ctrlMode);
@@ -711,13 +711,13 @@ void DeviceChk::init(void){
 void DeviceChk::init(void){
   String status = "";;
 
-  datRtc = false;
-  datE2ROM = false;
-  datSHT30 = false;
-  datQMP6988 = false;
-  datSSD1306 = false;
-  datM5OLED = false;
-  datBME680 = false;
+  detection.datRtc = false;
+  detection.datE2ROM = false;
+  detection.datSHT30 = false;
+  detection.datQMP6988 = false;
+  detection.datSSD1306 = false;
+  detection.datM5OLED = false;
+  detection.datBME680 = false;
 
   for (int i = 0; i < i2cDevice.size(); i++) {
 /*
@@ -728,31 +728,31 @@ void DeviceChk::init(void){
     Serial.println("  !");
 */
     if(i2cDevice[i] == I2C_ADDRESS_M5OLED){
-      datM5OLED = true;
+      detection.datM5OLED = true;
       status = status + "I2C_ADDRESS_M5OLED : True!\n";
     }
     else if(i2cDevice[i] == I2C_ADDRESS_SSD1306){
-      datSSD1306 = true;
+      detection.datSSD1306 = true;
       status = status + "I2C_ADDRESS_SSD1306 : True!\n";
     }
     else if(i2cDevice[i] == I2C_ADDRESS_DS1307){
-      datRtc = true;
+      detection.datRtc = true;
       status = status + "I2C_ADDRESS_DS1307 : True!\n";
     }
     else if(i2cDevice[i] == I2C_ADDRESS_24C32){
-      datE2ROM = true;
+      detection.datE2ROM = true;
       status = status + "I2C_ADDRESS_24C32 : True!\n";
    }
     else if(i2cDevice[i] == I2C_ADDRESS_SHT30){
-      datSHT30 = true;
+      detection.datSHT30 = true;
       status = status + "I2C_ADDRESS_SHT30 : True!\n";
     }
     else if(i2cDevice[i] == I2C_ADDRESS_QMP6988){
-      datQMP6988 = true;
+      detection.datQMP6988 = true;
       status = status + "I2C_ADDRESS_QMP6988 : True!\n";
     }
     else if(i2cDevice[i] == I2C_ADDRESS_BME680){
-      datBME680 = true;
+      detection.datBME680 = true;
       status = status + "I2C_ADDRESS_BME680 : True!\n";
     }
 
@@ -861,27 +861,27 @@ uint8_t DeviceChk::wireChk(uint8_t address){
 }
 
 uint8_t DeviceChk::rtc(void){
-    return datRtc;
+    return detection.datRtc;
 }
 bool DeviceChk::e2rom(void){
-  return datE2ROM;
+  return detection.datE2ROM;
 }
 bool DeviceChk::sht30(void){
-  return datSHT30;
+  return detection.datSHT30;
 }
 bool DeviceChk::qmp6988(void){
-  return datQMP6988;
+  return detection.datQMP6988;
 }
 bool DeviceChk::ssd1306(void){
-  return datSSD1306;
+  return detection.datSSD1306;
 //  return false;
 //  return true;
 }
 bool DeviceChk::m5oled(void){
-  return datM5OLED;
+  return detection.datM5OLED;
 }
 bool DeviceChk::bme680(void){
-  return datBME680;
+  return detection.datBME680;
 }
 
 void DeviceChk::i2cScan(void){

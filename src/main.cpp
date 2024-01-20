@@ -337,9 +337,10 @@ void taskDeviceCtrl(void *Parameters){
   // I2C Device Check
   deviceChk.i2cScan();
 
-  i2cDevicePresence i2cDeviceDat;           // i2cデバイス有無・i2c表示デバイス表示モード
-  i2cDeviceDat.datSSD1306 = deviceChk.ssd1306();    // 更新されない情報
-  i2cDeviceDat.datM5OLED = deviceChk.m5oled();      // 更新されない情報
+  DevicePresence i2cDeviceDat;              // i2cデバイス有無・i2c表示デバイス表示モード
+  i2cDeviceDat.i2c = deviceChk.detection;   // i2cDevice 検出情報
+//  i2cDeviceDat.i2c.datSSD1306 = deviceChk.ssd1306();    // 更新されない情報
+//  i2cDeviceDat.i2c.datM5OLED = deviceChk.m5oled();      // 更新されない情報
 
   // 開始情報作成
   i2cStartDat.ssd1306Valid = deviceChk.ssd1306();   // OLED有無設定
