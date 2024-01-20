@@ -148,30 +148,24 @@ void  OLEDDISP::clear(void)
 /**
  * @brief OLED センサデータ表示
  * 
- * @param debugData 表示データ
+ * @param dispDat 表示データ
  */
-void OLEDDISP::printEnvSensorData(DebugData debugData)
+void OLEDDISP::printEnvSensorData(DisplayData dispDat)
 {
   char buffer[100];
 
   display.clear();
   display.setFont(ArialMT_Plain_10);
 
-  dispDateTime(buffer,debugData.timeInfo,"SYS:");
+  dispDateTime(buffer,dispDat.timeInfo,"SYS:");
   display.drawString(0, 0, buffer);
 
-  dispDateTime(buffer,debugData.rtcTimeInfo,"RTC:");
+  dispDateTime(buffer,dispDat.rtcTimeInfo,"RTC:");
   display.drawString(0, 8, buffer);
 
   // デバッグ用データ：センサ情報
   DeviceData sensorData;
-  sensorData = debugData.deviceDat;
-//  sensorData.env3Temperature = debugData.temperature;
-//  sensorData.env3Humidity = debugData.humidity;
-//  sensorData.env3Pressure = debugData.pressure;
-//  sensorData.illumiData = debugData.illumiData;
-//  sensorData.dcdcTrg = debugData.dcdcTrg;
-//  sensorData.dcdcFdb = debugData.dcdcFdb;
+  sensorData = dispDat.deviceDat;
 
   dispDeviceData(buffer,sensorData,DEVICE_ENVIII_TEMP);
   display.drawString(0, 16, buffer);    // 気温
@@ -192,9 +186,9 @@ void OLEDDISP::printEnvSensorData(DebugData debugData)
 /**
  * @brief OLED イベントログ記録デバッグ情報表示
  * 
- * @param debugData 表示データ
+ * @param dispDat 表示データ
  */
-void OLEDDISP::printEventLog(DebugData debugData)
+void OLEDDISP::printEventLog(DisplayData dispDat)
 {
   char buffer[100];
 
@@ -202,7 +196,7 @@ void OLEDDISP::printEventLog(DebugData debugData)
   display.setFont(ArialMT_Plain_10);
 
   // システム時刻
-  dispDateTime(buffer,debugData.timeInfo,"SYS:");
+  dispDateTime(buffer,dispDat.timeInfo,"SYS:");
   display.drawString(0, 0, buffer);
 
   // イベントLog前回書き込み時刻
@@ -226,7 +220,7 @@ void OLEDDISP::printDeviceData(DevicePresence deviceDat)
   display.setFont(ArialMT_Plain_10);
 
   // システム時刻
-//  dispDateTime(buffer,debugData.timeInfo,"SYS:");
+//  dispDateTime(buffer,dispDat.timeInfo,"SYS:");
 //  display.drawString(0, 0, buffer);
 
   // イベントLog前回書き込み時刻
@@ -405,25 +399,25 @@ void M5OLED::clear(void)
 /**
  * @brief M5OLEDセンサデータ表示
  * 
- * @param debugData 表示データ
+ * @param dispDat 表示データ
  */
-void M5OLED::printEnvSensorData(DebugData debugData)
+void M5OLED::printEnvSensorData(DisplayData dispDat)
 {
   char buffer[100];
 
   // システム時刻
-  dispDateTime(buffer,debugData.timeInfo,"S:");
+  dispDateTime(buffer,dispDat.timeInfo,"S:");
   oled.setCursor(0, 0);
   oled.print(buffer);
 
   //RTC時刻
-  dispDateTime(buffer,debugData.rtcTimeInfo,"R:");
+  dispDateTime(buffer,dispDat.rtcTimeInfo,"R:");
   oled.setCursor(0, 8);
   oled.print(buffer);
 
   // デバッグ用データ：センサ情報
   DeviceData sensorData;
-  sensorData = debugData.deviceDat;
+  sensorData = dispDat.deviceDat;
 
   oled.setCursor(0, 16);
   dispDeviceData(buffer,sensorData,DEVICE_ENVIII_TEMP);

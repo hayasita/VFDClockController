@@ -70,6 +70,18 @@ SensorBME680Data::SensorBME680Data(void)
 }
 
 /**
+ * @brief Construct a new Device Data:: Device Data object
+ * 
+ */
+DeviceData::DeviceData(void)
+{
+  illumiData = 0;
+  dcdcTrg = 0;
+  dcdcFdb = 0;
+  return;
+}
+
+/**
  * @brief デバイス情報の表示データを作成する。
  * 
  * @param buffer 作製した表示データを入れる

@@ -20,6 +20,7 @@
 #include <cstdio>
 #include <ctime>
 #include <cstring>
+#include <cstdint>
 
 bool dispDateTime(char* buffer,tm timeinfo,const char* title);
 
@@ -45,6 +46,7 @@ class SensorBME680Data{
 
 class DeviceData{
   public:
+    DeviceData(void);             // コンストラクタ
     SensorENVIIIData enviiiData;  // ENVIII SENSOR情報
     SensorBME680Data bme680Data;  // BME680 SENSOR情報
     uint16_t illumiData;          // 周辺輝度
