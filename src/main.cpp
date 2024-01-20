@@ -22,6 +22,7 @@
 #include "vfd_wificnt.h"
 
 #include "vfd_eerom.h"
+#include "mode_ctrl.h"
 
 
 // an IR detector/demodulator is connected to GPIO pin 2
@@ -51,6 +52,9 @@ struct mailboxData{
   uint16_t dcdcFdb;
   uint16_t Data0;
   uint16_t Data1;
+
+  dispMode displayMode;       // Display Mode Ctrl
+
 };
 
 struct i2cStartData{
@@ -216,9 +220,13 @@ void taskDisplayCtrl(void *pvParameters) {
   dcdcLasttime = millis();
   illumiLasttime = dcdcLasttime;
 
+  // 動作モード制御初期化
+  modeCtrl vfdModeCtrl(i2cStartDat.ssd1306Valid,i2cStartDat.m5oledValid);
+
   while (1) {
     struct tm *sysTimeInfo;
     struct tm rtcTimeInfo;
+    dispMode dispModeData;    // 動作モード
 
     timetmp = millis();
 
@@ -235,6 +243,7 @@ void taskDisplayCtrl(void *pvParameters) {
       sysTimeInfo = localtime(&sysTimeTmp);
 //      Serial.println(sysTimeInfo->tm_sec);
       mailboxDat2Loop.timeInfo = *sysTimeInfo;
+      mailboxDat2Loop.displayMode = dispModeData;   // 動作モード
       ret = xQueueOverwrite(xQueueSysTimeData1, &mailboxDat2Loop);   // taskDeviceCtrl()へシステム時刻を送信
       ret = xQueueOverwrite(xQueueSysTimeData2, &mailboxDat2Loop);   // loop()へシステム時刻を送信
     }
@@ -273,6 +282,9 @@ void taskDisplayCtrl(void *pvParameters) {
 
     // 端子入力
     keydata = itmMan();
+
+    // 操作モード更新
+    dispModeData = vfdModeCtrl.modeSet(keydata);
 
     // センサ情報受信
     ret = xQueueReceive(xQueueSensData1, &mailboxDispDat, 0);
@@ -324,6 +336,14 @@ void taskDeviceCtrl(void *Parameters){
 
   // I2C Device Check
   deviceChk.i2cScan();
+
+  i2cDevicePresence i2cDeviceDat;           // i2cデバイス有無・i2c表示デバイス表示モード
+  i2cDeviceDat.datSSD1306 = deviceChk.ssd1306();    // 更新されない情報
+  i2cDeviceDat.datM5OLED = deviceChk.m5oled();      // 更新されない情報
+
+  // 開始情報作成
+  i2cStartDat.ssd1306Valid = deviceChk.ssd1306();   // OLED有無設定
+  i2cStartDat.m5oledValid = deviceChk.m5oled();     // M5OLED有無設定
 
   // RTC control instance
   RtcCont RtcContrl;
@@ -430,11 +450,13 @@ void taskDeviceCtrl(void *Parameters){
       debugData.deviceDat.dcdcTrg = mailboxDisplayCtrl.dcdcTrg;
       debugData.deviceDat.dcdcFdb = mailboxDisplayCtrl.dcdcFdb;
       debugData.deviceDat.illumiData = mailboxDisplayCtrl.illumiData;
+
+      i2cDeviceDat.displayMode = mailboxDisplayCtrl.displayMode;
 //      debugData.dcdcTrg = mailboxDisplayCtrl.dcdcTrg;
 //      debugData.dcdcFdb = mailboxDisplayCtrl.dcdcFdb;
 //      debugData.illumiData = mailboxDisplayCtrl.illumiData;
-//      Serial.print("syst:");
-//      Serial.println(mailboxDisplayCtrl.illumiData);
+//      Serial.print("ctrlMode:");
+//      Serial.println(mailboxDisplayCtrl.ctrlMode);
     }
 
 
@@ -451,7 +473,8 @@ void taskDeviceCtrl(void *Parameters){
       //OLED 画面表示
       if(deviceChk.ssd1306()){
 //        oledDisp.printEnvSensorData(debugData);
-        oledDisp.printEventLog(debugData);
+//        oledDisp.printEventLog(debugData);
+        oledDisp.printDeviceData(i2cDeviceDat);
       }
 
       // M5OLED 画面表示 

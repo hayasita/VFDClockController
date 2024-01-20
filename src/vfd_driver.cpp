@@ -217,6 +217,41 @@ void OLEDDISP::printEventLog(DebugData debugData)
 
   return;
 }
+
+void OLEDDISP::printDeviceData(i2cDevicePresence deviceDat)
+{
+  char buffer[100];
+
+  display.clear();
+  display.setFont(ArialMT_Plain_10);
+
+  // システム時刻
+//  dispDateTime(buffer,debugData.timeInfo,"SYS:");
+//  display.drawString(0, 0, buffer);
+
+  // イベントLog前回書き込み時刻
+//  dispDateTime(buffer,vfdevent.getLastWriteTimeEp(),"BWr:");
+//  display.drawString(0, 10, buffer);
+
+  // OLED有無表示
+  snprintf(buffer, sizeof(buffer),"ssd1306:%d",deviceDat.datSSD1306);
+  display.drawString(0, 0, buffer);
+  snprintf(buffer, sizeof(buffer),"m5oled:%d",deviceDat.datM5OLED);
+  display.drawString(0, 10, buffer);
+
+  snprintf(buffer, sizeof(buffer),"ctrlMode:%d",deviceDat.displayMode.ctrlMode);
+  display.drawString(0, 20, buffer);
+  snprintf(buffer, sizeof(buffer),"dispModeVfd:%d",deviceDat.displayMode.dispModeVfd);
+  display.drawString(0, 30, buffer);
+  snprintf(buffer, sizeof(buffer),"dispModeOLED:%d",deviceDat.displayMode.dispModeOLED);
+  display.drawString(0, 40, buffer);
+  snprintf(buffer, sizeof(buffer),"dispModeM5OLED:%d",deviceDat.displayMode.dispModeM5OLED);
+  display.drawString(0, 50, buffer);
+
+  display.display();
+
+  return;
+}
 #ifdef DELETE
 void oledDispInit(void)
 {

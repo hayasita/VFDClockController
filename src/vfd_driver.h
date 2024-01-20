@@ -3,6 +3,7 @@
 
 // GLOBALを使用するヘッダはここでincludeする。
 #include "driver_sub.h"
+#include "mode_ctrl.h"
 
 #ifdef GLOBAL_VAL_DEF
 #define GLOBAL
@@ -183,6 +184,21 @@ class DeviceChk{
 };
 GLOBAL  DeviceChk deviceChk;
 
+// i2cdevice ステータス表示用
+class i2cDevicePresence{
+  public:
+    uint8_t datRtc;
+    bool datE2ROM;
+    bool datSHT30;        // SHT30
+    bool datQMP6988;      // QMP6988
+    bool datSSD1306;      // SSD1306 OLED Display
+    bool datM5OLED;       // M5 OLED Unit
+    bool datBME680;       // BME680
+
+    dispMode displayMode; // Display Mode Ctrl
+
+};
+
 // -- デバッグ用表示情報
 class DebugData{
   public:
@@ -323,6 +339,7 @@ class OLEDDISP{
     void clear(void);
     void printEnvSensorData(DebugData);   // OLED センサデータ表示
     void printEventLog(DebugData);        // OLED イベントログ記録デバッグ情報表示
+    void printDeviceData(i2cDevicePresence);      // OLED Device情報表示
   private:
 };
 
