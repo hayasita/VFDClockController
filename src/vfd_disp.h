@@ -1,6 +1,8 @@
 #ifndef vfd_disp_h
 #define vfd_disp_h
 
+#include "mode_ctrl.h"
+
 #ifdef GLOBAL_VAL_DEF
 #define GLOBAL
 #else
@@ -150,7 +152,7 @@ class DispCtr{
     void dataMake(struct DISPLAY_DATA inputData);
     void dispLCD(struct tm timeInfo);
 
-    void dispModeSet(uint8_t);              // 表示モード設定
+    uint8_t dispModeSet(dispMode);            // 表示モード設定
 
   private:
     void brightness_ini(void);
@@ -161,12 +163,17 @@ class DispCtr{
     uint16_t fadetime_tmpw;                 // クロスフェード時間受け渡し用データ
     uint8_t fade;                           // クロスフェードON/OFF
 
-    uint8_t dispMode;                       // 表示モード
+    uint8_t displayMode;                       // 表示モード
     uint8_t lastDispMode;                   // 前回表示モード
 
     uint8_t stdDispFormat;                  // VFD表示フォーマット指定
     void dispFormatAdd(void);               // VFD表示フォーマット+1
     void dispFormatDec(void);               // VFD表示フォーマット-1
+
+    // 設定画面表示制御
+    uint8_t ctrlDispFormat;                 // VFD設定表示フォーマット指定
+    uint8_t ctrlModeSelect;                 // 操作モード選択　0:モード切替 1:設定操作
+    uint8_t adjKeyData;                     // 設定操作用キー情報
 
 
     void dispClock(struct tm timeInfo);     // 時刻表示データ作成
@@ -185,7 +192,8 @@ class DispCtr{
 
     void dispBlinkingMakeIni(void);             // 表示データ点滅初期化
 
-    void clockAdjtitleDispdatMake(void);
+    void clockAdjtitleDispdatMake(void);            // 時刻設定タイトル表示
+    void clockAdjDispdatMake(uint8_t adjKeyData);   // 時刻設定画面表示
 
     void timeDispLcd(struct tm timeInfo);
     void debugTimeConf(void);

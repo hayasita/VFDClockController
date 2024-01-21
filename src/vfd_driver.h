@@ -146,12 +146,6 @@ GLOBAL void oledDispTime(tm rtcTimeInfo,tm localTimeinfo);
 #define BUTTON_2 9
 #define BUTTON_3 10
 uint8_t itmMan(void);
-#define KEY_WIFI_L  0x81  // SW0 Long ON 
-#define kEY_SET_L   0x82  // SW1 Long ON
-#define KEY_SET_S   0x01  // SW1 Short ON
-#define KEY_UP_S    0x04  // SW2 Short ON
-#define KEY_DOWN_S  0x08  // SW3 Short ON
-
 // i2c Scan
 GLOBAL void i2cScan(void);
 

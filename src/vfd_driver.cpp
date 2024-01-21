@@ -228,14 +228,14 @@ void OLEDDISP::printDeviceData(DevicePresence deviceDat)
 //  display.drawString(0, 10, buffer);
 
   // OLED有無表示
-  snprintf(buffer, sizeof(buffer),"ssd1306:%d",deviceDat.i2c.datSSD1306);
+  snprintf(buffer, sizeof(buffer),"ssd1306:%d m5oled:%d",deviceDat.i2c.datSSD1306,deviceDat.i2c.datM5OLED);
   display.drawString(0, 0, buffer);
-  snprintf(buffer, sizeof(buffer),"m5oled:%d",deviceDat.i2c.datM5OLED);
-  display.drawString(0, 10, buffer);
 
-  snprintf(buffer, sizeof(buffer),"ctrlMode:%d",deviceDat.displayMode.ctrlMode);
-  display.drawString(0, 20, buffer);
+  snprintf(buffer, sizeof(buffer),"ctrlModeSelect:%d ctrlMode:%d",deviceDat.displayMode.ctrlModeSelect,deviceDat.displayMode.ctrlMode);
+  display.drawString(0, 10, buffer);
   snprintf(buffer, sizeof(buffer),"dispModeVfd:%d",deviceDat.displayMode.dispModeVfd);
+  display.drawString(0, 20, buffer);
+  snprintf(buffer, sizeof(buffer),"dispModeVfdctrl:%d",deviceDat.displayMode.dispModeVfdCtrl);
   display.drawString(0, 30, buffer);
   snprintf(buffer, sizeof(buffer),"dispModeOLED:%d",deviceDat.displayMode.dispModeOLED);
   display.drawString(0, 40, buffer);
@@ -497,6 +497,7 @@ uint8_t itmMan(void){
         break;
       case 0x02:
         status = "Short ON : BUTTON_1";
+/*
         loopTimeMax = 0;
         taskDeviceTimeMax = 0;
         taskDeviceTimeMax0 = 0;
@@ -508,17 +509,17 @@ uint8_t itmMan(void){
         timerScanTimeMax = 0;
         timerExecTimeMax = 0;
 //        portEXIT_CRITICAL_ISR(&timerMux);
-
+*/
         break;
       case 0x03:
         status = "Short ON : BUTTON_0 & BUTTON_1";
         break;
       case 0x04:
         status = "Short ON : BUTTON_2";
-        if(uxQueueSpacesAvailable(xQueueSoundPlay) != 0){             // キューの追加可能数が0ではない
-          keyData = 2;
+//        if(uxQueueSpacesAvailable(xQueueSoundPlay) != 0){             // キューの追加可能数が0ではない
+//          keyData = 2;
 //          xQueueSend(xQueueSoundPlay, &keyData, 0);
-        }
+//        }
         break;
       case 0x05:
         status = "Short ON : BUTTON_0 & BUTTON_2";
@@ -533,10 +534,10 @@ uint8_t itmMan(void){
         status = "Short ON : BUTTON_3";
 //        xTaskNotify(sountaskHandle, 0, eIncrement);
 
-        if(uxQueueSpacesAvailable(xQueueSoundPlay) != 0){             // キューの追加可能数が0ではない
-          keyData = 1;
+//        if(uxQueueSpacesAvailable(xQueueSoundPlay) != 0){             // キューの追加可能数が0ではない
+//          keyData = 1;
 //          xQueueSend(xQueueSoundPlay, &keyData, 0);
-        }
+//        }
 
         break;
       case 0x09:
@@ -580,6 +581,7 @@ uint8_t itmMan(void){
         status = "Long ON : BUTTON_0 & BUTTON_1";
         break;
       case 0x04:
+/*
         status = "Long ON : BUTTON_2";
         if(vfdevent.eventLogSendSqf == EVENT_LOGSEND_WAIT){
           vfdevent.eventLogSendSqf = EVENT_LOGSEND_E2ROM_PRE;  // イベントLOG送信要求 EEPROMログ送信準備
@@ -588,7 +590,7 @@ uint8_t itmMan(void){
           Serial.println("-- Log Output Stop. --");
           vfdevent.eventLogSendSqf = EVENT_LOGSEND_WAIT;
         }
-        break;
+*/        break;
       case 0x05:
         status = "Long ON : BUTTON_0 & BUTTON_2";
         break;

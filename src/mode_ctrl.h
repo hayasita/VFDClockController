@@ -41,17 +41,26 @@
 #define ctrlMode_Oled           3   // OLED設定
 
 // キー入力
-#define KEY_WIFI_L  0x81  // SW0 Long ON 
-#define kEY_SET_L   0x82  // SW1 Long ON
-#define KEY_SET_S   0x01  // SW1 Short ON
-#define KEY_UP_S    0x04  // SW2 Short ON
-#define KEY_DOWN_S  0x08  // SW3 Short ON
+#define KEY_WIFI_S  0x01  // Hard SW0 Short ON 
+#define KEY_SET_S   0x02  // Hard SW1 Short ON
+#define KEY_UP_S    0x04  // Hard SW2 Short ON
+#define KEY_DOWN_S  0x08  // Hard SW3 Short ON
+#define KEY_WIFI_L  0x81  // Hard SW0 Long ON 
+#define kEY_SET_L   0x82  // Hard SW1 Long ON
+#define KEY_UP_L    0x84  // Hard SW2 Long ON
+#define KEY_DOWN_L  0x88  // Hard SW3 Long ON
+
+#define SWKEY_SET_S   0x02  // Soft SW1 Short ON
 
 struct dispMode{
-    uint8_t ctrlMode;           // 操作モード
-    uint8_t dispModeVfd;        // VFD表示モード
-    uint8_t dispModeM5OLED;     // M5OLED表示モード
-    uint8_t dispModeOLED;       // OLED表示モード
+  uint8_t ctrlModeSelect;     // 操作モード選択　0:モード切替 1:設定操作
+  uint8_t adjKeyData;         // 設定操作用キー情報
+  uint8_t ctrlMode;           // 操作モード
+
+  uint8_t dispModeVfd;        // VFD表示モード
+  uint8_t dispModeVfdCtrl;    // VFD設定表示モード
+  uint8_t dispModeM5OLED;     // M5OLED表示モード
+  uint8_t dispModeOLED;       // OLED表示モード
 
 };
 
@@ -61,24 +70,16 @@ class modeCtrl{
 
     uint8_t getCtrlMode(void);              // 操作モード取得
     uint8_t getDispModeVfd(void);           // VFD表示モード取得
+    uint8_t getDispModeVfdCtrl(void);       // VFD設定表示モード取得
     uint8_t getDispModeM5OLED(void);        // M5OLED表示モード取得
     uint8_t getDispModeOLED(void);          // OLED表示モード取得
 
-//    void modeSet(uint8_t setKey);           // 操作モード設定
-    dispMode modeSet(uint8_t setKey);           // 操作モード設定
+    dispMode modeSet(uint8_t setKey,uint8_t swKey);   // 操作モード設定
 
   private:
     bool ssd1306Valid;          // OLED有無
     bool m5oledValid;           // M5OLED有無
-
-    uint8_t ctrlMode;           // 操作モード
-
-    uint8_t dispModeVfd;        // VFD表示モード
-    uint8_t dispModeM5OLED;     // M5OLED表示モード
-    uint8_t dispModeOLED;       // OLED表示モード
-
-//    uint8_t dispCtrlTrg;        // ディスプレイ操作ターゲット
-
+    dispMode displayMode;       // モード情報
 
 };
 
