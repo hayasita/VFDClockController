@@ -1,6 +1,7 @@
 #include "vfd_disp.h"
 #include "vfd_driver.h"
 #include "vfd_conf.h"
+#include "mode_ctrl.h"
 
 #ifdef ARDUINO_M5Stick_C
 TFT_eSprite tftSprite = TFT_eSprite(&M5.Lcd); // スプライト
@@ -12,8 +13,8 @@ DispCtr::DispCtr(void)
     piriodTmp = new uint8_t[DISP_KETAMAX];
     dispdataTmp = new uint16_t[DISP_KETAMAX];
 
-    dispMode = MODE_STD_DISP;   // 起動時の表示モード設定
-    lastDispMode = dispMode;    // 前回表示モード設定
+    displayMode = MODE_STD_DISP;   // 起動時の表示モード設定
+    lastDispMode = displayMode;    // 前回表示モード設定
 
 #ifdef ARDUINO_M5Stick_C
   // LCD Setting
@@ -107,12 +108,12 @@ void DispCtr::dataMake(struct DISPLAY_DATA inputData)
 
   struct tm timeInfo = inputData.timeInfo;
 
-  if(confDat.dispFormatUpdatef == ON){
+  if(confDat.dispFormatUpdatef == ON){    // 修正必要　表示フォーマットの0番をweb設定表示、他は固定とする
     confDat.dispFormatUpdatef = OFF;
     stdDispFormat = confDat.GetdispFormatw();           // 表示フォーマット取得
   }
 
-  if(dispMode == MODE_STD_DISP){
+  if(displayMode == MODE_STD_DISP){   // VFD表示モード
     if(stdDispFormat == 0){
       dispClock(timeInfo);          // 時刻情報作成
     }
@@ -127,8 +128,15 @@ void DispCtr::dataMake(struct DISPLAY_DATA inputData)
       dispClock(timeInfo);          // 時刻情報作成
     }
   }
-  else{
-    clockAdjtitleDispdatMake();
+  else{   // VFD設定表示モード
+    if(ctrlDispFormat == 0){
+      if(ctrlModeSelect == 0){
+        clockAdjtitleDispdatMake();   // タイトル表示
+      }
+      else{
+        clockAdjDispdatMake(adjKeyData);        // 設定操作
+      }
+    }
   }
 /*
   dispTmp[0] = DISP_00;
@@ -532,14 +540,43 @@ void DispCtr::dispLCD(struct tm timeInfo)
     return;
 }
 
-void DispCtr::dispModeSet(uint8_t setKey)
+/**
+ * @brief 表示内容の切り替えを制御する
+ * 
+ * @param mode 表示モードの情報
+ * @return uint8_t 操作モード更新のsoftKey入力
+ */
+uint8_t DispCtr::dispModeSet(dispMode mode)
 {
   String status;
+  uint8_t swKey = 0;
 
+if(mode.ctrlMode == ctrlMode_VfdCtrl){   // VFD設定
+  displayMode = MODE_CLOCK_ADJ;
+  ctrlDispFormat = mode.dispModeVfdCtrl;
+  ctrlModeSelect = mode.ctrlModeSelect;
+  adjKeyData = mode.adjKeyData;               // 設定操作用キー情報
+
+  if(adjKeyData != 0){
+    Serial.println(adjKeyData);
+  }
+
+  if(adjKeyData == KEY_SET_S){    // setキーで設定完了条件満たす場合の条件を追加
+    swKey = SWKEY_SET_S;
+    Serial.println("設定モード脱出要求");
+  }
+//  }else if(mode.ctrlMode == ctrlMode_VfdDisp){        // VFD表示
+}else{                                        // VFD表示 他
+  displayMode = MODE_STD_DISP;
+  stdDispFormat = mode.dispModeVfd;
+  ctrlModeSelect = mode.ctrlModeSelect;
+  adjKeyData = 0;
+}
+/*
   status = "";
-  if(dispMode == MODE_STD_DISP){
+  if(displayMode == MODE_STD_DISP){
     if(setKey == kEY_SET_L){
-      dispMode = MODE_CLOCK_ADJ;
+      displayMode = MODE_CLOCK_ADJ;
       status = "Mode : MODE_CLOCK_ADJ";
     }
 
@@ -551,15 +588,15 @@ void DispCtr::dispModeSet(uint8_t setKey)
     }
 
   }
-  else if((dispMode >= MODE_CLOCK_ADJ) && (dispMode < MODE_ERR_)){
+  else if((displayMode >= MODE_CLOCK_ADJ) && (displayMode < MODE_ERR_)){
     if(setKey == kEY_SET_L){
-      dispMode = MODE_STD_DISP;
+      displayMode = MODE_STD_DISP;
       status = "Mode : MODE_STD_DISP";
     }
   }
-
-  if(dispMode != lastDispMode){     // モード変更あり
-    lastDispMode = dispMode;        // 前回モード = 今回モード
+*/
+  if(displayMode != lastDispMode){     // モード変更あり
+    lastDispMode = displayMode;        // 前回モード = 今回モード
     dispScrolldatMakeIni();         // スクロール表示データ初期化
 //    dispBlinkingMakeIni();          // 表示データ点滅初期化
   }
@@ -567,7 +604,8 @@ void DispCtr::dispModeSet(uint8_t setKey)
   if(status.length() != 0){
     Serial.println(status);
   }
-  return;
+
+  return swKey;
 }
 
 
@@ -642,10 +680,30 @@ void DispCtr::dispScrolldatMake(const char *disp_data,uint8_t startp,uint8_t dis
   return;
 }
 
-
+/**
+ * @brief 時刻設定タイトル表示
+ * 
+ */
 void DispCtr::clockAdjtitleDispdatMake(void){
 
   const char disptxt[] = "CLOCK SET";
+  dispScrolldatMake(disptxt,5,5);
+  dispTmp[6] = DISP_NON;
+  dispTmp[7] = DISP_01;
+  dispTmp[8] = DISP_K1;
+  piriodTmp[7] = 0x01;
+
+  return;
+}
+
+/**
+ * @brief 時刻設定操作表示
+ * 
+ * @param adjKeyData 操作キー入力
+ */
+void DispCtr::clockAdjDispdatMake(uint8_t adjKeyData){
+
+  const char disptxt[] = "CLOCK ADJ";
   dispScrolldatMake(disptxt,5,5);
   dispTmp[6] = DISP_NON;
   dispTmp[7] = DISP_01;

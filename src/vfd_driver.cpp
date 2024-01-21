@@ -231,7 +231,7 @@ void OLEDDISP::printDeviceData(DevicePresence deviceDat)
   snprintf(buffer, sizeof(buffer),"ssd1306:%d m5oled:%d",deviceDat.i2c.datSSD1306,deviceDat.i2c.datM5OLED);
   display.drawString(0, 0, buffer);
 
-  snprintf(buffer, sizeof(buffer),"ctrlMode:%d",deviceDat.displayMode.ctrlMode);
+  snprintf(buffer, sizeof(buffer),"ctrlModeSelect:%d ctrlMode:%d",deviceDat.displayMode.ctrlModeSelect,deviceDat.displayMode.ctrlMode);
   display.drawString(0, 10, buffer);
   snprintf(buffer, sizeof(buffer),"dispModeVfd:%d",deviceDat.displayMode.dispModeVfd);
   display.drawString(0, 20, buffer);

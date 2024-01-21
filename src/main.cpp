@@ -136,7 +136,8 @@ void taskDisplayCtrl(void *pvParameters) {
   int dcdcVDark;                  // 全体輝度暗：目標電圧
   int dcdcV;                      // DCDCコンバータ目標電圧
 
-  uint8_t keydata;                // キー入力情報
+  uint8_t keydata;                // 物理キー入力情報
+  uint8_t softkeySet;             // SW内部キー入力情報
 
   struct mailboxData mailboxDispDat;
   struct mailboxData mailboxDat2Loop;   // Loop送信用mailbox
@@ -272,7 +273,7 @@ void taskDisplayCtrl(void *pvParameters) {
     keydata = itmMan();
 
     // 操作モード更新
-    dispModeData = vfdModeCtrl.modeSet(keydata);
+    dispModeData = vfdModeCtrl.modeSet(keydata,softkeySet);
 
     // センサ情報受信
     ret = xQueueReceive(xQueueSensData1, &mailboxDispDat, 0);
@@ -283,7 +284,7 @@ void taskDisplayCtrl(void *pvParameters) {
     }
 
 #ifdef USE_VFD
-    dispVFD.dispModeSet(keydata);           // 表示モード設定
+    softkeySet = dispVFD.dispModeSet(dispModeData);        // 表示モード設定
 
     dispInputData.timeInfo = *sysTimeInfo;  // 表示用時刻情報設定
     dispVFD.dataMake(dispInputData);        // VFD表示データ作成
