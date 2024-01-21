@@ -497,6 +497,7 @@ uint8_t itmMan(void){
         break;
       case 0x02:
         status = "Short ON : BUTTON_1";
+/*
         loopTimeMax = 0;
         taskDeviceTimeMax = 0;
         taskDeviceTimeMax0 = 0;
@@ -508,17 +509,17 @@ uint8_t itmMan(void){
         timerScanTimeMax = 0;
         timerExecTimeMax = 0;
 //        portEXIT_CRITICAL_ISR(&timerMux);
-
+*/
         break;
       case 0x03:
         status = "Short ON : BUTTON_0 & BUTTON_1";
         break;
       case 0x04:
         status = "Short ON : BUTTON_2";
-        if(uxQueueSpacesAvailable(xQueueSoundPlay) != 0){             // キューの追加可能数が0ではない
-          keyData = 2;
+//        if(uxQueueSpacesAvailable(xQueueSoundPlay) != 0){             // キューの追加可能数が0ではない
+//          keyData = 2;
 //          xQueueSend(xQueueSoundPlay, &keyData, 0);
-        }
+//        }
         break;
       case 0x05:
         status = "Short ON : BUTTON_0 & BUTTON_2";
@@ -533,10 +534,10 @@ uint8_t itmMan(void){
         status = "Short ON : BUTTON_3";
 //        xTaskNotify(sountaskHandle, 0, eIncrement);
 
-        if(uxQueueSpacesAvailable(xQueueSoundPlay) != 0){             // キューの追加可能数が0ではない
-          keyData = 1;
+//        if(uxQueueSpacesAvailable(xQueueSoundPlay) != 0){             // キューの追加可能数が0ではない
+//          keyData = 1;
 //          xQueueSend(xQueueSoundPlay, &keyData, 0);
-        }
+//        }
 
         break;
       case 0x09:
@@ -580,6 +581,7 @@ uint8_t itmMan(void){
         status = "Long ON : BUTTON_0 & BUTTON_1";
         break;
       case 0x04:
+/*
         status = "Long ON : BUTTON_2";
         if(vfdevent.eventLogSendSqf == EVENT_LOGSEND_WAIT){
           vfdevent.eventLogSendSqf = EVENT_LOGSEND_E2ROM_PRE;  // イベントLOG送信要求 EEPROMログ送信準備
@@ -588,7 +590,7 @@ uint8_t itmMan(void){
           Serial.println("-- Log Output Stop. --");
           vfdevent.eventLogSendSqf = EVENT_LOGSEND_WAIT;
         }
-        break;
+*/        break;
       case 0x05:
         status = "Long ON : BUTTON_0 & BUTTON_2";
         break;
