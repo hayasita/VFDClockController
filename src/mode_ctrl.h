@@ -50,6 +50,7 @@
 struct dispMode{
     uint8_t ctrlMode;           // 操作モード
     uint8_t dispModeVfd;        // VFD表示モード
+    uint8_t dispModeVfdCtrl;    // VFD設定表示モード
     uint8_t dispModeM5OLED;     // M5OLED表示モード
     uint8_t dispModeOLED;       // OLED表示モード
 
@@ -61,6 +62,7 @@ class modeCtrl{
 
     uint8_t getCtrlMode(void);              // 操作モード取得
     uint8_t getDispModeVfd(void);           // VFD表示モード取得
+    uint8_t getDispModeVfdCtrl(void);       // VFD設定表示モード取得
     uint8_t getDispModeM5OLED(void);        // M5OLED表示モード取得
     uint8_t getDispModeOLED(void);          // OLED表示モード取得
 
@@ -70,15 +72,7 @@ class modeCtrl{
   private:
     bool ssd1306Valid;          // OLED有無
     bool m5oledValid;           // M5OLED有無
-
-    uint8_t ctrlMode;           // 操作モード
-
-    uint8_t dispModeVfd;        // VFD表示モード
-    uint8_t dispModeM5OLED;     // M5OLED表示モード
-    uint8_t dispModeOLED;       // OLED表示モード
-
-//    uint8_t dispCtrlTrg;        // ディスプレイ操作ターゲット
-
+    dispMode displayMode;       // モード情報
 
 };
 
