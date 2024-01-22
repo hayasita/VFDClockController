@@ -331,10 +331,10 @@ void DispCtr::dispClock(struct tm timeInfo)
     piriodAmpm = 0x01;
   }
   else{
-//    ampm = DISP_NON;
-//    piriodAmpm = 0x00;
-    ampm = DISP_T;
-    piriodAmpm = 0x01;
+    ampm = DISP_NON;
+    piriodAmpm = 0x00;
+//    ampm = DISP_T;
+//    piriodAmpm = 0x01;
   }
 
   secL = timeInfo.tm_sec % 10;
@@ -398,7 +398,7 @@ void DispCtr::dispTemp(struct DISPLAY_DATA inputData)
   if((tempHH == DISP_NON) && (tempHL == 0)){tempHL = DISP_NON;}
 
   dispTmp[7] = (uint16_t)DISP_T;
-  dispTmp[6] = (uint16_t)DISP_E;
+  dispTmp[6] = (uint16_t)DISP_NON;
   dispTmp[5] = (uint16_t)tempHH;
   dispTmp[4] = (uint16_t)tempHL;
   dispTmp[3] = (uint16_t)tempLH;
@@ -407,8 +407,8 @@ void DispCtr::dispTemp(struct DISPLAY_DATA inputData)
   dispTmp[0] = (uint16_t)DISP_NON;
 
   piriodTmp[8] = 0x00;
-  piriodTmp[7] = 0x00;
-  piriodTmp[6] = 0x01;
+  piriodTmp[7] = 0x01;
+  piriodTmp[6] = 0x00;
   piriodTmp[5] = 0x00;
   piriodTmp[4] = 0x00;
   piriodTmp[3] = 0x01;
@@ -433,17 +433,17 @@ void DispCtr::dispHum(struct DISPLAY_DATA inputData)
   if((tempHH == DISP_NON) && (tempHL == 0)){tempHL = DISP_NON;}
 
   dispTmp[7] = (uint16_t)DISP_H;
-  dispTmp[6] = (uint16_t)DISP_U;
+  dispTmp[6] = (uint16_t)DISP_NON;
   dispTmp[5] = (uint16_t)tempHH;
   dispTmp[4] = (uint16_t)tempHL;
   dispTmp[3] = (uint16_t)tempLH;
   dispTmp[2] = (uint16_t)tempLL;
-  dispTmp[1] = (uint16_t)DISP_P;
-  dispTmp[0] = (uint16_t)DISP_A;
+  dispTmp[1] = (uint16_t)DISP_NON;
+  dispTmp[0] = (uint16_t)DISP_NON;
 
   piriodTmp[8] = 0x00;
-  piriodTmp[7] = 0x00;
-  piriodTmp[6] = 0x01;
+  piriodTmp[7] = 0x01;
+  piriodTmp[6] = 0x00;
   piriodTmp[5] = 0x00;
   piriodTmp[4] = 0x00;
   piriodTmp[3] = 0x01;
@@ -468,17 +468,17 @@ void DispCtr::dispPres(struct DISPLAY_DATA inputData)
   if((tempHH == DISP_NON) && (tempHL == 0)){tempHL = DISP_NON;}
 
   dispTmp[7] = (uint16_t)DISP_P;
-  dispTmp[6] = (uint16_t)DISP_R;
+  dispTmp[6] = (uint16_t)DISP_NON;
   dispTmp[5] = (uint16_t)tempHH;
   dispTmp[4] = (uint16_t)tempHL;
   dispTmp[3] = (uint16_t)tempLH;
   dispTmp[2] = (uint16_t)tempLL;
-  dispTmp[1] = (uint16_t)DISP_H;
-  dispTmp[0] = (uint16_t)DISP_P;
+  dispTmp[1] = (uint16_t)DISP_NON;
+  dispTmp[0] = (uint16_t)DISP_NON;
 
   piriodTmp[8] = 0x00;
-  piriodTmp[7] = 0x00;
-  piriodTmp[6] = 0x01;
+  piriodTmp[7] = 0x01;
+  piriodTmp[6] = 0x00;
   piriodTmp[5] = 0x00;
   piriodTmp[4] = 0x00;
   piriodTmp[3] = 0x00;
