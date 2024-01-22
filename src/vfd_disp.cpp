@@ -105,24 +105,33 @@ void DispCtr::dataMake(struct DISPLAY_DATA inputData)
   unsigned long dispdata;         // 表示データ作成用tmp
   uint16_t fadetime_tmpw;                     // クロスフェード時間受け渡し用データ
   uint8_t fade = ON;                          // クロスフェードON/OFF
+  static uint8_t dispFormatWeb;          // WebIF設定の表示モード
 
   struct tm timeInfo = inputData.timeInfo;
 
   if(confDat.dispFormatUpdatef == ON){    // 修正必要　表示フォーマットの0番をweb設定表示、他は固定とする
     confDat.dispFormatUpdatef = OFF;
-    stdDispFormat = confDat.GetdispFormatw();           // 表示フォーマット取得
+    dispFormatWeb = confDat.GetdispFormatw();           // 表示フォーマット取得
   }
 
+
   if(displayMode == MODE_STD_DISP){   // VFD表示モード
-    if(stdDispFormat == 0){
+    if(stdDispFormat == 0){         // Web設定の表示
+      stdDispFormat = dispFormatWeb;
+    }
+
+    if(stdDispFormat == 1){
       dispClock(timeInfo);          // 時刻情報作成
     }
-    else if(stdDispFormat == 1){
-      dispCalender(timeInfo);
-    }
     else if(stdDispFormat == 2){
+      dispCalender(timeInfo);       // 日付表示
+    }
+    else if(stdDispFormat == 3){
       dispLoop1(inputData);
 //      dispTemp(inputData);          // 温度表示データ表示
+    }
+    else if(stdDispFormat == 4){
+      dispTemp(inputData);          // 温度表示データ表示
     }
     else{
       dispClock(timeInfo);          // 時刻情報作成
