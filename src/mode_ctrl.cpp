@@ -113,6 +113,13 @@ dispMode modeCtrl::modeSet(uint8_t setKey,uint8_t swKey)        // モード設�
       else if(setKey == KEY_DOWN_S){  // ▼Key SW3 Short ON
         displayMode.dispModeVfd--;
       }
+      else if(setKey == KEY_SET_S){   // SETKey SW1 Short ON
+        displayMode.adjKeyData = setKey;     // 設定操作用キー情報設定;
+      }
+
+      if(swKey == SWKEY_DISP_MODE_VFD_CLR){
+        displayMode.dispModeVfd = dispModeVfd_Default;        // VFD表示モード初期化
+      }
 
     }
     else if(displayMode.ctrlMode == ctrlMode_VfdCtrl){  // 操作モード：VFD設定
