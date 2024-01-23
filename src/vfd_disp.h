@@ -167,6 +167,7 @@ class DispCtr{
     uint8_t lastDispMode;                   // 前回表示モード
 
     uint8_t stdDispFormat;                  // VFD表示フォーマット指定
+    uint8_t lastStdDispFormat;              // 前回VFD表示フォーマット指定
     void dispFormatAdd(void);               // VFD表示フォーマット+1
     void dispFormatDec(void);               // VFD表示フォーマット-1
 
@@ -175,7 +176,7 @@ class DispCtr{
     uint8_t ctrlModeSelect;                 // 操作モード選択　0:モード切替 1:設定操作
     uint8_t adjKeyData;                     // 設定操作用キー情報
 
-
+    void dispNumber(void);                  // 表示番号表示データ作成
     void dispClock(struct tm timeInfo);     // 時刻表示データ作成
     void dispCalender(struct tm timeInfo);  // 日付表示データ作成
     void dispTemp(struct DISPLAY_DATA inputData);   // 温度表示データ作成

@@ -49,6 +49,7 @@ void DispCtr::init(void)
 
   brightness_ini();                    // 輝度情報初期化
   stdDispFormat = confDat.GetdispFormatw();           // 表示フォーマット取得
+  lastStdDispFormat = stdDispFormat;
 
   for(i = 0; i < 9; i++){
     disp[i] = 0;            // 数値表示データ初期化
@@ -105,7 +106,10 @@ void DispCtr::dataMake(struct DISPLAY_DATA inputData)
   unsigned long dispdata;         // 表示データ作成用tmp
   uint16_t fadetime_tmpw;                     // クロスフェード時間受け渡し用データ
   uint8_t fade = ON;                          // クロスフェードON/OFF
-  static uint8_t dispFormatWeb;          // WebIF設定の表示モード
+  static uint8_t dispFormatWeb;         // WebIF設定の表示モード
+  uint8_t dispFormat;                   // 表示フォーマット
+  static unsigned long waitTime;        // 表示番号表示タイマ
+  static uint8_t numDispSqf = 0;
 
   struct tm timeInfo = inputData.timeInfo;
 
@@ -116,25 +120,43 @@ void DispCtr::dataMake(struct DISPLAY_DATA inputData)
 
 
   if(displayMode == MODE_STD_DISP){   // VFD表示モード
-    if(stdDispFormat == 0){         // Web設定の表示
-      stdDispFormat = dispFormatWeb;
-    }
+    if(stdDispFormat != lastStdDispFormat){
+      if(numDispSqf == 0){
+        waitTime = millis();
+        numDispSqf = 1;
+        Serial.println(numDispSqf);
+      }
+      else{
+        dispNumber();
+        if(millis() - waitTime > (unsigned long)500){
+          lastStdDispFormat = stdDispFormat;
+          numDispSqf = 0;
+          Serial.println(numDispSqf);
+        }
+      }
+    }else{
+      if(stdDispFormat == 0){         // Web設定の表示
+        dispFormat = dispFormatWeb;
+      }
+      else{
+        dispFormat = stdDispFormat;
+      }
 
-    if(stdDispFormat == 1){
-      dispClock(timeInfo);          // 時刻情報作成
-    }
-    else if(stdDispFormat == 2){
-      dispCalender(timeInfo);       // 日付表示
-    }
-    else if(stdDispFormat == 3){
-      dispLoop1(inputData);
-//      dispTemp(inputData);          // 温度表示データ表示
-    }
-    else if(stdDispFormat == 4){
-      dispTemp(inputData);          // 温度表示データ表示
-    }
-    else{
-      dispClock(timeInfo);          // 時刻情報作成
+      if(dispFormat == 1){
+        dispClock(timeInfo);          // 時刻情報作成
+      }
+      else if(dispFormat == 2){
+        dispCalender(timeInfo);       // 日付表示
+      }
+      else if(dispFormat == 3){
+        dispLoop1(inputData);         // 時刻＋温度＋湿度＋気圧
+      }
+      else if(dispFormat == 4){
+        dispTemp(inputData);          // 温度表示データ表示
+      }
+      else{
+        dispClock(timeInfo);          // 時刻情報作成
+      }
     }
   }
   else{   // VFD設定表示モード
@@ -190,6 +212,31 @@ void DispCtr::dataMake(struct DISPLAY_DATA inputData)
   brp = confDat.GetBr_digTmpp();
 
   portEXIT_CRITICAL(&timerMux);     // 割り込み許可
+
+  return;
+}
+
+// 表示番号表示データ作成
+void DispCtr::dispNumber(void){
+  dispTmp[0] = (uint16_t)DISP_NON;
+  dispTmp[1] = (uint16_t)DISP_NON;
+  dispTmp[2] = (uint16_t)DISP_NON;
+  dispTmp[3] = (uint16_t)DISP_NON;
+  dispTmp[4] = (uint16_t)DISP_NON;
+  dispTmp[5] = (uint16_t)DISP_NON;
+  dispTmp[6] = (uint16_t)stdDispFormat%10;
+  dispTmp[7] = (uint16_t)stdDispFormat/10;
+  dispTmp[8] = (uint16_t)DISP_NON;
+
+  piriodTmp[0] = 0x00;
+  piriodTmp[1] = 0x00;
+  piriodTmp[2] = 0x00;
+  piriodTmp[3] = 0x00;
+  piriodTmp[4] = 0x00;
+  piriodTmp[5] = 0x00;
+  piriodTmp[6] = 0x01;
+  piriodTmp[7] = 0x00;
+  piriodTmp[8] = 0x00;
 
   return;
 }
