@@ -51,6 +51,7 @@
 #define KEY_DOWN_L  0x88  // Hard SW3 Long ON
 
 #define SWKEY_SET_S   0x02  // Soft SW1 Short ON
+#define SWKEY_DISP_MODE_VFD_CLR 0x11  // VFD表示モードクリア要求
 
 struct dispMode{
   uint8_t ctrlModeSelect;     // 操作モード選択　0:モード切替 1:設定操作

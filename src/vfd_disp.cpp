@@ -560,50 +560,36 @@ uint8_t DispCtr::dispModeSet(dispMode mode)
   String status;
   uint8_t swKey = 0;
 
-if(mode.ctrlMode == ctrlMode_VfdCtrl){   // VFD設定
-  displayMode = MODE_CLOCK_ADJ;
-  ctrlDispFormat = mode.dispModeVfdCtrl;
-  ctrlModeSelect = mode.ctrlModeSelect;
-  adjKeyData = mode.adjKeyData;               // 設定操作用キー情報
+  if(mode.ctrlMode == ctrlMode_VfdCtrl){   // VFD設定
+    displayMode = MODE_CLOCK_ADJ;
+    ctrlDispFormat = mode.dispModeVfdCtrl;
+    ctrlModeSelect = mode.ctrlModeSelect;
+    adjKeyData = mode.adjKeyData;               // 設定操作用キー情報
 
-  if(adjKeyData != 0){
-    Serial.println(adjKeyData);
-  }
-
-  if(adjKeyData == KEY_SET_S){    // setキーで設定完了条件満たす場合の条件を追加
-    swKey = SWKEY_SET_S;
-    Serial.println("設定モード脱出要求");
-  }
-//  }else if(mode.ctrlMode == ctrlMode_VfdDisp){        // VFD表示
-}else{                                        // VFD表示 他
-  displayMode = MODE_STD_DISP;
-  stdDispFormat = mode.dispModeVfd;
-  ctrlModeSelect = mode.ctrlModeSelect;
-  adjKeyData = 0;
-}
-/*
-  status = "";
-  if(displayMode == MODE_STD_DISP){
-    if(setKey == kEY_SET_L){
-      displayMode = MODE_CLOCK_ADJ;
-      status = "Mode : MODE_CLOCK_ADJ";
+    if(adjKeyData != 0){
+      Serial.println(adjKeyData);
     }
 
-    if(setKey == KEY_UP_S){
-      stdDispFormat++;
+    if(adjKeyData == KEY_SET_S){    // setキーで設定完了条件満たす場合の条件を追加
+      swKey = SWKEY_SET_S;
+      status = "設定モード脱出要求";
     }
-    else if(setKey == KEY_DOWN_S){
-      stdDispFormat--;
+  //  }else if(mode.ctrlMode == ctrlMode_VfdDisp){        // VFD表示
+  }else{      // VFD表示 他
+    if(mode.ctrlMode == ctrlMode_VfdDisp){    // VFD表示
+      if((mode.adjKeyData == KEY_SET_S) && (mode.dispModeVfd != 0)){    // setキーで現在表示している表示を0番に設定
+        confDat.SetdispFormatw(mode.dispModeVfd);                       // 表示フォーマット設定
+        swKey = SWKEY_DISP_MODE_VFD_CLR;                                // VFD表示モード初期化要求
+      }
+      else{
+      }
     }
+    displayMode = MODE_STD_DISP;
+    stdDispFormat = mode.dispModeVfd;
+    ctrlModeSelect = mode.ctrlModeSelect;
+    adjKeyData = 0;
+  }
 
-  }
-  else if((displayMode >= MODE_CLOCK_ADJ) && (displayMode < MODE_ERR_)){
-    if(setKey == kEY_SET_L){
-      displayMode = MODE_STD_DISP;
-      status = "Mode : MODE_STD_DISP";
-    }
-  }
-*/
   if(displayMode != lastDispMode){     // モード変更あり
     lastDispMode = displayMode;        // 前回モード = 今回モード
     dispScrolldatMakeIni();         // スクロール表示データ初期化
