@@ -119,6 +119,7 @@ const unsigned long font[] = {
 #define FONT_MAX (sizeof(font) / sizeof(unsigned long))
 
 #define MODE_STD_DISP 0   // 標準表示
+#define MODE_ADJ_DISP 1   // 設定表示
 
 #define MODE_CLOCK_ADJ                  10    // 時計調整
 #define MODE_CLOCK_ADJ_SET              11    // 時計調整実行

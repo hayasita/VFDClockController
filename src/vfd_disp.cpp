@@ -608,7 +608,7 @@ uint8_t DispCtr::dispModeSet(dispMode mode)
   uint8_t swKey = 0;
 
   if(mode.ctrlMode == ctrlMode_VfdCtrl){   // VFD設定
-    displayMode = MODE_CLOCK_ADJ;
+    displayMode = MODE_ADJ_DISP;
     ctrlDispFormat = mode.dispModeVfdCtrl;
     ctrlModeSelect = mode.ctrlModeSelect;
     adjKeyData = mode.adjKeyData;               // 設定操作用キー情報
