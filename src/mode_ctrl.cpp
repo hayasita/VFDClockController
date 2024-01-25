@@ -22,14 +22,7 @@ modeCtrl::modeCtrl(bool ssd1306,bool m5oled)
   ssd1306Valid = ssd1306;
   m5oledValid = m5oled;
 
-  displayMode.ctrlModeSelect = 0;                 // 操作モード選択　0:モード切替
-  displayMode.dispModeVfd = dispModeVfd_Default;        // VFD表示モード初期化
-  displayMode.dispModeVfdCtrl = 0;               //VFD設定表示モード
-  displayMode.dispModeM5OLED = dispModeOled_Default;    // M5OLED表示モード初期化
-  displayMode.dispModeOLED = dispModeOled_Default;      // OLED表示モード初期化
-
-//  dispCtrlTrg = dispCtrlTrg_Vfd;            // ディスプレイ操作ターゲット初期化
-  displayMode.ctrlMode = ctrlMode_VfdDisp;              // 操作モード初期化
+  modeIni();                  // モード初期化
 /*
   Serial.println("modeCtrl::modeCtrl");
   Serial.print("ssd1306Valid:");
@@ -37,6 +30,23 @@ modeCtrl::modeCtrl(bool ssd1306,bool m5oled)
   Serial.print("m5oled:");
   Serial.println(m5oled);
 */
+  return;
+}
+
+/**
+ * @brief モード初期化
+ * 
+ */
+void modeCtrl::modeIni(void)                     // モード初期化
+{
+  displayMode.ctrlModeSelect = 0;                       // 操作モード選択　0:モード切替
+  displayMode.ctrlMode = ctrlMode_VfdDisp;              // 操作モード初期化
+
+  displayMode.dispModeVfd = dispModeVfd_Default;        // VFD表示モード初期化
+  displayMode.dispModeVfdCtrl = 0;                      //VFD設定表示モード
+  displayMode.dispModeM5OLED = dispModeOled_Default;    // M5OLED表示モード初期化
+  displayMode.dispModeOLED = dispModeOled_Default;      // OLED表示モード初期化
+
   return;
 }
 

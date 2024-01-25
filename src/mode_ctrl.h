@@ -28,12 +28,6 @@
 
 #define dispModeOled_Default    dispModeOled_SensorData
 
-/*
-#define dispCtrlTrg_Vfd         0
-#define dispCtrlTrg_M5OLED      1
-#define dispCtrlTrg_M5OLED      2
-*/
-
 // 操作モード
 #define ctrlMode_VfdDisp        0   // VFD表示
 #define ctrlMode_VfdCtrl        1   // VFD設定
@@ -68,6 +62,7 @@ struct dispMode{
 class modeCtrl{
   public:
     modeCtrl(bool ssd1306,bool m5oled);     // コンストラクタ
+    void modeIni(void);                     // モード初期化
 
     uint8_t getCtrlMode(void);              // 操作モード取得
     uint8_t getDispModeVfd(void);           // VFD表示モード取得
