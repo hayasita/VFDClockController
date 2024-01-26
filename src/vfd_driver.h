@@ -365,6 +365,7 @@ class SensorBme680{
   public:
     bool init(SensorBME680Data *bme680Data);
     bool read(SensorBME680Data *bme680Data);
+    bool readAsync(SensorBME680Data *bme680Data);
   private:
     Adafruit_BME680 bme;
 };
