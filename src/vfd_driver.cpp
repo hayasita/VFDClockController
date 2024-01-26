@@ -1377,6 +1377,8 @@ bool SensorBme680::init(SensorBME680Data *bme680Data)
   bme.setIIRFilterSize(BME680_FILTER_SIZE_3);
   bme.setGasHeater(320, 150); // 320*C for 150 ms
 
+  endTime = 0;
+
   return ret;
 }
 
@@ -1421,6 +1423,183 @@ bool SensorBme680::read(SensorBME680Data *bme680Data)
   bme680Data->humidity = bme.humidity;
   bme680Data->gasResistance = bme.gas_resistance;
   bme680Data->altitude = bme.readAltitude(SEALEVELPRESSURE_HPA);
+
+  if(bme680Data->pressure > 0){
+    bme680Data->sensorActive = true;
+  }
+
+  return true;
+}
+
+/**
+ * @brief 非同期読み出し
+ * 
+ * @param bme680Data  データ格納用
+ * @return true 取得成功
+ * @return false 取得失敗
+ */
+bool SensorBme680::readAsync(SensorBME680Data *bme680Data)
+{
+  // Tell BME680 to begin measurement.
+//  static unsigned long endTime = 0;
+  static unsigned long beginTime = 0;
+
+  if(endTime == 0){
+    endTime = bme.beginReading();
+    if (endTime == 0) {
+      Serial.println(F("Failed to begin reading :("));
+      return false;
+    }
+/*
+    Serial.print(F("Reading started at "));
+    Serial.print(millis());
+    Serial.print(F(" and will finish at "));
+    Serial.println(endTime);
+*/
+  }
+
+  // This represents parallel work.
+  // There's no need to delay() until millis() >= endTime: bme.endReading()
+  // takes care of that. It's okay for parallel work to take longer than
+  // BME680's measurement time.
+
+  // Obtain measurement results from BME680. Note that this operation isn't
+  // instantaneous even if milli() >= endTime due to I2C/SPI latency.
+
+  if(millis() >= endTime){
+    endTime = 0;
+    if (!bme.endReading()) {
+      Serial.println(F("Failed to complete reading :("));
+      return false;
+    }
+/*
+    Serial.print(F("Reading completed at "));
+    Serial.println(millis());
+
+    Serial.print(F("Temperature = "));
+    Serial.print(bme.temperature);
+    Serial.println(F(" *C"));
+
+    Serial.print(F("Pressure = "));
+    Serial.print(bme.pressure / 100.0);
+    Serial.println(F(" hPa"));
+
+    Serial.print(F("Humidity = "));
+    Serial.print(bme.humidity);
+    Serial.println(F(" %"));
+
+    Serial.print(F("Gas = "));
+    Serial.print(bme.gas_resistance / 1000.0);
+    Serial.println(F(" KOhms"));
+
+    Serial.print(F("Approx. Altitude = "));
+    Serial.print(bme.readAltitude(SEALEVELPRESSURE_HPA));
+    Serial.println(F(" m"));
+
+    Serial.print(F("Reading completed at "));
+    Serial.println(millis());
+
+    Serial.println();
+*/
+    bme680Data->temperature = bme.temperature;
+    bme680Data->pressure = bme.pressure;
+    bme680Data->humidity = bme.humidity;
+    bme680Data->gasResistance = bme.gas_resistance;
+    bme680Data->altitude = bme.readAltitude(SEALEVELPRESSURE_HPA);
+
+  }
+
+  if(bme680Data->pressure > 0){
+    bme680Data->sensorActive = true;
+  }
+
+  return true;
+}
+
+/**
+ * @brief 非同期読み出し準備
+ * 
+ * @return true 取得成功
+ * @return false 取得失敗
+ */
+bool SensorBme680::readAsyncBegin(void)
+{
+  // Tell BME680 to begin measurement.
+
+  if(endTime == 0){
+    endTime = bme.beginReading();
+    if (endTime == 0) {
+      Serial.println(F("Failed to begin reading :("));
+      return false;
+    }
+/*
+    Serial.print(F("Reading started at "));
+    Serial.print(millis());
+    Serial.print(F(" and will finish at "));
+    Serial.println(endTime);
+*/
+  }
+
+  return true;
+}
+  // This represents parallel work.
+  // There's no need to delay() until millis() >= endTime: bme.endReading()
+  // takes care of that. It's okay for parallel work to take longer than
+  // BME680's measurement time.
+
+  // Obtain measurement results from BME680. Note that this operation isn't
+  // instantaneous even if milli() >= endTime due to I2C/SPI latency.
+/**
+ * @brief 非同期読み出し実行
+ * 
+ * @param bme680Data  データ格納用
+ * @return true 取得成功
+ * @return false 取得失敗
+ */
+bool SensorBme680::readAsyncEnd(SensorBME680Data *bme680Data)
+{
+
+  if(millis() >= endTime){
+    endTime = 0;
+    if (!bme.endReading()) {
+      Serial.println(F("Failed to complete reading :("));
+      return false;
+    }
+/*
+    Serial.print(F("Reading completed at "));
+    Serial.println(millis());
+
+    Serial.print(F("Temperature = "));
+    Serial.print(bme.temperature);
+    Serial.println(F(" *C"));
+
+    Serial.print(F("Pressure = "));
+    Serial.print(bme.pressure / 100.0);
+    Serial.println(F(" hPa"));
+
+    Serial.print(F("Humidity = "));
+    Serial.print(bme.humidity);
+    Serial.println(F(" %"));
+
+    Serial.print(F("Gas = "));
+    Serial.print(bme.gas_resistance / 1000.0);
+    Serial.println(F(" KOhms"));
+
+    Serial.print(F("Approx. Altitude = "));
+    Serial.print(bme.readAltitude(SEALEVELPRESSURE_HPA));
+    Serial.println(F(" m"));
+
+    Serial.print(F("Reading completed at "));
+    Serial.println(millis());
+
+    Serial.println();
+*/
+    bme680Data->temperature = bme.temperature;
+    bme680Data->pressure = bme.pressure;
+    bme680Data->humidity = bme.humidity;
+    bme680Data->gasResistance = bme.gas_resistance;
+    bme680Data->altitude = bme.readAltitude(SEALEVELPRESSURE_HPA);
+  }
 
   if(bme680Data->pressure > 0){
     bme680Data->sensorActive = true;

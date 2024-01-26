@@ -363,10 +363,16 @@ class SensorEnviii{
 
 class SensorBme680{
   public:
-    bool init(SensorBME680Data *bme680Data);
-    bool read(SensorBME680Data *bme680Data);
+    bool init(SensorBME680Data *bme680Data);            // 初期化
+    bool read(SensorBME680Data *bme680Data);            // 同期読み出し
+    bool readAsync(SensorBME680Data *bme680Data);       // 非同期読み出し
+
+    bool readAsyncBegin(void);                          // 非同期読み出し準備
+    bool readAsyncEnd(SensorBME680Data *bme680Data);    // 非同期読み出し実行
+
   private:
     Adafruit_BME680 bme;
+    unsigned long endTime;    // 非同期読み出し待ち時間格納
 };
 
 #undef GLOBAL
