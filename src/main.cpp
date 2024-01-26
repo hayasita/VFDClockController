@@ -487,13 +487,17 @@ void taskDeviceCtrl(void *Parameters){
       // BME680 Data データ取得
       if(deviceChk.bme680()){
 //        bme680.read(&sensorDeviceData.bme680Data);
-        bme680.readAsync(&sensorDeviceData.bme680Data);
-        mailboxDat.device.bme680Data = sensorDeviceData.bme680Data;
+//        mailboxDat.device.bme680Data = sensorDeviceData.bme680Data;
+        bme680.readAsyncBegin();
       }
-
 
       ret = xQueueOverwrite(xQueueSensData1, &mailboxDat);      // taskDisplayCtrl()へセンサ情報を送信
       ret = xQueueOverwrite(xQueueSensData2, &mailboxDat);      // loop()へセンサ情報を送信
+    }
+    // BME680 Data データ取得
+    if(deviceChk.bme680()){
+      bme680.readAsyncEnd(&sensorDeviceData.bme680Data);
+      mailboxDat.device.bme680Data = sensorDeviceData.bme680Data;
     }
 
     // Callbackイベント要求処理
