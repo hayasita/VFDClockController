@@ -44,7 +44,8 @@ void modeCtrl::modeIni(void)                     // モード初期化
   displayMode.ctrlModeSelect = 0;                       // 操作モード選択　0:モード切替
   displayMode.ctrlMode = ctrlMode_VfdDisp;              // 操作モード初期化
 
-  displayMode.dispModeVfd = vfdCtrlMode[vfdCtrlModeCount];  // VFD表示モード初期化
+  displayMode.vfdCtrlModeCount = 0;
+  displayMode.dispModeVfd = vfdCtrlMode[displayMode.vfdCtrlModeCount];  // VFD表示モード初期化
 
   displayMode.dispModeVfdCtrl = 0;                      //VFD設定表示モード
   displayMode.dispModeM5OLED = dispModeOled_Default;    // M5OLED表示モード初期化
@@ -60,7 +61,6 @@ void modeCtrl::vfdModeIni(void)                  // VFD表示モードテーブ�
   vfdCtrlMode.push_back(VFD_DISP_CALENDAR);       // VFD表示　カレンダー表示
   vfdCtrlMode.push_back(VFD_DISP_TIME_SENSOR3);   // VFD表示　時刻・気温・湿度・気圧
   vfdCtrlMode.push_back(VFD_DISP_TMP);            // VFD表示　気温表示
-  vfdCtrlModeCount = 0;
 
   return;
 }
@@ -244,18 +244,32 @@ void modeCtrl::modeSetVFD(uint8_t setKey,uint8_t swKey)
     displayMode.ctrlMode = ctrlMode_VfdCtrl;    // 操作モード：VFD表示 -> VFD設定
   }
   else if(setKey == KEY_UP_S){    // ▲Key SW2 Short ON
-    displayMode.dispModeVfd++;
+    if((displayMode.vfdCtrlModeCount+1) < vfdCtrlMode.size()){
+      displayMode.vfdCtrlModeCount++;
+    }
+    else{
+      displayMode.vfdCtrlModeCount = 0;
+    }
+    displayMode.dispModeVfd = vfdCtrlMode[displayMode.vfdCtrlModeCount];  // VFD表示モード
+//    displayMode.dispModeVfd++;
   }
   else if(setKey == KEY_DOWN_S){  // ▼Key SW3 Short ON
-    displayMode.dispModeVfd--;
+    if(displayMode.vfdCtrlModeCount > 0){
+      displayMode.vfdCtrlModeCount--;
+    }
+    else{
+      displayMode.vfdCtrlModeCount = vfdCtrlMode.size() -1;
+    }
+    displayMode.dispModeVfd = vfdCtrlMode[displayMode.vfdCtrlModeCount];  // VFD表示モード
+//    displayMode.dispModeVfd--;
   }
   else if(setKey == KEY_SET_S){   // SETKey SW1 Short ON
     displayMode.adjKeyData = setKey;     // 設定操作用キー情報設定;
   }
 
   if(swKey == SWKEY_DISP_MODE_VFD_CLR){
-    vfdCtrlModeCount = 0;
-    displayMode.dispModeVfd = vfdCtrlMode[vfdCtrlModeCount];  // VFD表示モード初期化
+    displayMode.vfdCtrlModeCount = 0;
+    displayMode.dispModeVfd = vfdCtrlMode[displayMode.vfdCtrlModeCount];  // VFD表示モード初期化
   }
 
   return;

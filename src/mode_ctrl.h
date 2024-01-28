@@ -61,6 +61,8 @@ struct dispMode{
   uint8_t ctrlMode;           // 操作モード
 
   uint8_t dispModeVfd;        // VFD表示モード
+  uint8_t vfdCtrlModeCount;   // VFD表示モードテーブルカウンタ
+
   uint8_t dispModeVfdCtrl;    // VFD設定表示モード
   uint8_t dispModeM5OLED;     // M5OLED表示モード
   uint8_t dispModeOLED;       // OLED表示モード
@@ -88,7 +90,6 @@ class modeCtrl{
     dispMode displayMode;       // モード情報
 
     std::vector<uint8_t> vfdCtrlMode;   // VFD表示モードテーブル
-    uint8_t vfdCtrlModeCount;           // VFD表示モードテーブルカウンタ
 
 };
 

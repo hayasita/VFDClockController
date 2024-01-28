@@ -169,6 +169,7 @@ class DispCtr{
 
     uint8_t stdDispFormat;                  // VFD表示フォーマット指定
     uint8_t lastStdDispFormat;              // 前回VFD表示フォーマット指定
+    uint8_t vfdDispNum;                     // VFD表示フォーマット表示番号
     void dispFormatAdd(void);               // VFD表示フォーマット+1
     void dispFormatDec(void);               // VFD表示フォーマット-1
 
