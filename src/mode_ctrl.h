@@ -48,7 +48,7 @@
 #define SWKEY_SET_S   0x02  // Soft SW1 Short ON
 #define SWKEY_DISP_MODE_VFD_CLR 0x11  // VFD表示モードクリア要求
 
-// 表示モード
+// VFD表示モード
 #define VFD_DISP_DEFAULT                0     // VFD表示　標準表示
 #define VFD_DISP_TIMECLOCK              1     // VFD表示　時刻表示
 #define VFD_DISP_CALENDAR               2     // VFD表示　カレンダー表示
@@ -61,9 +61,11 @@ struct dispMode{
   uint8_t ctrlMode;           // 操作モード
 
   uint8_t dispModeVfd;        // VFD表示モード
-  uint8_t vfdCtrlModeCount;   // VFD表示モードテーブルカウンタ
+  uint8_t dispModeVfdCount;   // VFD表示モードテーブルカウンタ
 
-  uint8_t dispModeVfdCtrl;    // VFD設定表示モード
+  uint8_t dispModeVfdCtrl;        // VFD設定表示モード
+  uint8_t dispModeVfdCtrlCount;   // VFD設定表示モードテーブルカウンタ
+
   uint8_t dispModeM5OLED;     // M5OLED表示モード
   uint8_t dispModeOLED;       // OLED表示モード
 
@@ -89,7 +91,7 @@ class modeCtrl{
     bool m5oledValid;           // M5OLED有無
     dispMode displayMode;       // モード情報
 
-    std::vector<uint8_t> vfdCtrlMode;   // VFD表示モードテーブル
+    std::vector<uint8_t> dispModeVfdTbl;        // VFD表示モードテーブル
 
 };
 

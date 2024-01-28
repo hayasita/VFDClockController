@@ -631,7 +631,7 @@ uint8_t DispCtr::dispModeSet(dispMode mode)
     }
     displayMode = MODE_STD_DISP;
     stdDispFormat = mode.dispModeVfd;
-    vfdDispNum = mode.vfdCtrlModeCount;     // 
+    vfdDispNum = mode.dispModeVfdCount;     // 
     ctrlModeSelect = mode.ctrlModeSelect;
     adjKeyData = 0;
   }

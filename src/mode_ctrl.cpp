@@ -44,8 +44,8 @@ void modeCtrl::modeIni(void)                     // モード初期化
   displayMode.ctrlModeSelect = 0;                       // 操作モード選択　0:モード切替
   displayMode.ctrlMode = ctrlMode_VfdDisp;              // 操作モード初期化
 
-  displayMode.vfdCtrlModeCount = 0;
-  displayMode.dispModeVfd = vfdCtrlMode[displayMode.vfdCtrlModeCount];  // VFD表示モード初期化
+  displayMode.dispModeVfdCount = 0;
+  displayMode.dispModeVfd = dispModeVfdTbl[displayMode.dispModeVfdCount];  // VFD表示モード初期化
 
   displayMode.dispModeVfdCtrl = 0;                      //VFD設定表示モード
   displayMode.dispModeM5OLED = dispModeOled_Default;    // M5OLED表示モード初期化
@@ -56,11 +56,11 @@ void modeCtrl::modeIni(void)                     // モード初期化
 
 void modeCtrl::vfdModeIni(void)                  // VFD表示モードテーブル初期化
 {
-  vfdCtrlMode.push_back(VFD_DISP_DEFAULT);        // VFD表示　標準表示
-  vfdCtrlMode.push_back(VFD_DISP_TIMECLOCK);      // VFD表示　時刻表示
-  vfdCtrlMode.push_back(VFD_DISP_CALENDAR);       // VFD表示　カレンダー表示
-  vfdCtrlMode.push_back(VFD_DISP_TIME_SENSOR3);   // VFD表示　時刻・気温・湿度・気圧
-  vfdCtrlMode.push_back(VFD_DISP_TMP);            // VFD表示　気温表示
+  dispModeVfdTbl.push_back(VFD_DISP_DEFAULT);        // VFD表示　標準表示
+  dispModeVfdTbl.push_back(VFD_DISP_TIMECLOCK);      // VFD表示　時刻表示
+  dispModeVfdTbl.push_back(VFD_DISP_CALENDAR);       // VFD表示　カレンダー表示
+  dispModeVfdTbl.push_back(VFD_DISP_TIME_SENSOR3);   // VFD表示　時刻・気温・湿度・気圧
+  dispModeVfdTbl.push_back(VFD_DISP_TMP);            // VFD表示　気温表示
 
   return;
 }
@@ -244,23 +244,23 @@ void modeCtrl::modeSetVFD(uint8_t setKey,uint8_t swKey)
     displayMode.ctrlMode = ctrlMode_VfdCtrl;    // 操作モード：VFD表示 -> VFD設定
   }
   else if(setKey == KEY_UP_S){    // ▲Key SW2 Short ON
-    if((displayMode.vfdCtrlModeCount+1) < vfdCtrlMode.size()){
-      displayMode.vfdCtrlModeCount++;
+    if((displayMode.dispModeVfdCount+1) < dispModeVfdTbl.size()){
+      displayMode.dispModeVfdCount++;
     }
     else{
-      displayMode.vfdCtrlModeCount = 0;
+      displayMode.dispModeVfdCount = 0;
     }
-    displayMode.dispModeVfd = vfdCtrlMode[displayMode.vfdCtrlModeCount];  // VFD表示モード
+    displayMode.dispModeVfd = dispModeVfdTbl[displayMode.dispModeVfdCount];  // VFD表示モード
 //    displayMode.dispModeVfd++;
   }
   else if(setKey == KEY_DOWN_S){  // ▼Key SW3 Short ON
-    if(displayMode.vfdCtrlModeCount > 0){
-      displayMode.vfdCtrlModeCount--;
+    if(displayMode.dispModeVfdCount > 0){
+      displayMode.dispModeVfdCount--;
     }
     else{
-      displayMode.vfdCtrlModeCount = vfdCtrlMode.size() -1;
+      displayMode.dispModeVfdCount = dispModeVfdTbl.size() -1;
     }
-    displayMode.dispModeVfd = vfdCtrlMode[displayMode.vfdCtrlModeCount];  // VFD表示モード
+    displayMode.dispModeVfd = dispModeVfdTbl[displayMode.dispModeVfdCount];  // VFD表示モード
 //    displayMode.dispModeVfd--;
   }
   else if(setKey == KEY_SET_S){   // SETKey SW1 Short ON
@@ -268,8 +268,8 @@ void modeCtrl::modeSetVFD(uint8_t setKey,uint8_t swKey)
   }
 
   if(swKey == SWKEY_DISP_MODE_VFD_CLR){
-    displayMode.vfdCtrlModeCount = 0;
-    displayMode.dispModeVfd = vfdCtrlMode[displayMode.vfdCtrlModeCount];  // VFD表示モード初期化
+    displayMode.dispModeVfdCount = 0;
+    displayMode.dispModeVfd = dispModeVfdTbl[displayMode.dispModeVfdCount];  // VFD表示モード初期化
   }
 
   return;
