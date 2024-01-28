@@ -124,14 +124,12 @@ void DispCtr::dataMake(struct DISPLAY_DATA inputData)
       if(numDispSqf == 0){
         waitTime = millis();
         numDispSqf = 1;
-        Serial.println(numDispSqf);
       }
       else{
         dispNumber();
         if(millis() - waitTime > (unsigned long)500){
           lastStdDispFormat = stdDispFormat;
           numDispSqf = 0;
-          Serial.println(numDispSqf);
         }
       }
     }else{
@@ -224,8 +222,8 @@ void DispCtr::dispNumber(void){
   dispTmp[3] = (uint16_t)DISP_NON;
   dispTmp[4] = (uint16_t)DISP_NON;
   dispTmp[5] = (uint16_t)DISP_NON;
-  dispTmp[6] = (uint16_t)stdDispFormat%10;
-  dispTmp[7] = (uint16_t)stdDispFormat/10;
+  dispTmp[6] = (uint16_t)vfdDispNum%10;
+  dispTmp[7] = (uint16_t)vfdDispNum/10;
   dispTmp[8] = (uint16_t)DISP_NON;
 
   piriodTmp[0] = 0x00;
@@ -633,6 +631,7 @@ uint8_t DispCtr::dispModeSet(dispMode mode)
     }
     displayMode = MODE_STD_DISP;
     stdDispFormat = mode.dispModeVfd;
+    vfdDispNum = mode.vfdCtrlModeCount;     // 
     ctrlModeSelect = mode.ctrlModeSelect;
     adjKeyData = 0;
   }

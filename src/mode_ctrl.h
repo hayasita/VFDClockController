@@ -18,6 +18,7 @@
 #endif
 
 #include <cstdint>
+#include <vector>
 
 #define dispModeVdf_Std         0
 
@@ -27,12 +28,6 @@
 #define dispModeOled_EventLogCtrl   2   // EventLog操作情報
 
 #define dispModeOled_Default    dispModeOled_SensorData
-
-/*
-#define dispCtrlTrg_Vfd         0
-#define dispCtrlTrg_M5OLED      1
-#define dispCtrlTrg_M5OLED      2
-*/
 
 // 操作モード
 #define ctrlMode_VfdDisp        0   // VFD表示
@@ -53,12 +48,21 @@
 #define SWKEY_SET_S   0x02  // Soft SW1 Short ON
 #define SWKEY_DISP_MODE_VFD_CLR 0x11  // VFD表示モードクリア要求
 
+// 表示モード
+#define VFD_DISP_DEFAULT                0     // VFD表示　標準表示
+#define VFD_DISP_TIMECLOCK              1     // VFD表示　時刻表示
+#define VFD_DISP_CALENDAR               2     // VFD表示　カレンダー表示
+#define VFD_DISP_TIME_SENSOR3           3     // VFD表示　時刻・気温・湿度・気圧
+#define VFD_DISP_TMP                    4     // VFD表示　気温表示
+
 struct dispMode{
   uint8_t ctrlModeSelect;     // 操作モード選択　0:モード切替 1:設定操作
   uint8_t adjKeyData;         // 設定操作用キー情報
   uint8_t ctrlMode;           // 操作モード
 
   uint8_t dispModeVfd;        // VFD表示モード
+  uint8_t vfdCtrlModeCount;   // VFD表示モードテーブルカウンタ
+
   uint8_t dispModeVfdCtrl;    // VFD設定表示モード
   uint8_t dispModeM5OLED;     // M5OLED表示モード
   uint8_t dispModeOLED;       // OLED表示モード
@@ -68,6 +72,8 @@ struct dispMode{
 class modeCtrl{
   public:
     modeCtrl(bool ssd1306,bool m5oled);     // コンストラクタ
+    void modeIni(void);                     // モード初期化
+    void vfdModeIni(void);                  // VFD表示モードテーブル初期化
 
     uint8_t getCtrlMode(void);              // 操作モード取得
     uint8_t getDispModeVfd(void);           // VFD表示モード取得
@@ -76,11 +82,14 @@ class modeCtrl{
     uint8_t getDispModeOLED(void);          // OLED表示モード取得
 
     dispMode modeSet(uint8_t setKey,uint8_t swKey);   // 操作モード設定
+    void modeSetVFD(uint8_t setKey,uint8_t swKey);    // VFD表示モード設定
 
   private:
     bool ssd1306Valid;          // OLED有無
     bool m5oledValid;           // M5OLED有無
     dispMode displayMode;       // モード情報
+
+    std::vector<uint8_t> vfdCtrlMode;   // VFD表示モードテーブル
 
 };
 
