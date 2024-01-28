@@ -55,6 +55,19 @@
 #define VFD_DISP_TIME_SENSOR3           3     // VFD表示　時刻・気温・湿度・気圧
 #define VFD_DISP_TMP                    4     // VFD表示　気温表示
 
+// VFD設定表示モード
+#define VFD_DISP_CLOCK_ADJ              0     // 時計調整
+#define VFD_DISP_CLOCK_ADJ_SET          1     // 時計調整実行
+#define VFD_DISP_CAL_ADJ                2     // カレンダー調整
+#define VFD_DISP_CAL_ADJ_SET            3     // カレンダー調整実行
+#define VFD_DISP_CLOCK_1224SEL          4     // 12h24h表示切替
+#define VFD_DISP_CLOCK_1224SEL_SET      5     // 12h24h表示切替実行
+#define VFD_DISP_FADETIME_ADJ           6     // クロスフェード時間設定
+#define VFD_DISP_FADETIME_ADJ_SET       7     // クロスフェード時間設定実行
+#define VFD_DISP_BRIGHTNESS_ADJ         8     // VFD輝度調整
+#define VFD_DISP_BRIGHTNESS_ADJ_SET     9     // VFD輝度調整実行
+#define VFD_DISP_BRIGHTNESS_VIEW        10    // VFD輝度設定値表示
+
 struct dispMode{
   uint8_t ctrlModeSelect;     // 操作モード選択　0:モード切替 1:設定操作
   uint8_t adjKeyData;         // 設定操作用キー情報
@@ -85,6 +98,7 @@ class modeCtrl{
 
     dispMode modeSet(uint8_t setKey,uint8_t swKey);   // 操作モード設定
     void modeSetVFD(uint8_t setKey,uint8_t swKey);    // VFD表示モード設定
+    void modeSetVfdCnt(uint8_t setKey,uint8_t swKey); // VFD設定表示モード設定
 
   private:
     bool ssd1306Valid;          // OLED有無
@@ -92,6 +106,7 @@ class modeCtrl{
     dispMode displayMode;       // モード情報
 
     std::vector<uint8_t> dispModeVfdTbl;        // VFD表示モードテーブル
+    std::vector<uint8_t> dispModeVfdCtrTbl;     // VFD設定表示モードテーブル
 
 };
 

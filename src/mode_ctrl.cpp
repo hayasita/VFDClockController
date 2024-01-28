@@ -47,7 +47,9 @@ void modeCtrl::modeIni(void)                     // モード初期化
   displayMode.dispModeVfdCount = 0;
   displayMode.dispModeVfd = dispModeVfdTbl[displayMode.dispModeVfdCount];  // VFD表示モード初期化
 
-  displayMode.dispModeVfdCtrl = 0;                      //VFD設定表示モード
+  displayMode.dispModeVfdCtrlCount = 0;
+  displayMode.dispModeVfdCtrl = dispModeVfdCtrTbl[displayMode.dispModeVfdCtrlCount];  //VFD設定表示モード
+
   displayMode.dispModeM5OLED = dispModeOled_Default;    // M5OLED表示モード初期化
   displayMode.dispModeOLED = dispModeOled_Default;      // OLED表示モード初期化
 
@@ -61,6 +63,12 @@ void modeCtrl::vfdModeIni(void)                  // VFD表示モードテーブ�
   dispModeVfdTbl.push_back(VFD_DISP_CALENDAR);       // VFD表示　カレンダー表示
   dispModeVfdTbl.push_back(VFD_DISP_TIME_SENSOR3);   // VFD表示　時刻・気温・湿度・気圧
   dispModeVfdTbl.push_back(VFD_DISP_TMP);            // VFD表示　気温表示
+
+  dispModeVfdCtrTbl.push_back(VFD_DISP_CLOCK_ADJ);      // VFD設定表示 時計調整
+  dispModeVfdCtrTbl.push_back(VFD_DISP_CAL_ADJ);        // カレンダー調整
+  dispModeVfdCtrTbl.push_back(VFD_DISP_CLOCK_1224SEL);  // 12h24h表示切替
+  dispModeVfdCtrTbl.push_back(VFD_DISP_FADETIME_ADJ);   // クロスフェード時間設定
+  dispModeVfdCtrTbl.push_back(VFD_DISP_BRIGHTNESS_ADJ); // VFD輝度調整
 
   return;
 }
@@ -131,28 +139,7 @@ dispMode modeCtrl::modeSet(uint8_t setKey,uint8_t swKey)        // モード設�
       modeSetVFD(setKey,swKey);       // VFD表示モード設定
     }
     else if(displayMode.ctrlMode == ctrlMode_VfdCtrl){  // 操作モード：VFD設定
-      if(setKey == kEY_SET_L){        // SETKey SW1 Long ON
-        if(m5oledValid){
-          displayMode.ctrlMode = ctrlMode_M5oled;   // M5OLEDあり　操作モード：VFD設定 -> M5OLED設定
-        }
-        else if(ssd1306Valid){
-          displayMode.ctrlMode = ctrlMode_Oled;     // M5OLEDなし　OLEDあり 操作モード：VFD設定 -> OLED設定
-        }
-        else{
-          displayMode.ctrlMode = ctrlMode_VfdDisp;  // M5OLEDなし　OLEDなし　操作モード：VFD設定 -> VFD表示
-        }
-      }
-      else if(setKey == KEY_SET_S){
-        displayMode.ctrlModeSelect = 1;                 // 操作モード選択　1:設定操作
-//        Serial.println("操作設定へ移行");
-      }
-      else if(setKey == KEY_UP_S){    // ▲Key SW2 Short ON
-        displayMode.dispModeVfdCtrl++;
-      }
-      else if(setKey == KEY_DOWN_S){  // ▼Key SW3 Short ON
-        displayMode.dispModeVfdCtrl--;
-      }
-
+      modeSetVfdCnt(setKey,swKey);    // VFD設定表示モード設定
     }
     else if(displayMode.ctrlMode == ctrlMode_M5oled){   // 操作モード：M5OLED設定
       if(setKey == kEY_SET_L){        // SETKey SW1 Long ON
@@ -274,6 +261,54 @@ void modeCtrl::modeSetVFD(uint8_t setKey,uint8_t swKey)
 
   return;
 }
+
+/**
+ * @brief VFD設定表示モード設定
+ * 
+ * @param setKey 物理キー入力情報
+ * @param swKey SW内部キー入力情報
+ */
+void modeCtrl::modeSetVfdCnt(uint8_t setKey,uint8_t swKey)
+{
+  if(setKey == kEY_SET_L){        // SETKey SW1 Long ON
+    if(m5oledValid){
+      displayMode.ctrlMode = ctrlMode_M5oled;   // M5OLEDあり　操作モード：VFD設定 -> M5OLED設定
+    }
+    else if(ssd1306Valid){
+      displayMode.ctrlMode = ctrlMode_Oled;     // M5OLEDなし　OLEDあり 操作モード：VFD設定 -> OLED設定
+    }
+    else{
+      displayMode.ctrlMode = ctrlMode_VfdDisp;  // M5OLEDなし　OLEDなし　操作モード：VFD設定 -> VFD表示
+    }
+  }
+  else if(setKey == KEY_SET_S){
+    displayMode.ctrlModeSelect = 1;                 // 操作モード選択　1:設定操作
+//        Serial.println("操作設定へ移行");
+  }
+  else if(setKey == KEY_UP_S){    // ▲Key SW2 Short ON
+    if((displayMode.dispModeVfdCtrlCount+1) < dispModeVfdCtrTbl.size()){
+      displayMode.dispModeVfdCtrlCount++;
+    }
+    else{
+      displayMode.dispModeVfdCtrlCount = 0;
+    }
+    displayMode.dispModeVfdCtrl = dispModeVfdCtrTbl[displayMode.dispModeVfdCtrlCount];
+//    displayMode.dispModeVfdCtrl++;
+  }
+  else if(setKey == KEY_DOWN_S){  // ▼Key SW3 Short ON
+    if(displayMode.dispModeVfdCtrlCount > 0){
+      displayMode.dispModeVfdCtrlCount--;
+    }
+    else{
+      displayMode.dispModeVfdCtrlCount = dispModeVfdCtrTbl.size() -1;
+    }
+    displayMode.dispModeVfdCtrl = dispModeVfdCtrTbl[displayMode.dispModeVfdCtrlCount];
+//    displayMode.dispModeVfdCtrl--;
+  }
+
+  return;
+}
+
 /*
 void DispCtr::dispModeSet(uint8_t setKey)
 {
