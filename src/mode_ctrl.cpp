@@ -23,6 +23,7 @@ modeCtrl::modeCtrl(bool ssd1306,bool m5oled)
   m5oledValid = m5oled;
 
   vfdModeIni();               // VFD表示モードテーブル初期化
+  vfdAdjModeIni();
 
   modeIni();                  // モード初期化
 /*
@@ -64,6 +65,11 @@ void modeCtrl::vfdModeIni(void)                  // VFD表示モードテーブ�
   dispModeVfdTbl.push_back(VFD_DISP_TIME_SENSOR3);   // VFD表示　時刻・気温・湿度・気圧
   dispModeVfdTbl.push_back(VFD_DISP_TMP);            // VFD表示　気温表示
 
+  return;
+}
+
+void modeCtrl::vfdAdjModeIni(void)               // VFD設定表示モードテーブル初期化
+{
   dispModeVfdCtrTbl.push_back(VFD_DISP_CLOCK_ADJ);      // VFD設定表示 時計調整
   dispModeVfdCtrTbl.push_back(VFD_DISP_CAL_ADJ);        // カレンダー調整
   dispModeVfdCtrTbl.push_back(VFD_DISP_CLOCK_1224SEL);  // 12h24h表示切替
@@ -293,6 +299,7 @@ void modeCtrl::modeSetVfdCnt(uint8_t setKey,uint8_t swKey)
       displayMode.dispModeVfdCtrlCount = 0;
     }
     displayMode.dispModeVfdCtrl = dispModeVfdCtrTbl[displayMode.dispModeVfdCtrlCount];
+//    Serial.println(displayMode.dispModeVfdCtrl);
 //    displayMode.dispModeVfdCtrl++;
   }
   else if(setKey == KEY_DOWN_S){  // ▼Key SW3 Short ON
@@ -303,6 +310,7 @@ void modeCtrl::modeSetVfdCnt(uint8_t setKey,uint8_t swKey)
       displayMode.dispModeVfdCtrlCount = dispModeVfdCtrTbl.size() -1;
     }
     displayMode.dispModeVfdCtrl = dispModeVfdCtrTbl[displayMode.dispModeVfdCtrlCount];
+//    Serial.println(displayMode.dispModeVfdCtrl);
 //    displayMode.dispModeVfdCtrl--;
   }
 

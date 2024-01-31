@@ -56,17 +56,17 @@
 #define VFD_DISP_TMP                    4     // VFD表示　気温表示
 
 // VFD設定表示モード
-#define VFD_DISP_CLOCK_ADJ              0     // 時計調整
-#define VFD_DISP_CLOCK_ADJ_SET          1     // 時計調整実行
-#define VFD_DISP_CAL_ADJ                2     // カレンダー調整
-#define VFD_DISP_CAL_ADJ_SET            3     // カレンダー調整実行
-#define VFD_DISP_CLOCK_1224SEL          4     // 12h24h表示切替
-#define VFD_DISP_CLOCK_1224SEL_SET      5     // 12h24h表示切替実行
-#define VFD_DISP_FADETIME_ADJ           6     // クロスフェード時間設定
-#define VFD_DISP_FADETIME_ADJ_SET       7     // クロスフェード時間設定実行
-#define VFD_DISP_BRIGHTNESS_ADJ         8     // VFD輝度調整
-#define VFD_DISP_BRIGHTNESS_ADJ_SET     9     // VFD輝度調整実行
-#define VFD_DISP_BRIGHTNESS_VIEW        10    // VFD輝度設定値表示
+#define VFD_DISP_CLOCK_ADJ              10    // 時計調整
+#define VFD_DISP_CLOCK_ADJ_SET          11    // 時計調整実行
+#define VFD_DISP_CAL_ADJ                12    // カレンダー調整
+#define VFD_DISP_CAL_ADJ_SET            13    // カレンダー調整実行
+#define VFD_DISP_CLOCK_1224SEL          14    // 12h24h表示切替
+#define VFD_DISP_CLOCK_1224SEL_SET      15    // 12h24h表示切替実行
+#define VFD_DISP_FADETIME_ADJ           16    // クロスフェード時間設定
+#define VFD_DISP_FADETIME_ADJ_SET       17    // クロスフェード時間設定実行
+#define VFD_DISP_BRIGHTNESS_ADJ         18    // VFD輝度調整
+#define VFD_DISP_BRIGHTNESS_ADJ_SET     19    // VFD輝度調整実行
+#define VFD_DISP_BRIGHTNESS_VIEW        20    // VFD輝度設定値表示
 
 struct dispMode{
   uint8_t ctrlModeSelect;     // 操作モード選択　0:モード切替 1:設定操作
@@ -89,6 +89,7 @@ class modeCtrl{
     modeCtrl(bool ssd1306,bool m5oled);     // コンストラクタ
     void modeIni(void);                     // モード初期化
     void vfdModeIni(void);                  // VFD表示モードテーブル初期化
+    void vfdAdjModeIni(void);               // VFD設定表示モードテーブル初期化
 
     uint8_t getCtrlMode(void);              // 操作モード取得
     uint8_t getDispModeVfd(void);           // VFD表示モード取得

@@ -164,7 +164,7 @@ class DispCtr{
     uint16_t fadetime_tmpw;                 // クロスフェード時間受け渡し用データ
     uint8_t fade;                           // クロスフェードON/OFF
 
-    uint8_t displayMode;                       // 表示モード
+    uint8_t displayMode;                    // 表示モード(表示/設定表示)
     uint8_t lastDispMode;                   // 前回表示モード
 
     uint8_t stdDispFormat;                  // VFD表示フォーマット指定
@@ -175,6 +175,7 @@ class DispCtr{
 
     // 設定画面表示制御
     uint8_t ctrlDispFormat;                 // VFD設定表示フォーマット指定
+    uint8_t laseCtrlDispFormat;             // VFD設定表示フォーマット指定前回値
     uint8_t ctrlModeSelect;                 // 操作モード選択　0:モード切替 1:設定操作
     uint8_t adjKeyData;                     // 設定操作用キー情報
 
@@ -197,6 +198,11 @@ class DispCtr{
 
     void clockAdjtitleDispdatMake(void);            // 時刻設定タイトル表示
     void clockAdjDispdatMake(uint8_t adjKeyData);   // 時刻設定画面表示
+
+    void calenderAdjtitleDispdatMake(void);         // カレンダー設定タイトル表示
+    void clock1224setAdjtitleDispdatMake(void);     // 12h24h表示切替
+    void crossfadeAdjDispdatMake(void);             // クロスフェード時間設定
+    void brightnessAdjtitleDispdatMake(void);       // VFD輝度調整
 
     void timeDispLcd(struct tm timeInfo);
     void debugTimeConf(void);
