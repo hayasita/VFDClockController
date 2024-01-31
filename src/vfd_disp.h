@@ -145,6 +145,16 @@ struct DISPLAY_DATA{
   struct tm timeInfo;
 };
 
+/**
+ * @brief 表示データ作成処理テーブル
+ * 
+ */
+class dispTbl{
+  public:
+    uint8_t dispModeVfd;                      // VFD表示モード
+    std::function<void()> dispDatMakeFunc;    // 表示データ作成関数
+};
+
 class DispCtr{
   public:
     DispCtr(void);
@@ -170,8 +180,6 @@ class DispCtr{
     uint8_t stdDispFormat;                  // VFD表示フォーマット指定
     uint8_t lastStdDispFormat;              // 前回VFD表示フォーマット指定
     uint8_t vfdDispNum;                     // VFD表示フォーマット表示番号
-    void dispFormatAdd(void);               // VFD表示フォーマット+1
-    void dispFormatDec(void);               // VFD表示フォーマット-1
 
     // 設定画面表示制御
     uint8_t ctrlDispFormat;                 // VFD設定表示フォーマット指定
@@ -207,6 +215,11 @@ class DispCtr{
     void timeDispLcd(struct tm timeInfo);
     void debugTimeConf(void);
     void debugDispConf(void);
+
+    std::vector<dispTbl> dispTableArray;          // 表示データ作成処理テーブル
+    void dispTableIni(void);                      // 表示データ作成処理テーブル初期化
+    struct DISPLAY_DATA dispInputData;            // 表示用データ
+    void dispDataMakeExec(uint8_t index);         // 表示データ作成処理実行
 
 };
 //GLOBAL DispCtr dispVFD;

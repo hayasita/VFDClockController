@@ -57,20 +57,32 @@ void DispCtr::init(void)
     disp_fadecount[i] = 0;  // クロスフェードサイクルカウンタ初期化
   }
 
+  dispTableIni();   // 表示データ作成処理テーブル初期化
+
     return;
 }
 
-void DispCtr::dispFormatAdd(void)               // VFD表示フォーマット+1
+/**
+ * @brief 表示データ作成処理テーブル初期化
+ * 
+ */
+void DispCtr::dispTableIni(void)
 {
-  stdDispFormat++;
-  return;
-}
-void DispCtr::dispFormatDec(void)               // VFD表示フォーマット-1
-{
-  stdDispFormat--;
-  return;
-}
+  dispTableArray.push_back( {VFD_DISP_TIMECLOCK       ,[&](){dispClock(dispInputData.timeInfo);}});     // 時刻表示
+  dispTableArray.push_back( {VFD_DISP_CALENDAR        ,[&](){dispCalender(dispInputData.timeInfo);}});  // カレンダー表示
+  dispTableArray.push_back( {VFD_DISP_TIME_SENSOR3    ,[&](){dispLoop1(dispInputData);}});              // 時刻＋温度＋湿度＋気圧
+  dispTableArray.push_back( {VFD_DISP_TMP             ,[&](){dispTemp(dispInputData);}});               // 気温表示
 
+  dispTableArray.push_back( {VFD_DISP_CLOCK_ADJ       ,[&](){clockAdjtitleDispdatMake();}});            // 時計調整
+  dispTableArray.push_back( {VFD_DISP_CLOCK_ADJ_SET   ,[&](){clockAdjDispdatMake(adjKeyData);}});       // 時計調整
+
+  dispTableArray.push_back( {VFD_DISP_CAL_ADJ         ,[&](){calenderAdjtitleDispdatMake();}});         // カレンダー調整
+  dispTableArray.push_back( {VFD_DISP_CLOCK_1224SEL   ,[&](){clock1224setAdjtitleDispdatMake();}});     // 12h24h表示切替
+  dispTableArray.push_back( {VFD_DISP_FADETIME_ADJ    ,[&](){crossfadeAdjDispdatMake();}});             // クロスフェード時間設定
+  dispTableArray.push_back( {VFD_DISP_BRIGHTNESS_ADJ  ,[&](){brightnessAdjtitleDispdatMake();}});       // VFD輝度調整
+
+  return;
+}
 
 void DispCtr::brightness_ini(void)
 {
@@ -111,7 +123,7 @@ void DispCtr::dataMake(struct DISPLAY_DATA inputData)
   static unsigned long waitTime;        // 表示番号表示タイマ
   static uint8_t numDispSqf = 0;
 
-  struct tm timeInfo = inputData.timeInfo;
+  dispInputData = inputData;
 
   if(confDat.dispFormatUpdatef == ON){    // 修正必要　表示フォーマットの0番をweb設定表示、他は固定とする
     confDat.dispFormatUpdatef = OFF;
@@ -139,53 +151,13 @@ void DispCtr::dataMake(struct DISPLAY_DATA inputData)
       else{
         dispFormat = stdDispFormat;
       }
-
-      if(dispFormat == 1){
-        dispClock(timeInfo);          // 時刻情報作成
-      }
-      else if(dispFormat == 2){
-        dispCalender(timeInfo);       // 日付表示
-      }
-      else if(dispFormat == 3){
-        dispLoop1(inputData);         // 時刻＋温度＋湿度＋気圧
-      }
-      else if(dispFormat == 4){
-        dispTemp(inputData);          // 温度表示データ表示
-      }
-      else{
-        dispClock(timeInfo);          // 時刻情報作成
-      }
+      dispDataMakeExec(dispFormat);   // 表示データ作成処理実行
     }
   }
   else{   // VFD設定表示モード
-    if(ctrlDispFormat == VFD_DISP_CLOCK_ADJ){
-      if(ctrlModeSelect == 0){
-        clockAdjtitleDispdatMake();   // タイトル表示
-      }
-      else{
-        clockAdjDispdatMake(adjKeyData);        // 設定操作
-      }
-    }else if(ctrlDispFormat == VFD_DISP_CAL_ADJ){
-      calenderAdjtitleDispdatMake();
-    }else if(ctrlDispFormat == VFD_DISP_CLOCK_1224SEL){
-      clock1224setAdjtitleDispdatMake();
-    }else if(ctrlDispFormat == VFD_DISP_FADETIME_ADJ){
-      crossfadeAdjDispdatMake();
-    }else if(ctrlDispFormat == VFD_DISP_BRIGHTNESS_ADJ){
-      brightnessAdjtitleDispdatMake();
-    }
+    dispDataMakeExec(ctrlDispFormat);   // 表示データ作成処理実行
   }
-/*
-  dispTmp[0] = DISP_00;
-  dispTmp[1] = DISP_01;
-  dispTmp[2] = DISP_02;
-  dispTmp[3] = DISP_03;
-  dispTmp[4] = DISP_04;
-  dispTmp[5] = DISP_05;
-  dispTmp[6] = DISP_06;
-  dispTmp[7] = DISP_07;
-  dispTmp[8] = DISP_08;
-*/
+
   // 表示データ作成
   for (i = 0; i < 9; i++) {
     if (dispTmp[i] <= FONT_MAX) {
@@ -218,6 +190,27 @@ void DispCtr::dataMake(struct DISPLAY_DATA inputData)
   brp = confDat.GetBr_digTmpp();
 
   portEXIT_CRITICAL(&timerMux);     // 割り込み許可
+
+  return;
+}
+
+/**
+ * @brief 表示データ作成処理実行
+ * 
+ * @param index モニタ番号
+ */
+void DispCtr::dispDataMakeExec(uint8_t index)
+{
+  std::vector<dispTbl>::iterator itr = std::find_if(dispTableArray.begin(), dispTableArray.end(), [&](dispTbl &c) {
+    return (c.dispModeVfd == index);
+  });
+  if(itr != dispTableArray.end()){
+    (*itr).dispDatMakeFunc();
+  }
+  else{
+    // テーブル検索失敗
+    dispClock(dispInputData.timeInfo);          // 時刻情報作成
+  }
 
   return;
 }
