@@ -257,6 +257,7 @@ void DispCtr::dispCalender(struct tm timeInfo)
   yearHl = (tmpYear % 1000) / 100;
   yearHh = tmpYear / 1000;
 
+  dispTmp[8] = DISP_NON;
   if(confDat.getDateDisplayFormat() == dateDispFormYymmdd){
     // DateDisplay Format yy.mm.dd
     dispTmp[0] = dayL;
@@ -610,6 +611,7 @@ uint8_t DispCtr::dispModeSet(dispMode mode)
     displayMode = MODE_ADJ_DISP;
     ctrlDispFormat = mode.dispModeVfdCtrl;      // VFD設定表示モード
     ctrlModeSelect = mode.ctrlModeSelect;       // 操作モード選択　0:モード切替 1:設定操作
+    vfdDispNum = mode.dispModeVfdCtrlCount;     // 
     adjKeyData = mode.adjKeyData;               // 設定操作用キー情報
 
     if(adjKeyData != 0){
@@ -732,7 +734,8 @@ void DispCtr::clockAdjtitleDispdatMake(void){
   const char disptxt[] = "CLOCK SET";
   dispScrolldatMake(disptxt,5,5);
   dispTmp[6] = DISP_NON;
-  dispTmp[7] = DISP_01;
+//  dispTmp[7] = DISP_01;
+  dispTmp[7] = (vfdDispNum + 1) % 10;
   dispTmp[8] = DISP_K1;
   piriodTmp[7] = 0x01;
 
@@ -762,7 +765,8 @@ void DispCtr::calenderAdjtitleDispdatMake(void)         // カレンダー設定
   char disptxt[] = "CALENDAR SET";
   dispScrolldatMake(disptxt,5,5);
   dispTmp[6] = DISP_NON;
-  dispTmp[7] = DISP_02;
+//  dispTmp[7] = DISP_02;
+  dispTmp[7] = (vfdDispNum + 1) % 10;
   dispTmp[8] = DISP_K1;
   piriodTmp[7] = 0x01;
 
@@ -774,7 +778,8 @@ void DispCtr::clock1224setAdjtitleDispdatMake(void)     // 12h24h表示切替
   char disptxt[] = "12H24H SEL";
   dispScrolldatMake(disptxt,5,5);
   dispTmp[6] = DISP_NON;
-  dispTmp[7] = DISP_03;
+//  dispTmp[7] = DISP_03;
+  dispTmp[7] = (vfdDispNum + 1) % 10;
   dispTmp[8] = DISP_K1;
   piriodTmp[7] = 0x01;
 
@@ -786,7 +791,8 @@ void DispCtr::crossfadeAdjDispdatMake(void)             // クロスフェード
   char disptxt[] = "CROSS FADE TIME SET";
   dispScrolldatMake(disptxt,5,5);
   dispTmp[6] = DISP_NON;
-  dispTmp[7] = DISP_04;
+//  dispTmp[7] = DISP_04;
+  dispTmp[7] = (vfdDispNum + 1) % 10;
   dispTmp[8] = DISP_K1;
   piriodTmp[7] = 0x01;
 
@@ -798,7 +804,8 @@ void DispCtr::brightnessAdjtitleDispdatMake(void)       // VFD輝度調整
   char disptxt[] = "BRIGHTNES SET";
   dispScrolldatMake(disptxt,5,5);
   dispTmp[6] = DISP_NON;
-  dispTmp[7] = DISP_05;
+//  dispTmp[7] = DISP_05;
+  dispTmp[7] = (vfdDispNum + 1) % 10;
   dispTmp[8] = DISP_K1;
   piriodTmp[7] = 0x01;
 
