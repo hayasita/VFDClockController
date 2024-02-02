@@ -620,10 +620,19 @@ uint8_t DispCtr::dispModeSet(dispMode mode)
       Serial.println(adjKeyData);
     }
 
-    if(adjKeyData == KEY_SET_S){    // setキーで設定完了条件満たす場合の条件を追加
-      swKey = SWKEY_SET_S;
-      status = "設定モード脱出要求";
+    if(ctrlDispFormat == VFD_DISP_CLOCK_1224SEL_SET){
+      if(adjKeyData == KEY_UP_S){
+        status = "Up!";
+      }
+      else if(adjKeyData == KEY_DOWN_S){
+        status = "Down!";
+      }
+      else if(adjKeyData == KEY_SET_S){    // setキーで設定完了条件満たす場合の条件を追加
+        swKey = SWKEY_SET_S;
+        status = "設定モード脱出要求";
+      }
     }
+
   //  }else if(mode.ctrlMode == ctrlMode_VfdDisp){        // VFD表示
   }else{      // VFD表示 他
     if(mode.ctrlMode == ctrlMode_VfdDisp){    // VFD表示
