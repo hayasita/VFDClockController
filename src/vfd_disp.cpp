@@ -78,6 +78,8 @@ void DispCtr::dispTableIni(void)
 
   dispTableArray.push_back( {VFD_DISP_CAL_ADJ         ,[&](){calenderAdjtitleDispdatMake();}});         // カレンダー調整
   dispTableArray.push_back( {VFD_DISP_CLOCK_1224SEL   ,[&](){clock1224setAdjtitleDispdatMake();}});     // 12h24h表示切替
+  dispTableArray.push_back( {VFD_DISP_CLOCK_1224SEL_SET   ,[&](){clock1224setDispdatMake();}});         // 12h24h表示切替実行
+
   dispTableArray.push_back( {VFD_DISP_FADETIME_ADJ    ,[&](){crossfadeAdjDispdatMake();}});             // クロスフェード時間設定
   dispTableArray.push_back( {VFD_DISP_BRIGHTNESS_ADJ  ,[&](){brightnessAdjtitleDispdatMake();}});       // VFD輝度調整
 
@@ -782,6 +784,31 @@ void DispCtr::clock1224setAdjtitleDispdatMake(void)     // 12h24h表示切替
   dispTmp[7] = (vfdDispNum + 1) % 10;
   dispTmp[8] = DISP_K1;
   piriodTmp[7] = 0x01;
+
+  return;
+}
+
+// 12h24h表示切替実行
+void DispCtr::clock1224setDispdatMake(void)
+{
+  dispTmp[0] = DISP_H;
+  if(confDat.GetFormatHwTmp() == 1){
+    dispTmp[1] = DISP_04;
+    dispTmp[2] = DISP_02;
+  }
+  else{
+    dispTmp[1] = DISP_02;
+    dispTmp[2] = DISP_01;
+  }
+
+  dispTmp[3] = DISP_NON;
+  dispTmp[4] = DISP_NON;
+  dispTmp[5] = DISP_NON;
+  dispTmp[6] = DISP_NON;
+  dispTmp[7] = DISP_03;
+  dispTmp[8] = DISP_K1;
+  piriodTmp[7] = 0x01;
+//  display_blinking_make(disp_tmp,8,1,1,1000);
 
   return;
 }

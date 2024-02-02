@@ -161,8 +161,13 @@ dispMode modeCtrl::modeSet(uint8_t setKey,uint8_t swKey)        // モード設�
     displayMode.adjKeyData = setKey;     // 設定操作用キー情報設定
     // 操作モード選択　1:設定操作
      if(swKey == SWKEY_SET_S){   // 
+//      else{
        displayMode.ctrlModeSelect = 0;                 // 操作モード選択　1:設定操作
 //       Serial.println("操作モード選択へ移行");
+//      }
+      if(displayMode.dispModeVfdCtrl == VFD_DISP_CLOCK_1224SEL_SET){
+        displayMode.dispModeVfdCtrl = VFD_DISP_CLOCK_1224SEL;
+      }
     }
 
     // 設定処理強制終了
@@ -246,6 +251,13 @@ void modeCtrl::modeSetVfdCnt(uint8_t setKey,uint8_t swKey)
   else if(setKey == KEY_SET_S){
     displayMode.ctrlModeSelect = 1;                 // 操作モード選択　1:設定操作
 //        Serial.println("操作設定へ移行");
+      if(displayMode.dispModeVfdCtrl == VFD_DISP_CLOCK_1224SEL){
+        displayMode.dispModeVfdCtrl = VFD_DISP_CLOCK_1224SEL_SET;
+      }
+      else if(displayMode.dispModeVfdCtrl == VFD_DISP_CLOCK_1224SEL_SET){
+        displayMode.dispModeVfdCtrl = VFD_DISP_CLOCK_1224SEL;
+      }
+
   }
   else if(setKey == KEY_UP_S){    // ▲Key SW2 Short ON
     if((displayMode.dispModeVfdCtrlCount+1) < dispModeVfdCtrTbl.size()){

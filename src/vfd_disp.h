@@ -209,6 +209,7 @@ class DispCtr{
 
     void calenderAdjtitleDispdatMake(void);         // カレンダー設定タイトル表示
     void clock1224setAdjtitleDispdatMake(void);     // 12h24h表示切替
+    void clock1224setDispdatMake(void);             // 12h24h表示切替実行
     void crossfadeAdjDispdatMake(void);             // クロスフェード時間設定
     void brightnessAdjtitleDispdatMake(void);       // VFD輝度調整
 
