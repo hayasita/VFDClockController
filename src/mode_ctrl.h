@@ -100,6 +100,8 @@ class modeCtrl{
     dispMode modeSet(uint8_t setKey,uint8_t swKey);   // 操作モード設定
     void modeSetVFD(uint8_t setKey,uint8_t swKey);    // VFD表示モード設定
     void modeSetVfdCnt(uint8_t setKey,uint8_t swKey); // VFD設定表示モード設定
+    void modeSetM5OLED(uint8_t setKey,uint8_t swKey); // M5OLED表示モード設定
+    void modeSetOLED(uint8_t setKey,uint8_t swKey);   // OLED表示モード設定
 
   private:
     bool ssd1306Valid;          // OLED有無

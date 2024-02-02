@@ -148,54 +148,10 @@ dispMode modeCtrl::modeSet(uint8_t setKey,uint8_t swKey)        // モード設�
       modeSetVfdCnt(setKey,swKey);    // VFD設定表示モード設定
     }
     else if(displayMode.ctrlMode == ctrlMode_M5oled){   // 操作モード：M5OLED設定
-      if(setKey == kEY_SET_L){        // SETKey SW1 Long ON
-        if(ssd1306Valid){
-          displayMode.ctrlMode = ctrlMode_Oled;     // OLEDあり　操作モード：M5OLED設定 -> OLED設定
-        }
-        else{
-          displayMode.ctrlMode = ctrlMode_VfdDisp;  // OLEDなし　操作モード：M5OLED設定 -> VFD表示
-        }
-      }
-      else if(setKey == KEY_UP_S){    // ▲Key SW2 Short ON
-        if(displayMode.dispModeM5OLED == dispModeOled_SensorData){
-          displayMode.dispModeM5OLED = dispModeOled_EventLogCtrl;         // M5OLED表示モード：環境センサデータ表示 -> EventLog操作情報
-        }
-        else if(displayMode.dispModeM5OLED == dispModeOled_EventLogCtrl){
-          displayMode.dispModeM5OLED = dispModeOled_SensorData;           // M5OLED表示モード：EventLog操作情報 -> 環境センサデータ表示
-        }
-      }
-      else if(setKey == KEY_DOWN_S){  // ▼Key SW3 Short ON
-        if(displayMode.dispModeM5OLED == dispModeOled_SensorData){
-          displayMode.dispModeM5OLED = dispModeOled_EventLogCtrl;         // M5OLED表示モード：環境センサデータ表示 -> EventLog操作情報
-        }
-        else if(displayMode.dispModeM5OLED == dispModeOled_EventLogCtrl){
-          displayMode.dispModeM5OLED = dispModeOled_SensorData;           // M5OLED表示モード：EventLog操作情報 -> 環境センサデータ表示
-        }
-      }
-
+      modeSetM5OLED(setKey,swKey);    // M5OLED表示モード設定
     }
     else if(displayMode.ctrlMode == ctrlMode_Oled){   // 操作モード：OLED設定
-      if(setKey == kEY_SET_L){        // SETKey SW1 Long ON
-        displayMode.ctrlMode = ctrlMode_VfdDisp;    // 操作モード：OLED設定 -> VFD表示
-      }
-
-      else if(setKey == KEY_UP_S){    // ▲Key SW2 Short ON
-        if(displayMode.dispModeOLED == dispModeOled_SensorData){
-          displayMode.dispModeOLED = dispModeOled_EventLogCtrl;         // OLED表示モード：環境センサデータ表示 -> EventLog操作情報
-        }
-        else if(displayMode.dispModeOLED == dispModeOled_EventLogCtrl){
-          displayMode.dispModeOLED = dispModeOled_SensorData;           // OLED表示モード：EventLog操作情報 -> 環境センサデータ表示
-        }
-      }
-      else if(setKey == KEY_DOWN_S){  // ▼Key SW2 Short ON
-        if(displayMode.dispModeOLED == dispModeOled_SensorData){
-          displayMode.dispModeOLED = dispModeOled_EventLogCtrl;         // OLED表示モード：環境センサデータ表示 -> EventLog操作情報
-        }
-        else if(displayMode.dispModeOLED == dispModeOled_EventLogCtrl){
-          displayMode.dispModeOLED = dispModeOled_SensorData;           // OLED表示モード：EventLog操作情報 -> 環境センサデータ表示
-        }
-      }
-
+      modeSetOLED(setKey,swKey);      // OLED表示モード設定
     }
     else{
 
@@ -313,6 +269,61 @@ void modeCtrl::modeSetVfdCnt(uint8_t setKey,uint8_t swKey)
 //    Serial.println(displayMode.dispModeVfdCtrl);
 //    displayMode.dispModeVfdCtrl--;
   }
+
+  return;
+}
+
+void modeCtrl::modeSetM5OLED(uint8_t setKey,uint8_t swKey) // M5OLED表示モード設定
+{
+      if(setKey == kEY_SET_L){        // SETKey SW1 Long ON
+        if(ssd1306Valid){
+          displayMode.ctrlMode = ctrlMode_Oled;     // OLEDあり　操作モード：M5OLED設定 -> OLED設定
+        }
+        else{
+          displayMode.ctrlMode = ctrlMode_VfdDisp;  // OLEDなし　操作モード：M5OLED設定 -> VFD表示
+        }
+      }
+      else if(setKey == KEY_UP_S){    // ▲Key SW2 Short ON
+        if(displayMode.dispModeM5OLED == dispModeOled_SensorData){
+          displayMode.dispModeM5OLED = dispModeOled_EventLogCtrl;         // M5OLED表示モード：環境センサデータ表示 -> EventLog操作情報
+        }
+        else if(displayMode.dispModeM5OLED == dispModeOled_EventLogCtrl){
+          displayMode.dispModeM5OLED = dispModeOled_SensorData;           // M5OLED表示モード：EventLog操作情報 -> 環境センサデータ表示
+        }
+      }
+      else if(setKey == KEY_DOWN_S){  // ▼Key SW3 Short ON
+        if(displayMode.dispModeM5OLED == dispModeOled_SensorData){
+          displayMode.dispModeM5OLED = dispModeOled_EventLogCtrl;         // M5OLED表示モード：環境センサデータ表示 -> EventLog操作情報
+        }
+        else if(displayMode.dispModeM5OLED == dispModeOled_EventLogCtrl){
+          displayMode.dispModeM5OLED = dispModeOled_SensorData;           // M5OLED表示モード：EventLog操作情報 -> 環境センサデータ表示
+        }
+      }
+
+  return;
+}
+void modeCtrl::modeSetOLED(uint8_t setKey,uint8_t swKey)   // OLED表示モード設定
+{
+      if(setKey == kEY_SET_L){        // SETKey SW1 Long ON
+        displayMode.ctrlMode = ctrlMode_VfdDisp;    // 操作モード：OLED設定 -> VFD表示
+      }
+
+      else if(setKey == KEY_UP_S){    // ▲Key SW2 Short ON
+        if(displayMode.dispModeOLED == dispModeOled_SensorData){
+          displayMode.dispModeOLED = dispModeOled_EventLogCtrl;         // OLED表示モード：環境センサデータ表示 -> EventLog操作情報
+        }
+        else if(displayMode.dispModeOLED == dispModeOled_EventLogCtrl){
+          displayMode.dispModeOLED = dispModeOled_SensorData;           // OLED表示モード：EventLog操作情報 -> 環境センサデータ表示
+        }
+      }
+      else if(setKey == KEY_DOWN_S){  // ▼Key SW2 Short ON
+        if(displayMode.dispModeOLED == dispModeOled_SensorData){
+          displayMode.dispModeOLED = dispModeOled_EventLogCtrl;         // OLED表示モード：環境センサデータ表示 -> EventLog操作情報
+        }
+        else if(displayMode.dispModeOLED == dispModeOled_EventLogCtrl){
+          displayMode.dispModeOLED = dispModeOled_SensorData;           // OLED表示モード：EventLog操作情報 -> 環境センサデータ表示
+        }
+      }
 
   return;
 }
