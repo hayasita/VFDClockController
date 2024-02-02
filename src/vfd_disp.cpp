@@ -611,9 +611,9 @@ uint8_t DispCtr::dispModeSet(dispMode mode)
 
   if(mode.ctrlMode == ctrlMode_VfdCtrl){   // VFD設定
     displayMode = MODE_ADJ_DISP;
-    ctrlDispFormat = mode.dispModeVfdCtrl;      // VFD設定表示モード
+    ctrlDispFormat = mode.dispModeVfd;      // VFD設定表示モード
     ctrlModeSelect = mode.ctrlModeSelect;       // 操作モード選択　0:モード切替 1:設定操作
-    vfdDispNum = mode.dispModeVfdCtrlCount;     // 
+    vfdDispNum = mode.dispModeVfdCount;     // 
     adjKeyData = mode.adjKeyData;               // 設定操作用キー情報
 
     if(adjKeyData != 0){

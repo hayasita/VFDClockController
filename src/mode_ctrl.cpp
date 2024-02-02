@@ -48,8 +48,8 @@ void modeCtrl::modeIni(void)                     // モード初期化
   displayMode.dispModeVfdCount = 0;
   displayMode.dispModeVfd = dispModeVfdTbl[displayMode.dispModeVfdCount];  // VFD表示モード初期化
 
-  displayMode.dispModeVfdCtrlCount = 0;
-  displayMode.dispModeVfdCtrl = dispModeVfdCtrTbl[displayMode.dispModeVfdCtrlCount];  //VFD設定表示モード
+//  displayMode.dispModeVfdCtrlCount = 0;
+//  displayMode.dispModeVfdCtrl = dispModeVfdCtrTbl[displayMode.dispModeVfdCtrlCount];  //VFD設定表示モード
 
   displayMode.dispModeM5OLED = dispModeOled_Default;    // M5OLED表示モード初期化
   displayMode.dispModeOLED = dispModeOled_Default;      // OLED表示モード初期化
@@ -104,10 +104,10 @@ uint8_t modeCtrl::getDispModeVfd(void)        // VFD表示モード取得
  * 
  * @return uint8_t 
  */
-uint8_t modeCtrl::getDispModeVfdCtrl(void)       // VFD設定表示モード取得
-{
-  return displayMode.dispModeVfdCtrl;
-}
+//uint8_t modeCtrl::getDispModeVfdCtrl(void)       // VFD設定表示モード取得
+//{
+//  return displayMode.dispModeVfdCtrl;
+//}
 
 /**
  * @brief M5OLED表示モード取得
@@ -165,8 +165,8 @@ dispMode modeCtrl::modeSet(uint8_t setKey,uint8_t swKey)        // モード設�
        displayMode.ctrlModeSelect = 0;                 // 操作モード選択　1:設定操作
 //       Serial.println("操作モード選択へ移行");
 //      }
-      if(displayMode.dispModeVfdCtrl == VFD_DISP_CLOCK_1224SEL_SET){
-        displayMode.dispModeVfdCtrl = VFD_DISP_CLOCK_1224SEL;
+      if(displayMode.dispModeVfd == VFD_DISP_CLOCK_1224SEL_SET){
+        displayMode.dispModeVfd = VFD_DISP_CLOCK_1224SEL;
       }
     }
 
@@ -196,6 +196,8 @@ void modeCtrl::modeSetVFD(uint8_t setKey,uint8_t swKey)
 {
   if(setKey == kEY_SET_L){        // SETKey SW1 Long ON
     displayMode.ctrlMode = ctrlMode_VfdCtrl;    // 操作モード：VFD表示 -> VFD設定
+    displayMode.dispModeVfdCount = 0;
+    displayMode.dispModeVfd = dispModeVfdCtrTbl[displayMode.dispModeVfdCount];  // VFD設定表示モード設定
   }
   else if(setKey == KEY_UP_S){    // ▲Key SW2 Short ON
     if((displayMode.dispModeVfdCount+1) < dispModeVfdTbl.size()){
@@ -240,6 +242,8 @@ void modeCtrl::modeSetVfdCnt(uint8_t setKey,uint8_t swKey)
   if(setKey == kEY_SET_L){        // SETKey SW1 Long ON
     if(m5oledValid){
       displayMode.ctrlMode = ctrlMode_M5oled;   // M5OLEDあり　操作モード：VFD設定 -> M5OLED設定
+      displayMode.dispModeVfdCount = 0;
+      displayMode.dispModeVfd = dispModeVfdTbl[displayMode.dispModeVfdCount];  // VFD表示モード初期化
     }
     else if(ssd1306Valid){
       displayMode.ctrlMode = ctrlMode_Oled;     // M5OLEDなし　OLEDあり 操作モード：VFD設定 -> OLED設定
@@ -251,35 +255,35 @@ void modeCtrl::modeSetVfdCnt(uint8_t setKey,uint8_t swKey)
   else if(setKey == KEY_SET_S){
     displayMode.ctrlModeSelect = 1;                 // 操作モード選択　1:設定操作
 //        Serial.println("操作設定へ移行");
-      if(displayMode.dispModeVfdCtrl == VFD_DISP_CLOCK_1224SEL){
-        displayMode.dispModeVfdCtrl = VFD_DISP_CLOCK_1224SEL_SET;
+      if(displayMode.dispModeVfd == VFD_DISP_CLOCK_1224SEL){
+        displayMode.dispModeVfd = VFD_DISP_CLOCK_1224SEL_SET;
       }
-      else if(displayMode.dispModeVfdCtrl == VFD_DISP_CLOCK_1224SEL_SET){
-        displayMode.dispModeVfdCtrl = VFD_DISP_CLOCK_1224SEL;
+      else if(displayMode.dispModeVfd == VFD_DISP_CLOCK_1224SEL_SET){
+        displayMode.dispModeVfd = VFD_DISP_CLOCK_1224SEL;
       }
 
   }
   else if(setKey == KEY_UP_S){    // ▲Key SW2 Short ON
-    if((displayMode.dispModeVfdCtrlCount+1) < dispModeVfdCtrTbl.size()){
-      displayMode.dispModeVfdCtrlCount++;
+    if((displayMode.dispModeVfdCount+1) < dispModeVfdCtrTbl.size()){
+      displayMode.dispModeVfdCount++;
     }
     else{
-      displayMode.dispModeVfdCtrlCount = 0;
+      displayMode.dispModeVfdCount = 0;
     }
-    displayMode.dispModeVfdCtrl = dispModeVfdCtrTbl[displayMode.dispModeVfdCtrlCount];
-//    Serial.println(displayMode.dispModeVfdCtrl);
-//    displayMode.dispModeVfdCtrl++;
+    displayMode.dispModeVfd = dispModeVfdCtrTbl[displayMode.dispModeVfdCount];
+//    Serial.println(displayMode.dispModeVfd);
+//    displayMode.dispModeVfd++;
   }
   else if(setKey == KEY_DOWN_S){  // ▼Key SW3 Short ON
-    if(displayMode.dispModeVfdCtrlCount > 0){
-      displayMode.dispModeVfdCtrlCount--;
+    if(displayMode.dispModeVfdCount > 0){
+      displayMode.dispModeVfdCount--;
     }
     else{
-      displayMode.dispModeVfdCtrlCount = dispModeVfdCtrTbl.size() -1;
+      displayMode.dispModeVfdCount = dispModeVfdCtrTbl.size() -1;
     }
-    displayMode.dispModeVfdCtrl = dispModeVfdCtrTbl[displayMode.dispModeVfdCtrlCount];
-//    Serial.println(displayMode.dispModeVfdCtrl);
-//    displayMode.dispModeVfdCtrl--;
+    displayMode.dispModeVfd = dispModeVfdCtrTbl[displayMode.dispModeVfdCount];
+//    Serial.println(displayMode.dispModeVfd);
+//    displayMode.dispModeVfd--;
   }
 
   return;
