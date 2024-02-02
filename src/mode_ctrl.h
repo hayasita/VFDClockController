@@ -76,9 +76,6 @@ struct dispMode{
   uint8_t dispModeVfd;        // VFD表示モード
   uint8_t dispModeVfdCount;   // VFD表示モードテーブルカウンタ
 
-//  uint8_t dispModeVfdCtrl;        // VFD設定表示モード
-//  uint8_t dispModeVfdCtrlCount;   // VFD設定表示モードテーブルカウンタ
-
   uint8_t dispModeM5OLED;     // M5OLED表示モード
   uint8_t dispModeOLED;       // OLED表示モード
 
@@ -93,7 +90,6 @@ class modeCtrl{
 
     uint8_t getCtrlMode(void);              // 操作モード取得
     uint8_t getDispModeVfd(void);           // VFD表示モード取得
-//    uint8_t getDispModeVfdCtrl(void);       // VFD設定表示モード取得
     uint8_t getDispModeM5OLED(void);        // M5OLED表示モード取得
     uint8_t getDispModeOLED(void);          // OLED表示モード取得
 

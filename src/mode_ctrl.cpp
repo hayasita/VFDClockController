@@ -48,9 +48,6 @@ void modeCtrl::modeIni(void)                     // モード初期化
   displayMode.dispModeVfdCount = 0;
   displayMode.dispModeVfd = dispModeVfdTbl[displayMode.dispModeVfdCount];  // VFD表示モード初期化
 
-//  displayMode.dispModeVfdCtrlCount = 0;
-//  displayMode.dispModeVfdCtrl = dispModeVfdCtrTbl[displayMode.dispModeVfdCtrlCount];  //VFD設定表示モード
-
   displayMode.dispModeM5OLED = dispModeOled_Default;    // M5OLED表示モード初期化
   displayMode.dispModeOLED = dispModeOled_Default;      // OLED表示モード初期化
 
@@ -98,16 +95,6 @@ uint8_t modeCtrl::getDispModeVfd(void)        // VFD表示モード取得
 {
   return displayMode.dispModeVfd;
 }
-
-/**
- * @brief VFD設定表示モード取得
- * 
- * @return uint8_t 
- */
-//uint8_t modeCtrl::getDispModeVfdCtrl(void)       // VFD設定表示モード取得
-//{
-//  return displayMode.dispModeVfdCtrl;
-//}
 
 /**
  * @brief M5OLED表示モード取得
@@ -344,42 +331,3 @@ void modeCtrl::modeSetOLED(uint8_t setKey,uint8_t swKey)   // OLED表示モー�
   return;
 }
 
-/*
-void DispCtr::dispModeSet(uint8_t setKey)
-{
-  String status;
-
-  status = "";
-  if(dispMode == MODE_STD_DISP){
-    if(setKey == kEY_SET_L){
-      dispMode = MODE_CLOCK_ADJ;
-      status = "Mode : MODE_CLOCK_ADJ";
-    }
-
-    if(setKey == KEY_UP_S){
-      stdDispFormat++;
-    }
-    else if(setKey == KEY_DOWN_S){
-      stdDispFormat--;
-    }
-
-  }
-  else if((dispMode >= MODE_CLOCK_ADJ) && (dispMode < MODE_ERR_)){
-    if(setKey == kEY_SET_L){
-      dispMode = MODE_STD_DISP;
-      status = "Mode : MODE_STD_DISP";
-    }
-  }
-
-  if(dispMode != lastDispMode){     // モード変更あり
-    lastDispMode = dispMode;        // 前回モード = 今回モード
-    dispScrolldatMakeIni();         // スクロール表示データ初期化
-//    dispBlinkingMakeIni();          // 表示データ点滅初期化
-  }
-
-  if(status.length() != 0){
-    Serial.println(status);
-  }
-  return;
-}
-*/
