@@ -186,6 +186,13 @@ class DispCtr{
     uint8_t ctrlModeSelect;                 // 操作モード選択　0:モード切替 1:設定操作
     uint8_t adjKeyData;                     // 設定操作用キー情報
 
+    // 表示データ点滅処理
+    uint8_t blinkingState;
+    uint8_t blinkingSqf;
+    long blinkingTimNowl;
+    void dispBlinkingMakeIni(void);                 // 表示データ点滅初期化
+    void dispBlinkingMake(uint8_t startp,uint8_t dispnum,uint8_t mode,long blink_interval);
+
     void dispNumber(void);                          // VFD表示番号表示データ作成
     void dispClock(struct tm timeInfo);             // 時刻表示データ作成
     void dispCalender(struct tm timeInfo);          // 日付表示データ作成
@@ -200,8 +207,6 @@ class DispCtr{
     uint8_t disp_point;
     void dispScrolldatMakeIni(void);            // スクロール表示データ初期化
     void dispScrolldatMake(const char *disp_data,uint8_t startp,uint8_t dispnum);
-
-    void dispBlinkingMakeIni(void);             // 表示データ点滅初期化
 
     // 各表示モードの表示データ作成処理
     void clockAdjtitleDispdatMake(void);            // 時刻設定タイトル表示

@@ -663,6 +663,7 @@ uint8_t DispCtr::dispModeSet(dispMode mode)
     lastAdjVfdDispFormat = vfdDispFormat;  // 前回モード = 今回モード
     dispScrolldatMakeIni();         // スクロール表示データ初期化
 //    dispBlinkingMakeIni();          // 表示データ点滅初期化
+    dispBlinkingMakeIni();                  // 表示データ点滅初期化
   }
 
   if(status.length() != 0){
@@ -739,6 +740,63 @@ void DispCtr::dispScrolldatMake(const char *disp_data,uint8_t startp,uint8_t dis
       disp_point = 0;
     }
     scroll_tim_nowl = millis();     // 前回スクロール時刻更新
+  }
+
+  return;
+}
+
+void DispCtr::dispBlinkingMakeIni(void)             // 表示データ点滅初期化
+{
+  blinkingState = 0;
+  blinkingSqf = 0;
+  blinkingTimNowl = millis();
+  return;
+}
+
+void DispCtr::dispBlinkingMake(uint8_t startp,uint8_t dispnum,uint8_t mode,long blinkInterval)
+{
+  uint8_t blink_switch;           // 点滅スイッチ
+
+  if((mode == 0) || (mode > 2)){
+    mode = 1;
+  }
+  if(startp > 8){
+    startp = 8;
+  }
+  if(dispnum > startp){
+    dispnum = startp;
+  }
+
+  if( ( millis() - blinkingTimNowl ) > blinkInterval){
+    blinkingTimNowl = millis();
+
+    if(blinkingState == 0){
+      blinkingState = 1;
+    }
+    else{
+      blinkingState = 0;
+      blinkingSqf++;
+    }
+  }
+
+  blink_switch = blinkingState;
+  if(mode == 1){              // 連続点滅 010101
+    blinkingSqf = 0;
+  }
+  else if(mode == 2){         // 2回点滅 010100 010100
+    if(blinkingSqf ==2){
+      blink_switch = 1;         // 強制消灯
+    }
+    else if(blinkingSqf >=3){
+      blinkingSqf = 0;
+    }
+  }
+
+  // 消灯処理
+  if(blink_switch == 1){
+    for(uint8_t i=0;i<1;i++){
+      dispTmp[startp + i] = DISP_NON;
+    }
   }
 
   return;
@@ -830,7 +888,7 @@ void DispCtr::clock1224setDispdatMake(void)
   dispTmp[7] = DISP_03;
   dispTmp[8] = DISP_K1;
   piriodTmp[7] = 0x01;
-//  display_blinking_make(disp_tmp,8,1,1,1000);
+  dispBlinkingMake(8,1,1,1000);
 
   return;
 }
