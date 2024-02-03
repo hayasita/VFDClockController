@@ -235,8 +235,8 @@ void OLEDDISP::printDeviceData(DevicePresence deviceDat)
   display.drawString(0, 10, buffer);
   snprintf(buffer, sizeof(buffer),"dispModeVfd:%d",deviceDat.displayMode.dispModeVfd);
   display.drawString(0, 20, buffer);
-  snprintf(buffer, sizeof(buffer),"dispModeVfdctrl:%d",deviceDat.displayMode.dispModeVfdCtrl);
-  display.drawString(0, 30, buffer);
+
+//  display.drawString(0, 30, buffer);
   snprintf(buffer, sizeof(buffer),"dispModeOLED:%d",deviceDat.displayMode.dispModeOLED);
   display.drawString(0, 40, buffer);
   snprintf(buffer, sizeof(buffer),"dispModeM5OLED:%d",deviceDat.displayMode.dispModeM5OLED);

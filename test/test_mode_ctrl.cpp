@@ -23,7 +23,7 @@ TEST(ModeCtrl, ctrlModechg_ini){
   // 初期値確認
   EXPECT_EQ(mode.getCtrlMode(), ctrlMode_VfdDisp);            // 操作モード取得：VFD表示
   EXPECT_EQ(mode.getDispModeVfd(), dispModeVfd_Default);      // VFD表示モード取得：初期値
-  EXPECT_EQ(mode.getDispModeVfdCtrl(), 0);                    // VFD設定表示モード取得：初期値
+//  EXPECT_EQ(mode.getDispModeVfdCtrl(), VFD_DISP_CLOCK_ADJ);   // VFD設定表示モード取得：初期値
   EXPECT_EQ(mode.getDispModeM5OLED(), dispModeOled_Default);  // M5OLED表示モード取得：初期値
   EXPECT_EQ(mode.getDispModeOLED(), dispModeOled_Default);    // OLED表示モード取得：初期値
 
@@ -32,10 +32,10 @@ TEST(ModeCtrl, ctrlModechg_ini){
   EXPECT_EQ(modeData.adjKeyData, 0);                          // 設定操作用キー情報
   EXPECT_EQ(modeData.ctrlMode, ctrlMode_VfdDisp);             // 操作モード
 
-  EXPECT_EQ(modeData.vfdCtrlModeCount, VFD_DISP_DEFAULT);     // VFD表示モード初期化
-  EXPECT_EQ(modeData.vfdCtrlModeCount, 0);                    // VFD表示モードテーブルカウンタ
+  EXPECT_EQ(modeData.dispModeVfdCount, VFD_DISP_DEFAULT);     // VFD表示モード初期化
+  EXPECT_EQ(modeData.dispModeVfdCount, 0);                    // VFD表示モードテーブルカウンタ
 
-  EXPECT_EQ(modeData.dispModeVfdCtrl, 0);                     //VFD設定表示モード
+//  EXPECT_EQ(modeData.dispModeVfdCtrl, VFD_DISP_CLOCK_ADJ);    //VFD設定表示モード
   EXPECT_EQ(modeData.dispModeM5OLED, dispModeOled_Default);   // M5OLED表示モード初期化
   EXPECT_EQ(modeData.dispModeOLED, dispModeOled_Default);     // OLED表示モード初期化
 }
@@ -268,6 +268,11 @@ TEST(ModeCtrl, ctrlModechg_Mini){
 
 }
 
+/**
+ * @brief Construct a new TEST object
+ * getDispModeVfd()状態遷移
+ * 
+ */
 TEST(ModeCtrl, modeSetVFD){
   dispMode modeData;
   modeCtrl mode(true,true);
