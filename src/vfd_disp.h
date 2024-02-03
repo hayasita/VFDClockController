@@ -177,24 +177,23 @@ class DispCtr{
     uint8_t displayMode;                    // 表示モード(表示/設定表示)
     uint8_t lastDispMode;                   // 前回表示モード
 
-    uint8_t stdDispFormat;                  // VFD表示フォーマット指定
-    uint8_t lastStdDispFormat;              // 前回VFD表示フォーマット指定
+    uint8_t vfdDispFormat;                  // VFD表示フォーマット指定
+    uint8_t lastVfdDispFormat;              // 前回VFD表示フォーマット指定
+    uint8_t lastAdjVfdDispFormat;
     uint8_t vfdDispNum;                     // VFD表示フォーマット表示番号
 
     // 設定画面表示制御
-    uint8_t ctrlDispFormat;                 // VFD設定表示フォーマット指定
-    uint8_t laseCtrlDispFormat;             // VFD設定表示フォーマット指定前回値
     uint8_t ctrlModeSelect;                 // 操作モード選択　0:モード切替 1:設定操作
     uint8_t adjKeyData;                     // 設定操作用キー情報
 
-    void dispNumber(void);                  // 表示番号表示データ作成
-    void dispClock(struct tm timeInfo);     // 時刻表示データ作成
-    void dispCalender(struct tm timeInfo);  // 日付表示データ作成
+    void dispNumber(void);                          // VFD表示番号表示データ作成
+    void dispClock(struct tm timeInfo);             // 時刻表示データ作成
+    void dispCalender(struct tm timeInfo);          // 日付表示データ作成
     void dispTemp(struct DISPLAY_DATA inputData);   // 温度表示データ作成
     void dispHum(struct DISPLAY_DATA inputData);    // 湿度表示データ作成
     void dispPres(struct DISPLAY_DATA inputData);   // 気圧表示データ作成
 
-    void dispLoop1(struct DISPLAY_DATA inputData);   // Loop表示
+    void dispLoop1(struct DISPLAY_DATA inputData);   // 時刻＋温度＋湿度＋気圧
 
 
     unsigned long scroll_tim_nowl;
@@ -204,23 +203,33 @@ class DispCtr{
 
     void dispBlinkingMakeIni(void);             // 表示データ点滅初期化
 
+    // 各表示モードの表示データ作成処理
     void clockAdjtitleDispdatMake(void);            // 時刻設定タイトル表示
     void clockAdjDispdatMake(uint8_t adjKeyData);   // 時刻設定画面表示
-
     void calenderAdjtitleDispdatMake(void);         // カレンダー設定タイトル表示
+    void calenderAdjDispdatMake(void);              // カレンダー調整実行
     void clock1224setAdjtitleDispdatMake(void);     // 12h24h表示切替
     void clock1224setDispdatMake(void);             // 12h24h表示切替実行
-    void crossfadeAdjDispdatMake(void);             // クロスフェード時間設定
+    void crossfadeAdjTitleDispdatMake(void);        // クロスフェード時間設定
+    void crossfadeAdjDispdatMake(void);             // クロスフェード時間設定実行
     void brightnessAdjtitleDispdatMake(void);       // VFD輝度調整
+    void brightnessAdjDispdatMake(void);            // VFD輝度調整実行
+    void brightnessDataViewDispdatMake(void);       // VFD輝度設定値表示
 
-    void timeDispLcd(struct tm timeInfo);
-    void debugTimeConf(void);
-    void debugDispConf(void);
-
+    // 表示データ作成処理実行テーブル処理
     std::vector<dispTbl> dispTableArray;          // 表示データ作成処理テーブル
     void dispTableIni(void);                      // 表示データ作成処理テーブル初期化
     struct DISPLAY_DATA dispInputData;            // 表示用データ
     void dispDataMakeExec(uint8_t index);         // 表示データ作成処理実行
+    
+    // 設定表示　設定処理実行テーブル処理
+    std::vector<disoTbl> adjTableArray;           // 設定実行処理テーブル
+    void adjTableIni(void);                       // 設定実行処理テーブル初期化
+
+    // 
+    void timeDispLcd(struct tm timeInfo);
+    void debugTimeConf(void);
+    void debugDispConf(void);
 
 };
 //GLOBAL DispCtr dispVFD;

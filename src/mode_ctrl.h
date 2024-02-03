@@ -55,6 +55,8 @@
 #define VFD_DISP_TIME_SENSOR3           3     // VFD表示　時刻・気温・湿度・気圧
 #define VFD_DISP_TMP                    4     // VFD表示　気温表示
 
+#define VFD_DISP_NUMBER                 9     // VFD表示番号
+
 // VFD設定表示モード
 #define VFD_DISP_CLOCK_ADJ              10    // 時計調整
 #define VFD_DISP_CLOCK_ADJ_SET          11    // 時計調整実行
