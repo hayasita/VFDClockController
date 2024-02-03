@@ -229,6 +229,7 @@ class DispCtr{
     
     // 設定表示　設定処理実行テーブル処理
     std::vector<disoTbl> adjTableArray;           // 設定実行処理テーブル
+    std::vector<dispTbl> adjTableArray;           // 設定実行処理テーブル
     void adjTableIni(void);                       // 設定実行処理テーブル初期化
 
     // 
