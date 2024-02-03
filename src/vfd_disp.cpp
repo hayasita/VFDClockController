@@ -76,7 +76,7 @@ void DispCtr::dispTableIni(void)
   dispTableArray.push_back( {VFD_DISP_TMP               ,[&](){dispTemp(dispInputData);}});               // 温度表示データ作成
 
   dispTableArray.push_back( {VFD_DISP_CLOCK_ADJ           ,[&](){clockAdjtitleDispdatMake();}});          // 時計調整
-  dispTableArray.push_back( {VFD_DISP_CLOCK_ADJ_SET       ,[&](){clockAdjDispdatMake(adjKeyData);}});     // 時計調整
+  dispTableArray.push_back( {VFD_DISP_CLOCK_ADJ_SET       ,[&](){clockAdjDispdatMake();}});               // 時計調整
   dispTableArray.push_back( {VFD_DISP_CAL_ADJ             ,[&](){calenderAdjtitleDispdatMake();}});       // カレンダー調整
   dispTableArray.push_back( {VFD_DISP_CAL_ADJ_SET         ,[&](){calenderAdjDispdatMake();}});            // カレンダー調整実行
   dispTableArray.push_back( {VFD_DISP_CLOCK_1224SEL       ,[&](){clock1224setAdjtitleDispdatMake();}});   // 12h24h表示切替
@@ -143,16 +143,14 @@ void DispCtr::dataMake(struct DISPLAY_DATA inputData)
         numDispSqf = 1;
       }
       else{
-//        dispFormat = VFD_DISP_NUMBER;
         if(millis() - waitTime > (unsigned long)500){
           lastVfdDispFormat = vfdDispFormat;
           numDispSqf = 0;
         }
       }
-      dispFormat = VFD_DISP_NUMBER;
+      dispFormat = VFD_DISP_NUMBER;             // VFD表示番号表示データ
     }else{
-//      if(vfdDispFormat == 0){         // Web設定の表示
-      if(vfdDispFormat == VFD_DISP_DEFAULT){         // Web設定の表示
+      if(vfdDispFormat == VFD_DISP_DEFAULT){    // Web設定の表示
         dispFormat = dispFormatWeb;
       }
       else{
@@ -659,10 +657,9 @@ uint8_t DispCtr::dispModeSet(dispMode mode)
   }
 
   if((displayMode != lastDispMode)||(vfdDispFormat != lastAdjVfdDispFormat)){     // モード変更あり
-    lastDispMode = displayMode;        // 前回モード = 今回モード
-    lastAdjVfdDispFormat = vfdDispFormat;  // 前回モード = 今回モード
-    dispScrolldatMakeIni();         // スクロール表示データ初期化
-//    dispBlinkingMakeIni();          // 表示データ点滅初期化
+    lastDispMode = displayMode;             // 前回モード = 今回モード
+    lastAdjVfdDispFormat = vfdDispFormat;   // 前回モード = 今回モード
+    dispScrolldatMakeIni();                 // スクロール表示データ初期化
     dispBlinkingMakeIni();                  // 表示データ点滅初期化
   }
 
@@ -824,7 +821,7 @@ void DispCtr::clockAdjtitleDispdatMake(void){
  * 
  * @param adjKeyData 操作キー入力
  */
-void DispCtr::clockAdjDispdatMake(uint8_t adjKeyData){  // カレンダー調整
+void DispCtr::clockAdjDispdatMake(void){  // カレンダー調整
 
   const char disptxt[] = "CLOCK ADJ";
   dispScrolldatMake(disptxt,5,5);
