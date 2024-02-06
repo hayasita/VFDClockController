@@ -58,9 +58,6 @@ void modeCtrl::modeIni(void)
   displayMode.dispModeM5OLEDCount = 0;            // M5OLED表示モードテーブルカウンタ
   displayMode.dispModeOLED = dispModeOledTbl[displayMode.dispModeM5OLEDCount];    // M5OLED表示モード初期化
 
-//  displayMode.dispModeM5OLED = dispModeOled_Default;    // M5OLED表示モード初期化
-//  displayMode.dispModeOLED = dispModeOled_Default;      // OLED表示モード初期化
-
   return;
 }
 

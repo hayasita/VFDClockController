@@ -20,15 +20,6 @@
 #include <cstdint>
 #include <vector>
 
-#define dispModeVdf_Std         0
-
-#define dispModeVfd_Default     dispModeVdf_Std
-
-#define dispModeOled_SensorData     1   // 環境センサデータ表示
-#define dispModeOled_EventLogCtrl   2   // EventLog操作情報
-
-#define dispModeOled_Default    dispModeOled_SensorData
-
 // 操作モード
 #define ctrlMode_VfdDisp        0   // VFD表示
 #define ctrlMode_VfdCtrl        1   // VFD設定
@@ -52,7 +43,7 @@
 #define VFD_DISP_DEFAULT                0     // VFD表示　標準表示
 #define VFD_DISP_TIMECLOCK              1     // VFD表示　時刻表示
 #define VFD_DISP_CALENDAR               2     // VFD表示　カレンダー表示
-#define VFD_DISP_TIME_SENSOR3           3     // VFD表示　時刻・気温・湿度・気圧
+#define VFD_DISP_TIME_SENSOR3           3     // VFD表示　時刻・気温・湿度・気圧表示
 #define VFD_DISP_TMP                    4     // VFD表示　気温表示
 
 #define VFD_DISP_NUMBER                 9     // VFD表示番号
