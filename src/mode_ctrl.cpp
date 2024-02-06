@@ -332,7 +332,7 @@ uint8_t modeCtrl::updownKeyModeSet(uint8_t setKey,std::vector<uint8_t> modeTbl,u
 {
   if(setKey == KEY_UP_S){    // ▲Key SW2 Short ON
     if((*modeCount+1) < modeTbl.size()){
-      *modeCount+=1;          // pointerなので++は不可
+      (*modeCount)++;
     }
     else{
       *modeCount = 0;
@@ -340,7 +340,7 @@ uint8_t modeCtrl::updownKeyModeSet(uint8_t setKey,std::vector<uint8_t> modeTbl,u
   }
   else if(setKey == KEY_DOWN_S){  // ▼Key SW3 Short ON
     if(*modeCount > 0){
-      *modeCount-=1;          // pointerなので--は不可
+      (*modeCount)--;
     }
     else{
       *modeCount = modeTbl.size() -1;
