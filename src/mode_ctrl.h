@@ -20,20 +20,11 @@
 #include <cstdint>
 #include <vector>
 
-#define dispModeVdf_Std         0
-
-#define dispModeVfd_Default     dispModeVdf_Std
-
-#define dispModeOled_SensorData     1   // 環境センサデータ表示
-#define dispModeOled_EventLogCtrl   2   // EventLog操作情報
-
-#define dispModeOled_Default    dispModeOled_SensorData
-
 // 操作モード
 #define ctrlMode_VfdDisp        0   // VFD表示
 #define ctrlMode_VfdCtrl        1   // VFD設定
-#define ctrlMode_M5oled         2   // M5OLED設定
-#define ctrlMode_Oled           3   // OLED設定
+#define ctrlMode_Oled           2   // OLED設定
+#define ctrlMode_M5oled         3   // M5OLED設定
 
 // キー入力
 #define KEY_WIFI_S  0x01  // Hard SW0 Short ON 
@@ -52,7 +43,7 @@
 #define VFD_DISP_DEFAULT                0     // VFD表示　標準表示
 #define VFD_DISP_TIMECLOCK              1     // VFD表示　時刻表示
 #define VFD_DISP_CALENDAR               2     // VFD表示　カレンダー表示
-#define VFD_DISP_TIME_SENSOR3           3     // VFD表示　時刻・気温・湿度・気圧
+#define VFD_DISP_TIME_SENSOR3           3     // VFD表示　時刻・気温・湿度・気圧表示
 #define VFD_DISP_TMP                    4     // VFD表示　気温表示
 
 #define VFD_DISP_NUMBER                 9     // VFD表示番号
@@ -70,16 +61,28 @@
 #define VFD_DISP_BRIGHTNESS_ADJ_SET     19    // VFD輝度調整実行
 #define VFD_DISP_BRIGHTNESS_VIEW        20    // VFD輝度設定値表示
 
+// OLED表示モード
+#define OLED_DISP_SENSOR_DATA           1     // 環境センサデータ表示
+#define OLED_DISP_EVENTLOG_CTRL         2     // EventLog操作情報
+
+// M5OLED表示モード
+#define M5OLED_DISP_SENSOR_DATA         1     // 環境センサデータ表示
+#define M5OLED_DISP_EVENTLOG_CTRL       2     // EventLog操作情報
+
 struct dispMode{
-  uint8_t ctrlModeSelect;     // 操作モード選択　0:モード切替 1:設定操作
-  uint8_t adjKeyData;         // 設定操作用キー情報
-  uint8_t ctrlMode;           // 操作モード
+  uint8_t ctrlModeSelect;       // 操作モード選択　0:モード切替 1:設定操作
+  uint8_t adjKeyData;           // 設定操作用キー情報
 
-  uint8_t dispModeVfd;        // VFD表示モード
-  uint8_t dispModeVfdCount;   // VFD表示モードテーブルカウンタ
+  uint8_t ctrlMode;             // 操作モード
 
-  uint8_t dispModeM5OLED;     // M5OLED表示モード
-  uint8_t dispModeOLED;       // OLED表示モード
+  uint8_t dispModeVfd;          // VFD表示モード
+  uint8_t dispModeVfdCount;     // VFD表示モードテーブルカウンタ
+
+  uint8_t dispModeOLED;         // OLED表示モード
+  uint8_t dispModeOLEDCount;    // OLED表示モードテーブルカウンタ
+
+  uint8_t dispModeM5OLED;       // M5OLED表示モード
+  uint8_t dispModeM5OLEDCount;  // M5OLED表示モードテーブルカウンタ
 
 };
 
@@ -87,8 +90,6 @@ class modeCtrl{
   public:
     modeCtrl(bool ssd1306,bool m5oled);     // コンストラクタ
     void modeIni(void);                     // モード初期化
-    void vfdModeIni(void);                  // VFD表示モードテーブル初期化
-    void vfdAdjModeIni(void);               // VFD設定表示モードテーブル初期化
 
     uint8_t getCtrlMode(void);              // 操作モード取得
     uint8_t getDispModeVfd(void);           // VFD表示モード取得
@@ -106,8 +107,17 @@ class modeCtrl{
     bool m5oledValid;           // M5OLED有無
     dispMode displayMode;       // モード情報
 
+    void vfdModeIni(void);                      // VFD表示モードテーブル初期化
+    void vfdAdjModeIni(void);                   // VFD設定表示モードテーブル初期化
+    void oledModeIni(void);                     // OLED表示モードテーブル初期化
+    void m5OledModeIni(void);                   // M5OLED表示モードテーブル初期化
+
     std::vector<uint8_t> dispModeVfdTbl;        // VFD表示モードテーブル
     std::vector<uint8_t> dispModeVfdCtrTbl;     // VFD設定表示モードテーブル
+    std::vector<uint8_t> dispModeOledTbl;       // OLRD表示モードテーブル
+    std::vector<uint8_t> dispModeM5oledTbl;     // M5OLRD表示モードテーブル
+
+    uint8_t updownKeyModeSet(uint8_t setKey,std::vector<uint8_t> modeTbl,uint8_t *modeCount);   // UpDownKeyによる操作モードテーブル参照
 
 };
 
