@@ -27,7 +27,8 @@ modeCtrl::modeCtrl(bool ssd1306,bool m5oled)
   oledModeIni();              // OLED表示モードテーブル初期化
   m5OledModeIni();            // M5OLED表示モードテーブル初期化
 
-  modeIni();                  // モード初期化
+  modeVFDIni();               // VFDモード初期化
+  modeOledIni();              // OLED,M5OLEDモード初期化
 /*
   Serial.println("modeCtrl::modeCtrl");
   Serial.print("ssd1306Valid:");
@@ -42,7 +43,7 @@ modeCtrl::modeCtrl(bool ssd1306,bool m5oled)
  * @brief モード初期化
  * 
  */
-void modeCtrl::modeIni(void)
+void modeCtrl::modeVFDIni(void)
 {
   displayMode.ctrlModeSelect = 0;                 // 操作モード選択　0:モード切替
   displayMode.adjKeyData = 0;                     // 設定操作用キー情報初期化
@@ -52,6 +53,11 @@ void modeCtrl::modeIni(void)
   displayMode.dispModeVfdCount = 0;               // VFD表示モードテーブルカウンタ
   displayMode.dispModeVfd = dispModeVfdTbl[displayMode.dispModeVfdCount];         // VFD表示モード初期化
 
+  return;
+}
+
+void modeCtrl::modeOledIni(void)                 // OLED,M5OLEDモード初期化
+{
   displayMode.dispModeOLEDCount = 0;              // OLED表示モードテーブルカウンタ
   displayMode.dispModeM5OLED = dispModeM5oledTbl[displayMode.dispModeOLEDCount];  // OLED表示モード初期化
 
@@ -60,6 +66,7 @@ void modeCtrl::modeIni(void)
 
   return;
 }
+
 
 /**
  * @brief VFD表示モードテーブル初期化
@@ -196,11 +203,8 @@ dispMode modeCtrl::modeSet(uint8_t setKey,uint8_t swKey)        // モード設�
 
     // 設定処理強制終了
     if(setKey == kEY_SET_L){        // SETKey SW1 Long ON
-      displayMode.ctrlModeSelect = 0;                 // 操作モード選択　0:モード切替
-      displayMode.ctrlMode = ctrlMode_VfdDisp;
-      displayMode.adjKeyData = 0;     // 設定操作用キー情報クリア
+      modeVFDIni();                 // VFDモード初期化
 //      Serial.println("操作モード選択へ強制移行");
-
     }
     else if(setKey == KEY_SET_S){
 //      Serial.println(displayMode.adjKeyData);

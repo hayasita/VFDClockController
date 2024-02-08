@@ -89,7 +89,8 @@ struct dispMode{
 class modeCtrl{
   public:
     modeCtrl(bool ssd1306,bool m5oled);     // コンストラクタ
-    void modeIni(void);                     // モード初期化
+    void modeVFDIni(void);                  // VFDモード初期化
+    void modeOledIni(void);                 // OLED,M5OLEDモード初期化
 
     uint8_t getCtrlMode(void);              // 操作モード取得
     uint8_t getDispModeVfd(void);           // VFD表示モード取得
