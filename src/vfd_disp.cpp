@@ -9,12 +9,12 @@ TFT_eSprite tftSprite = TFT_eSprite(&M5.Lcd); // スプライト
 
 DispCtr::DispCtr(void)
 {
-    dispTmp = new uint16_t[DISP_KETAMAX];
-    piriodTmp = new uint8_t[DISP_KETAMAX];
+//    dispTmp = new uint16_t[DISP_KETAMAX];
+//    piriodTmp = new uint8_t[DISP_KETAMAX];
     dispdataTmp = new uint16_t[DISP_KETAMAX];
 
-    displayMode = MODE_STD_DISP;   // 起動時の表示モード設定
-    lastDispMode = displayMode;    // 前回表示モード設定
+//    displayMode = MODE_STD_DISP;   // 起動時の表示モード設定
+//    lastDispMode = displayMode;    // 前回表示モード設定
 
 #ifdef ARDUINO_M5Stick_C
   // LCD Setting
@@ -50,7 +50,7 @@ void DispCtr::init(void)
   brightness_ini();                    // 輝度情報初期化
   vfdDispFormat = confDat.GetdispFormatw();           // 表示フォーマット取得
   lastVfdDispFormat = vfdDispFormat;
-  lastAdjVfdDispFormat = vfdDispFormat;
+//  lastAdjVfdDispFormat = vfdDispFormat;
 
   for(i = 0; i < 9; i++){
     disp[i] = 0;            // 数値表示データ初期化
@@ -67,25 +67,26 @@ void DispCtr::init(void)
  * @brief 表示データ作成処理テーブル初期化
  * 
  */
-void DispCtr::dispTableIni(void)
+//void DispCtr::dispTableIni(void)
+void dispDatMakeFunc::dispTableIni(void)
 {
-  dispTableArray.push_back( {VFD_DISP_NUMBER            ,[&](){dispNumber();}});                          // VFD表示番号表示データ作成
-  dispTableArray.push_back( {VFD_DISP_TIMECLOCK         ,[&](){dispClock(dispInputData.timeInfo);}});     // 時刻表示データ作成
-  dispTableArray.push_back( {VFD_DISP_CALENDAR          ,[&](){dispCalender(dispInputData.timeInfo);}});  // 日付表示データ作成
-  dispTableArray.push_back( {VFD_DISP_TIME_SENSOR3      ,[&](){dispLoop1(dispInputData);}});              // 時刻＋温度＋湿度＋気圧
-  dispTableArray.push_back( {VFD_DISP_TMP               ,[&](){dispTemp(dispInputData);}});               // 温度表示データ作成
+  dispTableArray.push_back( {VFD_DISP_NUMBER            ,1  ,[&](){dispNumber();}});                          // VFD表示番号表示データ作成
+  dispTableArray.push_back( {VFD_DISP_TIMECLOCK         ,1  ,[&](){dispClock(dispInputData.timeInfo);}});     // 時刻表示データ作成
+  dispTableArray.push_back( {VFD_DISP_CALENDAR          ,1  ,[&](){dispCalender(dispInputData.timeInfo);}});  // 日付表示データ作成
+  dispTableArray.push_back( {VFD_DISP_TIME_SENSOR3      ,1  ,[&](){dispLoop1(dispInputData);}});              // 時刻＋温度＋湿度＋気圧
+  dispTableArray.push_back( {VFD_DISP_TMP               ,1  ,[&](){dispTemp(dispInputData);}});               // 温度表示データ作成
 
-  dispTableArray.push_back( {VFD_DISP_CLOCK_ADJ           ,[&](){clockAdjtitleDispdatMake();}});          // 時計調整
-  dispTableArray.push_back( {VFD_DISP_CLOCK_ADJ_SET       ,[&](){clockAdjDispdatMake();}});               // 時計調整
-  dispTableArray.push_back( {VFD_DISP_CAL_ADJ             ,[&](){calenderAdjtitleDispdatMake();}});       // カレンダー調整
-  dispTableArray.push_back( {VFD_DISP_CAL_ADJ_SET         ,[&](){calenderAdjDispdatMake();}});            // カレンダー調整実行
-  dispTableArray.push_back( {VFD_DISP_CLOCK_1224SEL       ,[&](){clock1224setAdjtitleDispdatMake();}});   // 12h24h表示切替
-  dispTableArray.push_back( {VFD_DISP_CLOCK_1224SEL_SET   ,[&](){clock1224setDispdatMake();}});           // 12h24h表示切替実行
-  dispTableArray.push_back( {VFD_DISP_FADETIME_ADJ        ,[&](){crossfadeAdjTitleDispdatMake();}});      // クロスフェード時間設定
-  dispTableArray.push_back( {VFD_DISP_FADETIME_ADJ_SET    ,[&](){crossfadeAdjDispdatMake();}});           // クロスフェード時間設定実行
-  dispTableArray.push_back( {VFD_DISP_BRIGHTNESS_ADJ      ,[&](){brightnessAdjtitleDispdatMake();}});     // VFD輝度調整
-  dispTableArray.push_back( {VFD_DISP_BRIGHTNESS_ADJ_SET  ,[&](){brightnessAdjDispdatMake();}});          // VFD輝度調整実行
-  dispTableArray.push_back( {VFD_DISP_BRIGHTNESS_VIEW     ,[&](){brightnessDataViewDispdatMake();}});     // VFD輝度設定値表示
+  dispTableArray.push_back( {VFD_DISP_CLOCK_ADJ           ,0  ,[&](){clockAdjtitleDispdatMake();}});          // 時計調整
+  dispTableArray.push_back( {VFD_DISP_CLOCK_ADJ_SET       ,0  ,[&](){clockAdjDispdatMake();}});               // 時計調整
+  dispTableArray.push_back( {VFD_DISP_CAL_ADJ             ,0  ,[&](){calenderAdjtitleDispdatMake();}});       // カレンダー調整
+  dispTableArray.push_back( {VFD_DISP_CAL_ADJ_SET         ,0  ,[&](){calenderAdjDispdatMake();}});            // カレンダー調整実行
+  dispTableArray.push_back( {VFD_DISP_CLOCK_1224SEL       ,0  ,[&](){clock1224setAdjtitleDispdatMake();}});   // 12h24h表示切替
+  dispTableArray.push_back( {VFD_DISP_CLOCK_1224SEL_SET   ,0  ,[&](){clock1224setDispdatMake();}});           // 12h24h表示切替実行
+  dispTableArray.push_back( {VFD_DISP_FADETIME_ADJ        ,0  ,[&](){crossfadeAdjTitleDispdatMake();}});      // クロスフェード時間設定
+  dispTableArray.push_back( {VFD_DISP_FADETIME_ADJ_SET    ,0  ,[&](){crossfadeAdjDispdatMake();}});           // クロスフェード時間設定実行
+  dispTableArray.push_back( {VFD_DISP_BRIGHTNESS_ADJ      ,0  ,[&](){brightnessAdjtitleDispdatMake();}});     // VFD輝度調整
+  dispTableArray.push_back( {VFD_DISP_BRIGHTNESS_ADJ_SET  ,0  ,[&](){brightnessAdjDispdatMake();}});          // VFD輝度調整実行
+  dispTableArray.push_back( {VFD_DISP_BRIGHTNESS_VIEW     ,0  ,[&](){brightnessDataViewDispdatMake();}});     // VFD輝度設定値表示
 
   return;
 }
@@ -124,11 +125,13 @@ void DispCtr::dataMake(struct DISPLAY_DATA inputData)
   unsigned long dispdata;         // 表示データ作成用tmp
   uint16_t fadetime_tmpw;                     // クロスフェード時間受け渡し用データ
   uint8_t fade = ON;                          // クロスフェードON/OFF
-  static uint8_t dispFormatWeb;         // WebIF設定の表示モード
-  uint8_t dispFormat;                   // 表示フォーマット
-  static unsigned long waitTime;        // 表示番号表示タイマ
-  static uint8_t numDispSqf = 0;
+//  static uint8_t dispFormatWeb;         // WebIF設定の表示モード
+//  uint8_t dispFormat;                   // 表示フォーマット
+//  static unsigned long waitTime;        // 表示番号表示タイマ
+//  static uint8_t numDispSqf = 0;
 
+  vfdDispDataMakeSel(inputData);
+/*
   dispInputData = inputData;
 
   if(confDat.dispFormatUpdatef == ON){    // 修正必要　表示フォーマットの0番をweb設定表示、他は固定とする
@@ -162,6 +165,7 @@ void DispCtr::dataMake(struct DISPLAY_DATA inputData)
     dispFormat = vfdDispFormat;
   }
   dispDataMakeExec(dispFormat);   // 表示データ作成処理実行
+*/
 
   // 表示データ作成
   for (i = 0; i < 9; i++) {
@@ -199,12 +203,109 @@ void DispCtr::dataMake(struct DISPLAY_DATA inputData)
   return;
 }
 
+dispDatMakeFunc::dispDatMakeFunc(void)
+{
+  dispTmp = new uint16_t[DISP_KETAMAX];
+  piriodTmp = new uint8_t[DISP_KETAMAX];
+
+  return;
+}
+
+void dispDatMakeFunc::vfdDispDataMakeSel(struct DISPLAY_DATA inputData)          // VFD表示データ作製処理選択
+{
+  static uint8_t dispFormatWeb;         // WebIF設定の表示モード
+  uint8_t dispFormat;                   // 表示フォーマット
+  static unsigned long waitTime;        // 表示番号表示タイマ
+  static uint8_t numDispSqf = 0;
+
+  dispInputData = inputData;
+
+  if(confDat.dispFormatUpdatef == ON){    // 修正必要　表示フォーマットの0番をweb設定表示、他は固定とする
+    confDat.dispFormatUpdatef = OFF;
+    dispFormatWeb = confDat.GetdispFormatw();           // 表示フォーマット取得
+  }
+
+  if(vfdDispFormat != lastVfdDispFormat){
+//    if((displayMode != lastDispMode)||(vfdDispFormat != lastAdjVfdDispFormat)){     // モード変更あり
+//      lastDispMode = displayMode;             // 前回モード = 今回モード
+//      lastAdjVfdDispFormat = vfdDispFormat;   // 前回モード = 今回モード
+      dispScrolldatMakeIni();                 // スクロール表示データ初期化
+      dispBlinkingMakeIni();                  // 表示データ点滅初期化
+
+      std::vector<dispTbl>::iterator itr = std::find_if(dispTableArray.begin(), dispTableArray.end(), [&](dispTbl &c) {
+        return (c.dispModeVfd == vfdDispFormat);
+      });
+      if(itr != dispTableArray.end()){
+        numDispSqf = (*itr).dispNumSq;
+      }
+      else{
+        // テーブル検索失敗
+        numDispSqf = 1;
+      }
+      Serial.println(numDispSqf);
+
+      lastVfdDispFormat = vfdDispFormat;
+//    }
+  }
+
+  if(numDispSqf == 1){
+      waitTime = millis();
+      numDispSqf = 2;
+  }
+  if(numDispSqf == 2){
+    if(millis() - waitTime > (unsigned long)500){
+      numDispSqf = 0;
+    }
+    else{
+      dispFormat = VFD_DISP_NUMBER;             // VFD表示番号表示データ
+    }
+  }
+  else if(numDispSqf == 0){
+    if(vfdDispFormat == VFD_DISP_DEFAULT){    // Web設定の表示
+      dispFormat = dispFormatWeb;
+    }
+    else{
+      dispFormat = vfdDispFormat;
+    }
+  }
+  dispDataMakeExec(dispFormat);   // 表示データ作成処理実行
+/*
+  if(displayMode == MODE_STD_DISP){   // VFD表示モード
+    if(vfdDispFormat != lastVfdDispFormat){
+      if(numDispSqf == 0){
+        waitTime = millis();
+        numDispSqf = 1;
+      }
+      else{
+        if(millis() - waitTime > (unsigned long)500){
+          lastVfdDispFormat = vfdDispFormat;
+          numDispSqf = 0;
+        }
+      }
+      dispFormat = VFD_DISP_NUMBER;             // VFD表示番号表示データ
+    }else{
+      if(vfdDispFormat == VFD_DISP_DEFAULT){    // Web設定の表示
+        dispFormat = dispFormatWeb;
+      }
+      else{
+        dispFormat = vfdDispFormat;
+      }
+    }
+  }
+  else{   // VFD設定表示モード
+    dispFormat = vfdDispFormat;
+  }
+  dispDataMakeExec(dispFormat);   // 表示データ作成処理実行
+*/
+  return;
+}
+
 /**
  * @brief 表示データ作成処理実行
  * 
  * @param index モニタ番号
  */
-void DispCtr::dispDataMakeExec(uint8_t index)
+void dispDatMakeFunc::dispDataMakeExec(uint8_t index)
 {
   std::vector<dispTbl>::iterator itr = std::find_if(dispTableArray.begin(), dispTableArray.end(), [&](dispTbl &c) {
     return (c.dispModeVfd == index);
@@ -221,7 +322,7 @@ void DispCtr::dispDataMakeExec(uint8_t index)
 }
 
 // 表示番号表示データ作成
-void DispCtr::dispNumber(void){
+void dispDatMakeFunc::dispNumber(void){
   dispTmp[0] = (uint16_t)DISP_NON;
   dispTmp[1] = (uint16_t)DISP_NON;
   dispTmp[2] = (uint16_t)DISP_NON;
@@ -246,7 +347,7 @@ void DispCtr::dispNumber(void){
 }
 
 // 日付表示データ作成
-void DispCtr::dispCalender(struct tm timeInfo)
+void dispDatMakeFunc::dispCalender(struct tm timeInfo)
 {
   uint16_t tmpYear = timeInfo.tm_year + 1900;
   uint8_t tmpMonth = timeInfo.tm_mon + 1;
@@ -374,7 +475,7 @@ void DispCtr::dispCalender(struct tm timeInfo)
   return;
 }
 // 時計表示データ作成
-void DispCtr::dispClock(struct tm timeInfo)
+void dispDatMakeFunc::dispClock(struct tm timeInfo)
 {
   uint8_t hour;
   uint8_t hourH,hourL,minH,minL,secH,secL;
@@ -446,7 +547,7 @@ void DispCtr::dispClock(struct tm timeInfo)
 }
 
 // 温度表示データ表示
-void DispCtr::dispTemp(struct DISPLAY_DATA inputData)
+void dispDatMakeFunc::dispTemp(struct DISPLAY_DATA inputData)
 {
   uint16_t tempHH,tempHL,tempLH,tempLL;
 
@@ -481,7 +582,7 @@ void DispCtr::dispTemp(struct DISPLAY_DATA inputData)
 }
 
 // 湿度表示データ表示
-void DispCtr::dispHum(struct DISPLAY_DATA inputData)
+void dispDatMakeFunc::dispHum(struct DISPLAY_DATA inputData)
 {
   uint16_t tempHH,tempHL,tempLH,tempLL;
 
@@ -516,7 +617,7 @@ void DispCtr::dispHum(struct DISPLAY_DATA inputData)
 }
 
 // 気圧表示データ作成
-void DispCtr::dispPres(struct DISPLAY_DATA inputData)
+void dispDatMakeFunc::dispPres(struct DISPLAY_DATA inputData)
 {
   uint16_t tempHH,tempHL,tempLH,tempLL;
 
@@ -551,7 +652,7 @@ void DispCtr::dispPres(struct DISPLAY_DATA inputData)
 }
 
 
-void DispCtr::dispLoop1(struct DISPLAY_DATA inputData)   // Loop表示
+void dispDatMakeFunc::dispLoop1(struct DISPLAY_DATA inputData)   // Loop表示
 {
   static uint8_t time = 0;
   static uint8_t lastSec = 0;
@@ -607,17 +708,17 @@ void DispCtr::dispLCD(struct tm timeInfo)
  * @param mode 表示モードの情報
  * @return uint8_t 操作モード更新のsoftKey入力
  */
-uint8_t DispCtr::dispModeSet(dispMode mode)
+uint8_t dispDatMakeFunc::dispModeSet(dispMode mode)
 {
   String status;
   uint8_t swKey = 0;
 
   vfdDispFormat = mode.dispModeVfd;         // VFD表示フォーマット
   vfdDispNum = mode.dispModeVfdCount;       // VFD表示フォーマット表示番号
-  ctrlModeSelect = mode.ctrlModeSelect;     // 操作モード選択　0:モード切替 1:設定操作
+//  ctrlModeSelect = mode.ctrlModeSelect;     // 操作モード選択　0:モード切替 1:設定操作
 
   if(mode.ctrlMode == ctrlMode_VfdCtrl){   // VFD設定
-    displayMode = MODE_ADJ_DISP;
+//    displayMode = MODE_ADJ_DISP;
     adjKeyData = mode.adjKeyData;         // 設定操作用キー情報
 
     if(adjKeyData != 0){
@@ -643,7 +744,7 @@ uint8_t DispCtr::dispModeSet(dispMode mode)
 
   //  }else if(mode.ctrlMode == ctrlMode_VfdDisp){        // VFD表示
   }else{      // VFD表示 他
-    displayMode = MODE_STD_DISP;
+//    displayMode = MODE_STD_DISP;
     adjKeyData = 0;                 // 設定用キー入力なし
 
     if(mode.ctrlMode == ctrlMode_VfdDisp){    // VFD表示
@@ -655,14 +756,14 @@ uint8_t DispCtr::dispModeSet(dispMode mode)
       }
     }
   }
-
+/*
   if((displayMode != lastDispMode)||(vfdDispFormat != lastAdjVfdDispFormat)){     // モード変更あり
     lastDispMode = displayMode;             // 前回モード = 今回モード
     lastAdjVfdDispFormat = vfdDispFormat;   // 前回モード = 今回モード
     dispScrolldatMakeIni();                 // スクロール表示データ初期化
     dispBlinkingMakeIni();                  // 表示データ点滅初期化
   }
-
+*/
   if(status.length() != 0){
     Serial.println(status);
   }
@@ -672,7 +773,7 @@ uint8_t DispCtr::dispModeSet(dispMode mode)
 
 
 /* 表示スクロールデータ作成 */
-void DispCtr::dispScrolldatMakeIni(){
+void dispDatMakeFunc::dispScrolldatMakeIni(){
   disp_point = 0;
   scroll_tim_nowl = millis();
   return;
@@ -683,7 +784,7 @@ void DispCtr::dispScrolldatMakeIni(){
   uint8_t startp : 表示開始位置
   uint8_t dispnum : スクロール領域文字数
 */
-void DispCtr::dispScrolldatMake(const char *disp_data,uint8_t startp,uint8_t dispnum) {
+void dispDatMakeFunc::dispScrolldatMake(const char *disp_data,uint8_t startp,uint8_t dispnum) {
   unsigned char tmp;
   unsigned char disp_tmpp;
   long scrool_wait;
@@ -742,7 +843,7 @@ void DispCtr::dispScrolldatMake(const char *disp_data,uint8_t startp,uint8_t dis
   return;
 }
 
-void DispCtr::dispBlinkingMakeIni(void)             // 表示データ点滅初期化
+void dispDatMakeFunc::dispBlinkingMakeIni(void)             // 表示データ点滅初期化
 {
   blinkingState = 0;
   blinkingSqf = 0;
@@ -750,7 +851,7 @@ void DispCtr::dispBlinkingMakeIni(void)             // 表示データ点滅初�
   return;
 }
 
-void DispCtr::dispBlinkingMake(uint8_t startp,uint8_t dispnum,uint8_t mode,long blinkInterval)
+void dispDatMakeFunc::dispBlinkingMake(uint8_t startp,uint8_t dispnum,uint8_t mode,long blinkInterval)
 {
   uint8_t blink_switch;           // 点滅スイッチ
 
@@ -803,7 +904,7 @@ void DispCtr::dispBlinkingMake(uint8_t startp,uint8_t dispnum,uint8_t mode,long 
  * @brief 時刻設定タイトル表示
  * 
  */
-void DispCtr::clockAdjtitleDispdatMake(void){
+void dispDatMakeFunc::clockAdjtitleDispdatMake(void){
 
   const char disptxt[] = "CLOCK SET";
   dispScrolldatMake(disptxt,5,5);
@@ -821,7 +922,7 @@ void DispCtr::clockAdjtitleDispdatMake(void){
  * 
  * @param adjKeyData 操作キー入力
  */
-void DispCtr::clockAdjDispdatMake(void){  // カレンダー調整
+void dispDatMakeFunc::clockAdjDispdatMake(void){  // カレンダー調整
 
   const char disptxt[] = "CLOCK ADJ";
   dispScrolldatMake(disptxt,5,5);
@@ -834,7 +935,7 @@ void DispCtr::clockAdjDispdatMake(void){  // カレンダー調整
 }
 
 
-void DispCtr::calenderAdjtitleDispdatMake(void)         // カレンダー設定タイトル表示
+void dispDatMakeFunc::calenderAdjtitleDispdatMake(void)         // カレンダー設定タイトル表示
 {
   char disptxt[] = "CALENDAR SET";
   dispScrolldatMake(disptxt,5,5);
@@ -847,12 +948,12 @@ void DispCtr::calenderAdjtitleDispdatMake(void)         // カレンダー設定
   return;
 }
 
-void DispCtr::calenderAdjDispdatMake(void)  // カレンダー調整実行
+void dispDatMakeFunc::calenderAdjDispdatMake(void)  // カレンダー調整実行
 {
   return;
 }
 
-void DispCtr::clock1224setAdjtitleDispdatMake(void)     // 12h24h表示切替
+void dispDatMakeFunc::clock1224setAdjtitleDispdatMake(void)     // 12h24h表示切替
 {
   char disptxt[] = "12H24H SEL";
   dispScrolldatMake(disptxt,5,5);
@@ -866,7 +967,7 @@ void DispCtr::clock1224setAdjtitleDispdatMake(void)     // 12h24h表示切替
 }
 
 // 12h24h表示切替実行表示
-void DispCtr::clock1224setDispdatMake(void)
+void dispDatMakeFunc::clock1224setDispdatMake(void)
 {
   dispTmp[0] = DISP_H;
   if(confDat.GetFormatHwTmp() == 1){
@@ -890,7 +991,7 @@ void DispCtr::clock1224setDispdatMake(void)
   return;
 }
 
-void DispCtr::crossfadeAdjTitleDispdatMake(void)        // クロスフェード時間設定
+void dispDatMakeFunc::crossfadeAdjTitleDispdatMake(void)        // クロスフェード時間設定
 {
   char disptxt[] = "CROSS FADE TIME SET";
   dispScrolldatMake(disptxt,5,5);
@@ -903,7 +1004,7 @@ void DispCtr::crossfadeAdjTitleDispdatMake(void)        // クロスフェード
   return;
 }
 
-void DispCtr::crossfadeAdjDispdatMake(void)             // クロスフェード時間設定実行
+void dispDatMakeFunc::crossfadeAdjDispdatMake(void)             // クロスフェード時間設定実行
 {
   char disptxt[] = "CROSS FADE TIME SET";
   dispScrolldatMake(disptxt,5,5);
@@ -916,7 +1017,7 @@ void DispCtr::crossfadeAdjDispdatMake(void)             // クロスフェード
   return;
 }
 
-void DispCtr::brightnessAdjtitleDispdatMake(void)       // VFD輝度調整
+void dispDatMakeFunc::brightnessAdjtitleDispdatMake(void)       // VFD輝度調整
 {
   char disptxt[] = "BRIGHTNES SET";
   dispScrolldatMake(disptxt,5,5);
@@ -929,12 +1030,12 @@ void DispCtr::brightnessAdjtitleDispdatMake(void)       // VFD輝度調整
   return;
 }
 
-void DispCtr::brightnessAdjDispdatMake(void)       // VFD輝度調整実行
+void dispDatMakeFunc::brightnessAdjDispdatMake(void)       // VFD輝度調整実行
 {
   return;
 }
 
-void DispCtr::brightnessDataViewDispdatMake(void)       // VFD輝度設定値表示
+void dispDatMakeFunc::brightnessDataViewDispdatMake(void)       // VFD輝度設定値表示
 {
   return;
 }

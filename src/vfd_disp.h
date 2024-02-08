@@ -152,37 +152,106 @@ struct DISPLAY_DATA{
 class dispTbl{
   public:
     uint8_t dispModeVfd;                      // VFD表示モード
+    uint8_t dispNumSq;                        // VFD表示フォーマット表示有無　0:無 1:有
     std::function<void()> dispDatMakeFunc;    // 表示データ作成関数
 };
 
-class DispCtr{
+class dispDatMakeFunc{
+  public:
+    dispDatMakeFunc(void);
+    uint8_t dispModeSet(dispMode);                  // 表示モード設定
+    void vfdDispDataMakeSel(struct DISPLAY_DATA inputData);          // VFD表示データ作製処理選択
+    void dispTableIni(void);                      // 表示データ作成処理テーブル初期化
+
+    uint16_t *dispTmp;                      // 各桁表示データ
+    uint8_t *piriodTmp;                     // 各桁ピリオド
+//    uint8_t displayMode;                    // 表示モード(表示/設定表示)
+//    uint8_t lastDispMode;                   // 前回表示モード
+    uint8_t vfdDispFormat;                  // VFD表示フォーマット指定
+    uint8_t lastVfdDispFormat;              // 前回VFD表示フォーマット指定
+//    uint8_t lastAdjVfdDispFormat;
+
+  private:
+    // 表示データ作成処理実行テーブル処理
+    std::vector<dispTbl> dispTableArray;          // 表示データ作成処理テーブル
+    struct DISPLAY_DATA dispInputData;            // 表示用データ
+    void dispDataMakeExec(uint8_t index);         // 表示データ作成処理実行
+    
+    // 設定表示　設定処理実行テーブル処理
+    std::vector<dispTbl> adjTableArray;           // 設定実行処理テーブル
+    void adjTableIni(void);                       // 設定実行処理テーブル初期化
+
+    // 表示データスクロール処理
+    unsigned long scroll_tim_nowl;
+    uint8_t disp_point;
+    void dispScrolldatMakeIni(void);                // スクロール表示データ初期化
+    void dispScrolldatMake(const char *disp_data,uint8_t startp,uint8_t dispnum);
+
+    // 表示データ点滅処理
+    uint8_t blinkingState;
+    uint8_t blinkingSqf;
+    long blinkingTimNowl;
+    void dispBlinkingMakeIni(void);                 // 表示データ点滅初期化
+    void dispBlinkingMake(uint8_t startp,uint8_t dispnum,uint8_t mode,long blink_interval);
+
+    // 各表示モードの表示データ作成処理
+    void dispNumber(void);                          // VFD表示番号表示データ作成
+    void dispClock(struct tm timeInfo);             // 時刻表示データ作成
+    void dispCalender(struct tm timeInfo);          // 日付表示データ作成
+    void dispTemp(struct DISPLAY_DATA inputData);   // 温度表示データ作成
+    void dispHum(struct DISPLAY_DATA inputData);    // 湿度表示データ作成
+    void dispPres(struct DISPLAY_DATA inputData);   // 気圧表示データ作成
+    void dispLoop1(struct DISPLAY_DATA inputData);  // 時刻＋温度＋湿度＋気圧
+
+    void clockAdjtitleDispdatMake(void);            // 時刻設定タイトル表示
+    void clockAdjDispdatMake(void);                 // 時刻設定画面表示
+    void calenderAdjtitleDispdatMake(void);         // カレンダー設定タイトル表示
+    void calenderAdjDispdatMake(void);              // カレンダー調整実行
+    void clock1224setAdjtitleDispdatMake(void);     // 12h24h表示切替
+    void clock1224setDispdatMake(void);             // 12h24h表示切替実行
+    void crossfadeAdjTitleDispdatMake(void);        // クロスフェード時間設定
+    void crossfadeAdjDispdatMake(void);             // クロスフェード時間設定実行
+    void brightnessAdjtitleDispdatMake(void);       // VFD輝度調整
+    void brightnessAdjDispdatMake(void);            // VFD輝度調整実行
+    void brightnessDataViewDispdatMake(void);       // VFD輝度設定値表示
+
+    uint8_t vfdDispNum;                     // VFD表示フォーマット表示番号
+    uint8_t adjKeyData;                     // 設定操作用キー情報
+
+    // 設定画面表示制御
+//    uint8_t ctrlModeSelect;                 // 操作モード選択　0:モード切替 1:設定操作
+
+};
+
+class DispCtr : public dispDatMakeFunc
+//class DispCtr : private dispDatMakeFunc
+{
   public:
     DispCtr(void);
     void init(void);
-    uint8_t dispModeSet(dispMode);                  // 表示モード設定
     void dataMake(struct DISPLAY_DATA inputData);   // 表示データ作成
     void dispLCD(struct tm timeInfo);
 
 
   private:
     void brightness_ini(void);
-    uint16_t *dispTmp;                      // 各桁表示データ
-    uint8_t *piriodTmp;                     // 各桁ピリオド
+//    uint16_t *dispTmp;                      // 各桁表示データ
+//    uint8_t *piriodTmp;                     // 各桁ピリオド
     uint16_t *dispdataTmp;                  // 各桁表示データ(font情報)
     uint16_t dispdata;                      // 表示データ作成用tmp
     uint16_t fadetime_tmpw;                 // クロスフェード時間受け渡し用データ
     uint8_t fade;                           // クロスフェードON/OFF
 
-    uint8_t displayMode;                    // 表示モード(表示/設定表示)
-    uint8_t lastDispMode;                   // 前回表示モード
+//    uint8_t displayMode;                    // 表示モード(表示/設定表示)
+//    uint8_t lastDispMode;                   // 前回表示モード
 
-    uint8_t vfdDispFormat;                  // VFD表示フォーマット指定
-    uint8_t lastVfdDispFormat;              // 前回VFD表示フォーマット指定
-    uint8_t lastAdjVfdDispFormat;
-    uint8_t vfdDispNum;                     // VFD表示フォーマット表示番号
-
+//    uint8_t vfdDispFormat;                  // VFD表示フォーマット指定
+//    uint8_t lastVfdDispFormat;              // 前回VFD表示フォーマット指定
+//    uint8_t lastAdjVfdDispFormat;
+//    uint8_t vfdDispNum;                     // VFD表示フォーマット表示番号
+/*
     // 設定画面表示制御
-    uint8_t ctrlModeSelect;                 // 操作モード選択　0:モード切替 1:設定操作
+//    uint8_t ctrlModeSelect;                 // 操作モード選択　0:モード切替 1:設定操作
     uint8_t adjKeyData;                     // 設定操作用キー情報
 
     // 表示データスクロール処理
@@ -228,7 +297,7 @@ class DispCtr{
     // 設定表示　設定処理実行テーブル処理
     std::vector<dispTbl> adjTableArray;           // 設定実行処理テーブル
     void adjTableIni(void);                       // 設定実行処理テーブル初期化
-
+*/
     // 
     void timeDispLcd(struct tm timeInfo);
     void debugTimeConf(void);
