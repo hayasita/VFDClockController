@@ -153,7 +153,8 @@ class dispTbl{
   public:
     uint8_t dispModeVfd;                      // VFD表示モード
     uint8_t dispNumSq;                        // VFD表示フォーマット表示有無　0:無 1:有
-    std::function<void()> dispDatMakeFunc;    // 表示データ作成関数
+    std::function<void()> dispDatMakeFunc;    // 表示データ作成メンバ
+    std::function<uint8_t()> dispAdjFunc;     // 設定処理メンバ
 };
 
 class dispDatMakeFunc{
@@ -174,10 +175,6 @@ class dispDatMakeFunc{
     struct DISPLAY_DATA dispInputData;            // 表示用データ
     void dispDataMakeExec(uint8_t index);         // 表示データ作成処理実行
     
-    // 設定表示　設定処理実行テーブル処理
-    std::vector<dispTbl> adjTableArray;           // 設定実行処理テーブル
-    void adjTableIni(void);                       // 設定実行処理テーブル初期化
-
     // 表示データスクロール処理
     unsigned long scroll_tim_nowl;
     uint8_t disp_point;
@@ -211,6 +208,11 @@ class dispDatMakeFunc{
     void brightnessAdjtitleDispdatMake(void);       // VFD輝度調整
     void brightnessAdjDispdatMake(void);            // VFD輝度調整実行
     void brightnessDataViewDispdatMake(void);       // VFD輝度設定値表示
+
+    // 各設定モードの実行処理
+    uint8_t dummyExec(void);                        // 処理なし
+    uint8_t dispDefaultSetExec(void);               // 標準表示設定処理
+    uint8_t clock1224setAdjExec(void);              // 12h24h表示切替処理
 
     uint8_t vfdDispNum;                     // VFD表示フォーマット表示番号
     uint8_t adjKeyData;                     // 設定操作用キー情報

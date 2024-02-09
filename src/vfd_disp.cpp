@@ -52,8 +52,6 @@ void DispCtr::init(void)
     disp_fadecount[i] = 0;  // クロスフェードサイクルカウンタ初期化
   }
 
-  dispTableIni();   // 表示データ作成処理テーブル初期化
-
     return;
 }
 
@@ -157,6 +155,8 @@ dispDatMakeFunc::dispDatMakeFunc(void)
   dispTmp = new uint16_t[DISP_KETAMAX];
   piriodTmp = new uint8_t[DISP_KETAMAX];
 
+  dispTableIni();   // 表示データ作成処理テーブル初期化
+
   return;
 }
 
@@ -166,23 +166,24 @@ dispDatMakeFunc::dispDatMakeFunc(void)
  */
 void dispDatMakeFunc::dispTableIni(void)
 {
-  dispTableArray.push_back( {VFD_DISP_NUMBER            ,1  ,[&](){dispNumber();}});                          // VFD表示番号表示データ作成
-  dispTableArray.push_back( {VFD_DISP_TIMECLOCK         ,1  ,[&](){dispClock(dispInputData.timeInfo);}});     // 時刻表示データ作成
-  dispTableArray.push_back( {VFD_DISP_CALENDAR          ,1  ,[&](){dispCalender(dispInputData.timeInfo);}});  // 日付表示データ作成
-  dispTableArray.push_back( {VFD_DISP_TIME_SENSOR3      ,1  ,[&](){dispLoop1(dispInputData);}});              // 時刻＋温度＋湿度＋気圧
-  dispTableArray.push_back( {VFD_DISP_TMP               ,1  ,[&](){dispTemp(dispInputData);}});               // 温度表示データ作成
+  // 表示データ作成処理テーブル
+  dispTableArray.push_back( {VFD_DISP_NUMBER            ,1  ,[&](){dispNumber();}                             ,[&](){return dummyExec();}  });          // VFD表示番号表示データ作成
+  dispTableArray.push_back( {VFD_DISP_TIMECLOCK         ,1  ,[&](){dispClock(dispInputData.timeInfo);}        ,[&](){return dispDefaultSetExec();}  }); // 時刻表示データ作成
+  dispTableArray.push_back( {VFD_DISP_CALENDAR          ,1  ,[&](){dispCalender(dispInputData.timeInfo);}     ,[&](){return dispDefaultSetExec();}  }); // 日付表示データ作成
+  dispTableArray.push_back( {VFD_DISP_TIME_SENSOR3      ,1  ,[&](){dispLoop1(dispInputData);}                 ,[&](){return dispDefaultSetExec();}  }); // 時刻＋温度＋湿度＋気圧
+  dispTableArray.push_back( {VFD_DISP_TMP               ,1  ,[&](){dispTemp(dispInputData);}                  ,[&](){return dispDefaultSetExec();}  }); // 温度表示データ作成
 
-  dispTableArray.push_back( {VFD_DISP_CLOCK_ADJ           ,0  ,[&](){clockAdjtitleDispdatMake();}});          // 時計調整
-  dispTableArray.push_back( {VFD_DISP_CLOCK_ADJ_SET       ,0  ,[&](){clockAdjDispdatMake();}});               // 時計調整
-  dispTableArray.push_back( {VFD_DISP_CAL_ADJ             ,0  ,[&](){calenderAdjtitleDispdatMake();}});       // カレンダー調整
-  dispTableArray.push_back( {VFD_DISP_CAL_ADJ_SET         ,0  ,[&](){calenderAdjDispdatMake();}});            // カレンダー調整実行
-  dispTableArray.push_back( {VFD_DISP_CLOCK_1224SEL       ,0  ,[&](){clock1224setAdjtitleDispdatMake();}});   // 12h24h表示切替
-  dispTableArray.push_back( {VFD_DISP_CLOCK_1224SEL_SET   ,0  ,[&](){clock1224setDispdatMake();}});           // 12h24h表示切替実行
-  dispTableArray.push_back( {VFD_DISP_FADETIME_ADJ        ,0  ,[&](){crossfadeAdjTitleDispdatMake();}});      // クロスフェード時間設定
-  dispTableArray.push_back( {VFD_DISP_FADETIME_ADJ_SET    ,0  ,[&](){crossfadeAdjDispdatMake();}});           // クロスフェード時間設定実行
-  dispTableArray.push_back( {VFD_DISP_BRIGHTNESS_ADJ      ,0  ,[&](){brightnessAdjtitleDispdatMake();}});     // VFD輝度調整
-  dispTableArray.push_back( {VFD_DISP_BRIGHTNESS_ADJ_SET  ,0  ,[&](){brightnessAdjDispdatMake();}});          // VFD輝度調整実行
-  dispTableArray.push_back( {VFD_DISP_BRIGHTNESS_VIEW     ,0  ,[&](){brightnessDataViewDispdatMake();}});     // VFD輝度設定値表示
+  dispTableArray.push_back( {VFD_DISP_CLOCK_ADJ           ,0  ,[&](){clockAdjtitleDispdatMake();}             ,[&](){return dummyExec();}  });          // 時計調整
+  dispTableArray.push_back( {VFD_DISP_CLOCK_ADJ_SET       ,0  ,[&](){clockAdjDispdatMake();}                  ,[&](){return dummyExec();}  });          // 時計調整
+  dispTableArray.push_back( {VFD_DISP_CAL_ADJ             ,0  ,[&](){calenderAdjtitleDispdatMake();}          ,[&](){return dummyExec();}  });          // カレンダー調整
+  dispTableArray.push_back( {VFD_DISP_CAL_ADJ_SET         ,0  ,[&](){calenderAdjDispdatMake();}               ,[&](){return dummyExec();}  });          // カレンダー調整実行
+  dispTableArray.push_back( {VFD_DISP_CLOCK_1224SEL       ,0  ,[&](){clock1224setAdjtitleDispdatMake();}      ,[&](){return dummyExec();}  });          // 12h24h表示切替
+  dispTableArray.push_back( {VFD_DISP_CLOCK_1224SEL_SET   ,0  ,[&](){clock1224setDispdatMake();}              ,[&](){return clock1224setAdjExec();}  });  // 12h24h表示切替実行
+  dispTableArray.push_back( {VFD_DISP_FADETIME_ADJ        ,0  ,[&](){crossfadeAdjTitleDispdatMake();}         ,[&](){return dummyExec();}  });   // クロスフェード時間設定
+  dispTableArray.push_back( {VFD_DISP_FADETIME_ADJ_SET    ,0  ,[&](){crossfadeAdjDispdatMake();}              ,[&](){return dummyExec();}  });   // クロスフェード時間設定実行
+  dispTableArray.push_back( {VFD_DISP_BRIGHTNESS_ADJ      ,0  ,[&](){brightnessAdjtitleDispdatMake();}        ,[&](){return dummyExec();}  });   // VFD輝度調整
+  dispTableArray.push_back( {VFD_DISP_BRIGHTNESS_ADJ_SET  ,0  ,[&](){brightnessAdjDispdatMake();}             ,[&](){return dummyExec();}  });   // VFD輝度調整実行
+  dispTableArray.push_back( {VFD_DISP_BRIGHTNESS_VIEW     ,0  ,[&](){brightnessDataViewDispdatMake();}        ,[&](){return dummyExec();}  });   // VFD輝度設定値表示
 
   return;
 }
@@ -278,42 +279,86 @@ uint8_t dispDatMakeFunc::dispModeSet(dispMode mode)
   vfdDispFormat = mode.dispModeVfd;         // VFD表示フォーマット
   vfdDispNum = mode.dispModeVfdCount;       // VFD表示フォーマット表示番号
 
-  if(mode.ctrlMode == ctrlMode_VfdCtrl){   // VFD設定
-    adjKeyData = mode.adjKeyData;         // 設定操作用キー情報
+  adjKeyData = mode.adjKeyData;         // 設定操作用キー情報
 
-    if(adjKeyData != 0){
-      Serial.println(adjKeyData);
+  if(adjKeyData != 0){
+    Serial.println(adjKeyData);
+  }
+
+  std::vector<dispTbl>::iterator itr = std::find_if(dispTableArray.begin(), dispTableArray.end(), [&](dispTbl &c) {
+    return (c.dispModeVfd == vfdDispFormat);
+  });
+  if(itr != dispTableArray.end()){
+    swKey = (*itr).dispAdjFunc();
+  }
+  else{
+    // テーブル検索失敗
+    swKey = dummyExec();          // 
+  }
+
+  if(status.length() != 0){
+    Serial.println(status);
+  }
+
+  return swKey;
+}
+
+/**
+ * @brief 処理なし
+ * 
+ * @return uint8_t SW内部キー入力情報
+ */
+uint8_t dispDatMakeFunc::dummyExec(void)
+{
+  return 0;
+}
+
+/**
+ * @brief 標準表示設定処理
+ * 
+ * @return uint8_t SW内部キー入力情報
+ */
+uint8_t dispDatMakeFunc::dispDefaultSetExec(void)
+{
+  String status;
+  uint8_t swKey = 0;
+
+  if((adjKeyData == KEY_SET_S) && (adjKeyData != 0)){    // setキーで現在表示している表示を0番に設定
+    confDat.SetdispFormatw(vfdDispFormat);                       // 表示フォーマット設定
+    status = "confDat.SetdispFormatw";
+    swKey = SWKEY_DISP_MODE_VFD_CLR;                                // VFD表示モード初期化要求
+  }
+
+  if(status.length() != 0){
+    Serial.println(status);
+  }
+
+  return swKey;
+}
+
+/**
+ * @brief 12h24h表示切替処理
+ * 
+ * @return uint8_t SW内部キー入力情報
+ */
+uint8_t dispDatMakeFunc::clock1224setAdjExec(void)
+{
+  String status;
+  uint8_t swKey = 0;
+
+  if((adjKeyData == KEY_UP_S) || (adjKeyData == KEY_DOWN_S)){
+    status = "Up! Down!";
+    if(confDat.GetFormatHwTmp() == 1){
+      confDat.SetFormatHwTmp(0);
     }
-
-    if(vfdDispFormat == VFD_DISP_CLOCK_1224SEL_SET){
-      if((adjKeyData == KEY_UP_S) || (adjKeyData == KEY_DOWN_S)){
-        status = "Up! Down!";
-        if(confDat.GetFormatHwTmp() == 1){
-          confDat.SetFormatHwTmp(0);
-        }
-        else{
-          confDat.SetFormatHwTmp(1);
-        }
-      }
-      else if(adjKeyData == KEY_SET_S){    // setキーで設定完了条件満たす場合の条件を追加
-        confDat.SetFormatHw(confDat.GetFormatHwTmp());
-        swKey = SWKEY_SET_S;              // 設定モード脱出要求
-        status = "設定モード脱出要求";
-      }
+    else{
+      confDat.SetFormatHwTmp(1);
     }
-
-  }else{      // VFD表示 他
-    adjKeyData = 0;                 // 設定用キー入力なし
-
-    if(mode.ctrlMode == ctrlMode_VfdDisp){    // VFD表示
-      if((mode.adjKeyData == KEY_SET_S) && (mode.dispModeVfd != 0)){    // setキーで現在表示している表示を0番に設定
-        confDat.SetdispFormatw(mode.dispModeVfd);                       // 表示フォーマット設定
-        status = "confDat.SetdispFormatw";
-        swKey = SWKEY_DISP_MODE_VFD_CLR;                                // VFD表示モード初期化要求
-      }
-      else{
-      }
-    }
+  }
+  else if(adjKeyData == KEY_SET_S){    // setキーで設定完了条件満たす場合の条件を追加
+    confDat.SetFormatHw(confDat.GetFormatHwTmp());
+    swKey = SWKEY_SET_S;              // 設定モード脱出要求
+    status = "設定モード脱出要求";
   }
 
   if(status.length() != 0){
