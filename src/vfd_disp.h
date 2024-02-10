@@ -213,7 +213,8 @@ class dispDatMakeFunc{
     uint8_t dummyExec(void);                        // 処理なし
     uint8_t dispDefaultSetExec(void);               // 標準表示設定処理
     uint8_t clock1224setAdjExec(void);              // 12h24h表示切替処理
-
+    uint8_t fadetimeAdjExec(void);                  // クロスフェード時間設定処理
+    
     uint8_t vfdDispNum;                     // VFD表示フォーマット表示番号
     uint8_t adjKeyData;                     // 設定操作用キー情報
 

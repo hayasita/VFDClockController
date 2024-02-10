@@ -178,9 +178,9 @@ void dispDatMakeFunc::dispTableIni(void)
   dispTableArray.push_back( {VFD_DISP_CAL_ADJ             ,0  ,[&](){calenderAdjtitleDispdatMake();}          ,[&](){return dummyExec();}  });          // カレンダー調整
   dispTableArray.push_back( {VFD_DISP_CAL_ADJ_SET         ,0  ,[&](){calenderAdjDispdatMake();}               ,[&](){return dummyExec();}  });          // カレンダー調整実行
   dispTableArray.push_back( {VFD_DISP_CLOCK_1224SEL       ,0  ,[&](){clock1224setAdjtitleDispdatMake();}      ,[&](){return dummyExec();}  });          // 12h24h表示切替
-  dispTableArray.push_back( {VFD_DISP_CLOCK_1224SEL_SET   ,0  ,[&](){clock1224setDispdatMake();}              ,[&](){return clock1224setAdjExec();}  });  // 12h24h表示切替実行
+  dispTableArray.push_back( {VFD_DISP_CLOCK_1224SEL_SET   ,0  ,[&](){clock1224setDispdatMake();}              ,[&](){return clock1224setAdjExec();} }); // 12h24h表示切替実行
   dispTableArray.push_back( {VFD_DISP_FADETIME_ADJ        ,0  ,[&](){crossfadeAdjTitleDispdatMake();}         ,[&](){return dummyExec();}  });   // クロスフェード時間設定
-  dispTableArray.push_back( {VFD_DISP_FADETIME_ADJ_SET    ,0  ,[&](){crossfadeAdjDispdatMake();}              ,[&](){return dummyExec();}  });   // クロスフェード時間設定実行
+  dispTableArray.push_back( {VFD_DISP_FADETIME_ADJ_SET    ,0  ,[&](){crossfadeAdjDispdatMake();}              ,[&](){return fadetimeAdjExec();}     }); // クロスフェード時間設定実行
   dispTableArray.push_back( {VFD_DISP_BRIGHTNESS_ADJ      ,0  ,[&](){brightnessAdjtitleDispdatMake();}        ,[&](){return dummyExec();}  });   // VFD輝度調整
   dispTableArray.push_back( {VFD_DISP_BRIGHTNESS_ADJ_SET  ,0  ,[&](){brightnessAdjDispdatMake();}             ,[&](){return dummyExec();}  });   // VFD輝度調整実行
   dispTableArray.push_back( {VFD_DISP_BRIGHTNESS_VIEW     ,0  ,[&](){brightnessDataViewDispdatMake();}        ,[&](){return dummyExec();}  });   // VFD輝度設定値表示
@@ -363,7 +363,30 @@ uint8_t dispDatMakeFunc::clock1224setAdjExec(void)
   else if(adjKeyData == SWKEY_ADJ_RESET){
     confDat.SetFormatHwTmp(confDat.GetFormatHw());    // 設定値初期化
     swKey = SWKEY_SET_L;                              // 設定モード中断要求
+    status = "設定モード中断要求";
+  }
+
+  if(status.length() != 0){
+    Serial.println(status);
+  }
+
+  return swKey;
+}
+
+uint8_t dispDatMakeFunc::fadetimeAdjExec(void)                  // クロスフェード時間設定処理
+{
+  String status;
+  uint8_t swKey = 0;
+
+  if(adjKeyData == KEY_SET_S){    // setキーで設定完了条件満たす場合の条件を追加
+//    confDat.SetFormatHw(confDat.GetFormatHwTmp());
+    swKey = SWKEY_SET_S;              // 設定モード脱出要求
     status = "設定モード脱出要求";
+  }
+  else if(adjKeyData == SWKEY_ADJ_RESET){
+//    confDat.SetFormatHwTmp(confDat.GetFormatHw());    // 設定値初期化
+    swKey = SWKEY_SET_L;                              // 設定モード中断要求
+    status = "設定モード中断要求";
   }
 
   if(status.length() != 0){
@@ -968,13 +991,17 @@ void dispDatMakeFunc::crossfadeAdjTitleDispdatMake(void)        // クロスフ�
 
 void dispDatMakeFunc::crossfadeAdjDispdatMake(void)             // クロスフェード時間設定実行
 {
-  char disptxt[] = "CROSS FADE TIME SET";
-  dispScrolldatMake(disptxt,5,5);
-  dispTmp[6] = DISP_NON;
-//  dispTmp[7] = DISP_04;
-  dispTmp[7] = (vfdDispNum + 1) % 10;
+  for (unsigned char i = 0; i < 9; i++) {
+    dispTmp[i] = DISP_NON;
+    piriodTmp[i] = 0;
+  }
+
+  dispTmp[0] = DISP_00 + confDat.GetFadetimewTmp();
+  dispTmp[7] = DISP_04;
   dispTmp[8] = DISP_K1;
   piriodTmp[7] = 0x01;
+  dispBlinkingMake(0,1,1,1000);
+  dispBlinkingMake(8,1,1,1000);
 
   return;
 }

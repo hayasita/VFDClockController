@@ -97,14 +97,14 @@ void modeCtrl::vfdAdjModeIni(void)
   dispModeVfdCtrTbl.push_back(VFD_DISP_BRIGHTNESS_ADJ); // VFD輝度調整
 
   // 設定モードのタイトル表示 <-> 設定処理　遷移テーブル
-  cntModeVfdCtrTbl.push_back({VFD_DISP_CLOCK_ADJ       ,VFD_DISP_CLOCK_ADJ_SET     ,1,1,0,0});  // 時計調整 → 時計調整実行            UpDownキーブロック  setKeyで遷移  Abote無効
-  cntModeVfdCtrTbl.push_back({VFD_DISP_CLOCK_ADJ       ,VFD_DISP_CLOCK_ADJ_SET     ,0,0,1,0});  // 時計調整 → 時計調整実行            UpDownキー有効      swKeyで遷移   Abote無効
-  cntModeVfdCtrTbl.push_back({VFD_DISP_CAL_ADJ         ,VFD_DISP_CAL_ADJ_SET       ,1,1,0,0});  // カレンダー調整 → カレンダー調整実行  UpDownキーブロック  setKeyで遷移  Abote無効
-  cntModeVfdCtrTbl.push_back({VFD_DISP_CAL_ADJ         ,VFD_DISP_CAL_ADJ_SET       ,0,0,1,0});  // カレンダー調整 → カレンダー調整実行  UpDownキー有効      swKeyで遷移   Abote無効
-  cntModeVfdCtrTbl.push_back({VFD_DISP_CLOCK_1224SEL   ,VFD_DISP_CLOCK_1224SEL_SET ,1,1,0,1});  // 12h24h表示切替 → 12h24h表示切替実行 UpDownキーブロック setKeyで遷移  Abote有効
-  cntModeVfdCtrTbl.push_back({VFD_DISP_CLOCK_1224SEL_SET   ,VFD_DISP_CLOCK_1224SEL ,0,0,1,0});  // 12h24h表示切替実行 → 12h24h表示切替 UpDownキー有効     swKeyで遷移   Abote無効
-  cntModeVfdCtrTbl.push_back({VFD_DISP_FADETIME_ADJ    ,VFD_DISP_FADETIME_ADJ_SET  ,1,1,0,0});  // クロスフェード時間設定 → クロスフェード時間設定実行 UpDownキーブロック setKeyで遷移  Abote無効
-  cntModeVfdCtrTbl.push_back({VFD_DISP_FADETIME_ADJ    ,VFD_DISP_FADETIME_ADJ_SET  ,0,0,1,0});  // クロスフェード時間設定 → クロスフェード時間設定実行 UpDownキー有効     swKeyで遷移   Abote無効
+  cntModeVfdCtrTbl.push_back({VFD_DISP_CLOCK_ADJ        ,VFD_DISP_CLOCK_ADJ_SET     ,1,1,0,1});  // 時計調整 → 時計調整実行             UpDownキーブロック  setKeyで遷移  Abote無効
+  cntModeVfdCtrTbl.push_back({VFD_DISP_CLOCK_ADJ_SET    ,VFD_DISP_CLOCK_ADJ         ,0,0,1,0});  // 時計調整実行 → 時計調整             UpDownキー有効      swKeyで遷移   Abote無効
+  cntModeVfdCtrTbl.push_back({VFD_DISP_CAL_ADJ          ,VFD_DISP_CAL_ADJ_SET       ,1,1,0,1});  // カレンダー調整 → カレンダー調整実行  UpDownキーブロック setKeyで遷移  Abote無効
+  cntModeVfdCtrTbl.push_back({VFD_DISP_CAL_ADJ_SET      ,VFD_DISP_CAL_ADJ           ,0,0,1,0});  // カレンダー調整実行 → カレンダー調整  UpDownキー有効     swKeyで遷移   Abote無効
+  cntModeVfdCtrTbl.push_back({VFD_DISP_CLOCK_1224SEL    ,VFD_DISP_CLOCK_1224SEL_SET ,1,1,0,1});  // 12h24h表示切替 → 12h24h表示切替実行 UpDownキーブロック  setKeyで遷移  Abote有効
+  cntModeVfdCtrTbl.push_back({VFD_DISP_CLOCK_1224SEL_SET,VFD_DISP_CLOCK_1224SEL     ,0,0,1,0});  // 12h24h表示切替実行 → 12h24h表示切替 UpDownキー有効      swKeyで遷移   Abote無効
+  cntModeVfdCtrTbl.push_back({VFD_DISP_FADETIME_ADJ     ,VFD_DISP_FADETIME_ADJ_SET  ,1,1,0,1});  // クロスフェード時間設定 → クロスフェード時間設定実行 UpDownキーブロック setKeyで遷移  Abote有効
+  cntModeVfdCtrTbl.push_back({VFD_DISP_FADETIME_ADJ_SET ,VFD_DISP_FADETIME_ADJ      ,0,0,1,0});  // クロスフェード時間設定実行 → クロスフェード時間設定 UpDownキー有効     swKeyで遷移   Abote無効
 
   return;
 }
@@ -274,6 +274,11 @@ void modeCtrl::modeSetVfdCnt(uint8_t setKey,uint8_t swKey)
       return (c.modeFrom == displayMode.dispModeVfd);
     });
     if(itr != cntModeVfdCtrTbl.end()){
+//      Serial.println((*itr).modeFrom);
+//      Serial.println((*itr).modeTo);
+//      Serial.println((*itr).setKeySq);
+//      Serial.println((*itr).swKeySq);
+
       if(setKey == KEY_SET_S && (*itr).setKeySq ){
         displayMode.dispModeVfd = (*itr).modeTo;
         brockUpdownKeyModeSetb = (*itr).brockUpdownKeyModeSet;
@@ -290,6 +295,12 @@ void modeCtrl::modeSetVfdCnt(uint8_t setKey,uint8_t swKey)
     }
     else{
       // テーブル検索失敗
+//      Serial.print("テーブル検索失敗:");
+//      Serial.println(displayMode.dispModeVfd);
+
+      brockUpdownKeyModeSetb = 0;   // ブロック解除
+      aboteb = 0;                   // 設定中断解除
+      modeVFDIni();                 // モード初期化
     }
   }
   else if( ((setKey == KEY_UP_S) || (setKey == KEY_DOWN_S)) && (!brockUpdownKeyModeSetb) ){    // ▲Key SW2 Short ON or ▼Key SW3 Short ON
