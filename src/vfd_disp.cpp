@@ -173,10 +173,10 @@ void dispDatMakeFunc::dispTableIni(void)
   dispTableArray.push_back( {VFD_DISP_TIME_SENSOR3      ,1  ,[&](){dispLoop1(dispInputData);}                 ,[&](){return dispDefaultSetExec();}  }); // 時刻＋温度＋湿度＋気圧
   dispTableArray.push_back( {VFD_DISP_TMP               ,1  ,[&](){dispTemp(dispInputData);}                  ,[&](){return dispDefaultSetExec();}  }); // 温度表示データ作成
 
-  dispTableArray.push_back( {VFD_DISP_CLOCK_ADJ           ,0  ,[&](){clockAdjtitleDispdatMake();}             ,[&](){return dummyExec();}  });          // 時計調整
-  dispTableArray.push_back( {VFD_DISP_CLOCK_ADJ_SET       ,0  ,[&](){clockAdjDispdatMake();}                  ,[&](){return dummyExec();}  });          // 時計調整
-  dispTableArray.push_back( {VFD_DISP_CAL_ADJ             ,0  ,[&](){calenderAdjtitleDispdatMake();}          ,[&](){return dummyExec();}  });          // カレンダー調整
-  dispTableArray.push_back( {VFD_DISP_CAL_ADJ_SET         ,0  ,[&](){calenderAdjDispdatMake();}               ,[&](){return dummyExec();}  });          // カレンダー調整実行
+  dispTableArray.push_back( {VFD_DISP_CLOCK_ADJ           ,0  ,[&](){clockAdjtitleDispdatMake(dispInputData.timeInfo);}     ,[&](){return dummyExec();}  });          // 時計調整
+  dispTableArray.push_back( {VFD_DISP_CLOCK_ADJ_SET       ,0  ,[&](){clockAdjDispdatMake();}                  ,[&](){return clockAdjExec();}  });          // 時計調整
+  dispTableArray.push_back( {VFD_DISP_CAL_ADJ             ,0  ,[&](){calenderAdjtitleDispdatMake(dispInputData.timeInfo);}  ,[&](){return dummyExec();}  });          // カレンダー調整
+  dispTableArray.push_back( {VFD_DISP_CAL_ADJ_SET         ,0  ,[&](){calenderAdjDispdatMake();}               ,[&](){return calenderAdjExec();}  });          // カレンダー調整実行
   dispTableArray.push_back( {VFD_DISP_CLOCK_1224SEL       ,0  ,[&](){clock1224setAdjtitleDispdatMake();}      ,[&](){return dummyExec();}  });          // 12h24h表示切替
   dispTableArray.push_back( {VFD_DISP_CLOCK_1224SEL_SET   ,0  ,[&](){clock1224setDispdatMake();}              ,[&](){return clock1224setAdjExec();} }); // 12h24h表示切替実行
   dispTableArray.push_back( {VFD_DISP_FADETIME_ADJ        ,0  ,[&](){crossfadeAdjTitleDispdatMake();}         ,[&](){return dummyExec();}  });   // クロスフェード時間設定
@@ -337,6 +337,62 @@ uint8_t dispDatMakeFunc::dispDefaultSetExec(void)
 }
 
 /**
+ * @brief 時刻設定処理
+ * 
+ * @return uint8_t 
+ */
+uint8_t dispDatMakeFunc::clockAdjExec(void)
+{
+  String status;
+  uint8_t swKey = 0;
+
+  if(adjKeyData == KEY_SET_S){    // setキーで設定完了条件満たす場合の条件を追加
+//    confDat.SetFormatHw(confDat.GetFormatHwTmp());
+    swKey = SWKEY_SET_S;              // 設定モード完了要求
+    status = "設定モード完了要求";
+  }
+  else if(adjKeyData == SWKEY_ADJ_RESET){
+//    confDat.SetFormatHwTmp(confDat.GetFormatHw());    // 設定値初期化
+    swKey = SWKEY_SET_L;                              // 設定モード中断要求
+    status = "設定モード中断要求";
+  }
+
+  if(status.length() != 0){
+    Serial.println(status);
+  }
+
+  return swKey;
+}
+
+/**
+ * @brief カレンダー設定処理
+ * 
+ * @return uint8_t 
+ */
+uint8_t dispDatMakeFunc::calenderAdjExec(void)
+{
+  String status;
+  uint8_t swKey = 0;
+
+  if(adjKeyData == KEY_SET_S){    // setキーで設定完了条件満たす場合の条件を追加
+//    confDat.SetFormatHw(confDat.GetFormatHwTmp());
+    swKey = SWKEY_SET_S;              // 設定モード完了要求
+    status = "設定モード完了要求";
+  }
+  else if(adjKeyData == SWKEY_ADJ_RESET){
+//    confDat.SetFormatHwTmp(confDat.GetFormatHw());    // 設定値初期化
+    swKey = SWKEY_SET_L;                              // 設定モード中断要求
+    status = "設定モード中断要求";
+  }
+
+  if(status.length() != 0){
+    Serial.println(status);
+  }
+
+  return swKey;
+}
+
+/**
  * @brief 12h24h表示切替処理
  * 
  * @return uint8_t SW内部キー入力情報
@@ -357,8 +413,8 @@ uint8_t dispDatMakeFunc::clock1224setAdjExec(void)
   }
   else if(adjKeyData == KEY_SET_S){    // setキーで設定完了条件満たす場合の条件を追加
     confDat.SetFormatHw(confDat.GetFormatHwTmp());
-    swKey = SWKEY_SET_S;              // 設定モード脱出要求
-    status = "設定モード脱出要求";
+    swKey = SWKEY_SET_S;              // 設定モード完了要求
+    status = "設定モード完了要求";
   }
   else if(adjKeyData == SWKEY_ADJ_RESET){
     confDat.SetFormatHwTmp(confDat.GetFormatHw());    // 設定値初期化
@@ -373,15 +429,20 @@ uint8_t dispDatMakeFunc::clock1224setAdjExec(void)
   return swKey;
 }
 
-uint8_t dispDatMakeFunc::fadetimeAdjExec(void)                  // クロスフェード時間設定処理
+/**
+ * @brief クロスフェード時間設定処理
+ * 
+ * @return uint8_t 
+ */
+uint8_t dispDatMakeFunc::fadetimeAdjExec(void)
 {
   String status;
   uint8_t swKey = 0;
 
   if(adjKeyData == KEY_SET_S){    // setキーで設定完了条件満たす場合の条件を追加
 //    confDat.SetFormatHw(confDat.GetFormatHwTmp());
-    swKey = SWKEY_SET_S;              // 設定モード脱出要求
-    status = "設定モード脱出要求";
+    swKey = SWKEY_SET_S;              // 設定モード完了要求
+    status = "設定モード完了要求";
   }
   else if(adjKeyData == SWKEY_ADJ_RESET){
 //    confDat.SetFormatHwTmp(confDat.GetFormatHw());    // 設定値初期化
@@ -889,7 +950,7 @@ void dispDatMakeFunc::dispBlinkingMake(uint8_t startp,uint8_t dispnum,uint8_t mo
  * @brief 時刻設定タイトル表示
  * 
  */
-void dispDatMakeFunc::clockAdjtitleDispdatMake(void){
+void dispDatMakeFunc::clockAdjtitleDispdatMake(struct tm timeInfo){
 
   const char disptxt[] = "CLOCK SET";
   dispScrolldatMake(disptxt,5,5);
@@ -898,6 +959,8 @@ void dispDatMakeFunc::clockAdjtitleDispdatMake(void){
   dispTmp[7] = (vfdDispNum + 1) % 10;
   dispTmp[8] = DISP_K1;
   piriodTmp[7] = 0x01;
+
+  adjTimeInfo = timeInfo;   // 設定用時刻設定
 
   return;
 }
@@ -908,19 +971,22 @@ void dispDatMakeFunc::clockAdjtitleDispdatMake(void){
  * @param adjKeyData 操作キー入力
  */
 void dispDatMakeFunc::clockAdjDispdatMake(void){  // カレンダー調整
-
+/*
   const char disptxt[] = "CLOCK ADJ";
   dispScrolldatMake(disptxt,5,5);
   dispTmp[6] = DISP_NON;
   dispTmp[7] = DISP_01;
   dispTmp[8] = DISP_K1;
   piriodTmp[7] = 0x01;
+*/
+  dispClock(adjTimeInfo);
+  dispTmp[8] = DISP_K1;
 
   return;
 }
 
 
-void dispDatMakeFunc::calenderAdjtitleDispdatMake(void)         // カレンダー設定タイトル表示
+void dispDatMakeFunc::calenderAdjtitleDispdatMake(struct tm timeInfo)         // カレンダー設定タイトル表示
 {
   char disptxt[] = "CALENDAR SET";
   dispScrolldatMake(disptxt,5,5);
@@ -930,11 +996,16 @@ void dispDatMakeFunc::calenderAdjtitleDispdatMake(void)         // カレンダ�
   dispTmp[8] = DISP_K1;
   piriodTmp[7] = 0x01;
 
+  adjTimeInfo = timeInfo;   // 設定用時刻設定
+
   return;
 }
 
 void dispDatMakeFunc::calenderAdjDispdatMake(void)  // カレンダー調整実行
 {
+  dispCalender(adjTimeInfo);
+  dispTmp[8] = DISP_K1;
+
   return;
 }
 

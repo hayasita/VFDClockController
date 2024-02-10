@@ -197,9 +197,9 @@ class dispDatMakeFunc{
     void dispPres(struct DISPLAY_DATA inputData);   // 気圧表示データ作成
     void dispLoop1(struct DISPLAY_DATA inputData);  // 時刻＋温度＋湿度＋気圧
 
-    void clockAdjtitleDispdatMake(void);            // 時刻設定タイトル表示
+    void clockAdjtitleDispdatMake(struct tm timeInfo);  // 時刻設定タイトル表示
     void clockAdjDispdatMake(void);                 // 時刻設定画面表示
-    void calenderAdjtitleDispdatMake(void);         // カレンダー設定タイトル表示
+    void calenderAdjtitleDispdatMake(struct tm timeInfo); // カレンダー設定タイトル表示
     void calenderAdjDispdatMake(void);              // カレンダー調整実行
     void clock1224setAdjtitleDispdatMake(void);     // 12h24h表示切替
     void clock1224setDispdatMake(void);             // 12h24h表示切替実行
@@ -212,10 +212,15 @@ class dispDatMakeFunc{
     // 各設定モードの実行処理
     uint8_t dummyExec(void);                        // 処理なし
     uint8_t dispDefaultSetExec(void);               // 標準表示設定処理
+
+    uint8_t clockAdjExec(void);                     // 時刻設定処理
+    uint8_t calenderAdjExec(void);                  // カレンダー設定処理
+
     uint8_t clock1224setAdjExec(void);              // 12h24h表示切替処理
     uint8_t fadetimeAdjExec(void);                  // クロスフェード時間設定処理
     
     uint8_t vfdDispNum;                     // VFD表示フォーマット表示番号
+    struct tm adjTimeInfo;                  // 設定用時刻情報
     uint8_t adjKeyData;                     // 設定操作用キー情報
 
 };
