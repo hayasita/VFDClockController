@@ -45,7 +45,6 @@ modeCtrl::modeCtrl(bool ssd1306,bool m5oled)
  */
 void modeCtrl::modeVFDIni(void)
 {
-//  displayMode.ctrlModeSelect = 0;                 // 操作モード選択　0:モード切替
   displayMode.adjKeyData = 0;                     // 設定操作用キー情報初期化
 
   displayMode.ctrlMode = ctrlMode_VfdDisp;        // 操作モード初期化
@@ -196,32 +195,7 @@ dispMode modeCtrl::modeSet(uint8_t setKey,uint8_t swKey)        // モード設�
   }
   else{
   }
-/*
-  }
-  else{
-    displayMode.adjKeyData = setKey;     // 設定操作用キー情報設定
-    // 操作モード選択　1:設定操作
-    if(swKey == SWKEY_SET_S){   // 
-//      else{
-       displayMode.ctrlModeSelect = 0;                 // 操作モード選択　1:設定操作
-//       Serial.println("操作モード選択へ移行");
-//      }
-      if(displayMode.dispModeVfd == VFD_DISP_CLOCK_1224SEL_SET){
-        displayMode.dispModeVfd = VFD_DISP_CLOCK_1224SEL;
-//        Serial.println("設定完了_1");
-      }
-    }
 
-    // 設定処理強制終了
-    if(setKey == kEY_SET_L){        // SETKey SW1 Long ON
-      modeVFDIni();                 // VFDモード初期化
-//      Serial.println("操作モード選択へ強制移行");
-    }
-    else if(setKey == KEY_SET_S){
-//      Serial.println(displayMode.adjKeyData);
-    }
-  }
-*/
   return displayMode;
 }
 
@@ -279,12 +253,6 @@ void modeCtrl::modeSetVfdCnt(uint8_t setKey,uint8_t swKey)
     }
   }
   else if(setKey == KEY_SET_S || swKey == SWKEY_SET_S){
-//    displayMode.ctrlModeSelect = 1;                 // 操作モード選択　1:設定操作
-//        Serial.println("操作設定へ移行");
-//      if(displayMode.dispModeVfd == VFD_DISP_CLOCK_1224SEL){
-//        displayMode.dispModeVfd = VFD_DISP_CLOCK_1224SEL_SET;
-//      }
-
 //    if(setKey == KEY_SET_S){Serial.println("KEY_SET_S");}
 //    if(swKey == SWKEY_SET_S){Serial.println("SWKEY_SET_S");}
 
@@ -308,7 +276,6 @@ void modeCtrl::modeSetVfdCnt(uint8_t setKey,uint8_t swKey)
       // テーブル検索失敗
     }
   }
-//  else if((setKey == KEY_UP_S) || (setKey == KEY_DOWN_S)){    // ▲Key SW2 Short ON or ▼Key SW3 Short ON
   else if( ((setKey == KEY_UP_S) || (setKey == KEY_DOWN_S)) && (!brockUpdownKeyModeSetb) ){    // ▲Key SW2 Short ON or ▼Key SW3 Short ON
     displayMode.dispModeVfd = updownKeyModeSet(setKey,dispModeVfdCtrTbl,&displayMode.dispModeVfdCount);
   }

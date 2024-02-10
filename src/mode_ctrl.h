@@ -71,7 +71,6 @@
 #define M5OLED_DISP_EVENTLOG_CTRL       2     // EventLog操作情報
 
 struct dispMode{
-//  uint8_t ctrlModeSelect;       // 操作モード選択　0:モード切替 1:設定操作
   uint8_t adjKeyData;           // 設定操作用キー情報
 
   uint8_t ctrlMode;             // 操作モード
