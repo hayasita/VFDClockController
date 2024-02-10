@@ -257,6 +257,7 @@ void modeCtrl::modeSetVfdCnt(uint8_t setKey,uint8_t swKey)
     }
   }
   else if((setKey == kEY_SET_L) && aboteb){        // SETKey SW1 Long ON 設定中断
+    // 直接実行せずに、一度外で設定値をクリアしてから、swKeyで中断するべき
 //    Serial.println("SETKey SW1 Long ON 設定中断");
     brockUpdownKeyModeSetb = 0;   // ブロック解除
     aboteb = 0;                   // 設定中断解除
