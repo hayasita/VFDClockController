@@ -97,14 +97,14 @@ void modeCtrl::vfdAdjModeIni(void)
   dispModeVfdCtrTbl.push_back(VFD_DISP_BRIGHTNESS_ADJ); // VFD輝度調整
 
   // 設定モードのタイトル表示 <-> 設定処理　遷移テーブル
-  cntModeVfdCtrTbl.push_back({VFD_DISP_CLOCK_ADJ       ,VFD_DISP_CLOCK_ADJ_SET     ,1,1,0});  // 時計調整 → 時計調整実行 UpDownキーブロック setKeyで遷移
-  cntModeVfdCtrTbl.push_back({VFD_DISP_CLOCK_ADJ       ,VFD_DISP_CLOCK_ADJ_SET     ,0,0,1});  // 時計調整 → 時計調整実行 UpDownキー有効 swKeyで遷移
-  cntModeVfdCtrTbl.push_back({VFD_DISP_CAL_ADJ         ,VFD_DISP_CAL_ADJ_SET       ,1,1,0});  // カレンダー調整 → カレンダー調整実行 UpDownキーブロック setKeyで遷移
-  cntModeVfdCtrTbl.push_back({VFD_DISP_CAL_ADJ         ,VFD_DISP_CAL_ADJ_SET       ,0,0,1});  // カレンダー調整 → カレンダー調整実行 UpDownキー有効 swKeyで遷移
-  cntModeVfdCtrTbl.push_back({VFD_DISP_CLOCK_1224SEL   ,VFD_DISP_CLOCK_1224SEL_SET ,1,1,0});  // 12h24h表示切替 → 12h24h表示切替実行 UpDownキーブロック setKeyで遷移
-  cntModeVfdCtrTbl.push_back({VFD_DISP_CLOCK_1224SEL_SET   ,VFD_DISP_CLOCK_1224SEL ,0,0,1});  // 12h24h表示切替実行 → 12h24h表示切替 UpDownキー有効 swKeyで遷移
-  cntModeVfdCtrTbl.push_back({VFD_DISP_FADETIME_ADJ    ,VFD_DISP_FADETIME_ADJ_SET  ,1,1,0});  // クロスフェード時間設定 → クロスフェード時間設定実行 UpDownキーブロック setKeyで遷移
-  cntModeVfdCtrTbl.push_back({VFD_DISP_FADETIME_ADJ    ,VFD_DISP_FADETIME_ADJ_SET  ,0,0,1});  // クロスフェード時間設定 → クロスフェード時間設定実行 UpDownキー有効 swKeyで遷移
+  cntModeVfdCtrTbl.push_back({VFD_DISP_CLOCK_ADJ       ,VFD_DISP_CLOCK_ADJ_SET     ,1,1,0,0});  // 時計調整 → 時計調整実行            UpDownキーブロック  setKeyで遷移  Abote無効
+  cntModeVfdCtrTbl.push_back({VFD_DISP_CLOCK_ADJ       ,VFD_DISP_CLOCK_ADJ_SET     ,0,0,1,0});  // 時計調整 → 時計調整実行            UpDownキー有効      swKeyで遷移   Abote無効
+  cntModeVfdCtrTbl.push_back({VFD_DISP_CAL_ADJ         ,VFD_DISP_CAL_ADJ_SET       ,1,1,0,0});  // カレンダー調整 → カレンダー調整実行  UpDownキーブロック  setKeyで遷移  Abote無効
+  cntModeVfdCtrTbl.push_back({VFD_DISP_CAL_ADJ         ,VFD_DISP_CAL_ADJ_SET       ,0,0,1,0});  // カレンダー調整 → カレンダー調整実行  UpDownキー有効      swKeyで遷移   Abote無効
+  cntModeVfdCtrTbl.push_back({VFD_DISP_CLOCK_1224SEL   ,VFD_DISP_CLOCK_1224SEL_SET ,1,1,0,1});  // 12h24h表示切替 → 12h24h表示切替実行 UpDownキーブロック setKeyで遷移  Abote有効
+  cntModeVfdCtrTbl.push_back({VFD_DISP_CLOCK_1224SEL_SET   ,VFD_DISP_CLOCK_1224SEL ,0,0,1,0});  // 12h24h表示切替実行 → 12h24h表示切替 UpDownキー有効     swKeyで遷移   Abote無効
+  cntModeVfdCtrTbl.push_back({VFD_DISP_FADETIME_ADJ    ,VFD_DISP_FADETIME_ADJ_SET  ,1,1,0,0});  // クロスフェード時間設定 → クロスフェード時間設定実行 UpDownキーブロック setKeyで遷移  Abote無効
+  cntModeVfdCtrTbl.push_back({VFD_DISP_FADETIME_ADJ    ,VFD_DISP_FADETIME_ADJ_SET  ,0,0,1,0});  // クロスフェード時間設定 → クロスフェード時間設定実行 UpDownキー有効     swKeyで遷移   Abote無効
 
   return;
 }
@@ -239,8 +239,9 @@ void modeCtrl::modeSetVFD(uint8_t setKey,uint8_t swKey)
 void modeCtrl::modeSetVfdCnt(uint8_t setKey,uint8_t swKey)
 {
   static bool brockUpdownKeyModeSetb = 0;   // UpDownKeyによる操作モード変更ブロック
+  static bool aboteb = 0;   // 設定中断・モード初期化
 
-  if(setKey == kEY_SET_L){        // SETKey SW1 Long ON
+  if((setKey == kEY_SET_L) && !aboteb){        // SETKey SW1 Long ON
     if(ssd1306Valid){
       displayMode.ctrlMode = ctrlMode_Oled;     // M5OLEDなし　OLEDあり 操作モード：VFD設定 -> OLED設定
       displayMode.dispModeVfdCount = 0;
@@ -255,6 +256,12 @@ void modeCtrl::modeSetVfdCnt(uint8_t setKey,uint8_t swKey)
       displayMode.ctrlMode = ctrlMode_VfdDisp;  // M5OLEDなし　OLEDなし　操作モード：VFD設定 -> VFD表示
     }
   }
+  else if((setKey == kEY_SET_L) && aboteb){        // SETKey SW1 Long ON 設定中断
+//    Serial.println("SETKey SW1 Long ON 設定中断");
+    brockUpdownKeyModeSetb = 0;   // ブロック解除
+    aboteb = 0;                   // 設定中断解除
+    modeVFDIni();                 // モード初期化
+  }
   else if(setKey == KEY_SET_S || swKey == SWKEY_SET_S){
 //    if(setKey == KEY_SET_S){Serial.println("KEY_SET_S");}
 //    if(swKey == SWKEY_SET_S){Serial.println("SWKEY_SET_S");}
@@ -266,12 +273,14 @@ void modeCtrl::modeSetVfdCnt(uint8_t setKey,uint8_t swKey)
       if(setKey == KEY_SET_S && (*itr).setKeySq ){
         displayMode.dispModeVfd = (*itr).modeTo;
         brockUpdownKeyModeSetb = (*itr).brockUpdownKeyModeSet;
+        aboteb = (*itr).abote;
         displayMode.adjKeyData = 0;  // 設定操作用キー情報設定クリア
 //        Serial.println("設定操作用キー情報設定クリア");
       }
       else if(swKey == SWKEY_SET_S && (*itr).swKeySq ){
         displayMode.dispModeVfd = (*itr).modeTo;
         brockUpdownKeyModeSetb = (*itr).brockUpdownKeyModeSet;
+        aboteb = (*itr).abote;
       }
 
     }
