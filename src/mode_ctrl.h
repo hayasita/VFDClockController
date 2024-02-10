@@ -93,7 +93,6 @@ class vfdCntState{
     bool brockUpdownKeyModeSet;   // UpDownKeyによる操作モード変更ブロック
     bool setKeySq;                // setKeyで遷移有効
     bool swKeySq;                 // swKeyで遷移有効
-    bool abote;                   // 設定中断・モード初期化有効
 };
 
 class modeCtrl{
