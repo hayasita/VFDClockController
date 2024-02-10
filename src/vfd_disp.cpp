@@ -360,6 +360,11 @@ uint8_t dispDatMakeFunc::clock1224setAdjExec(void)
     swKey = SWKEY_SET_S;              // 設定モード脱出要求
     status = "設定モード脱出要求";
   }
+  else if(adjKeyData == SWKEY_ADJ_RESET){
+    confDat.SetFormatHwTmp(confDat.GetFormatHw());    // 設定値初期化
+    swKey = SWKEY_SET_L;                              // 設定モード中断要求
+    status = "設定モード脱出要求";
+  }
 
   if(status.length() != 0){
     Serial.println(status);

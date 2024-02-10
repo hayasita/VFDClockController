@@ -37,8 +37,10 @@
 #define KEY_UP_L    0x84  // Hard SW2 Long ON
 #define KEY_DOWN_L  0x88  // Hard SW3 Long ON
 
-#define SWKEY_SET_S   0x12  // Soft SW1 Short ON
 #define SWKEY_DISP_MODE_VFD_CLR 0x11  // VFD表示モードクリア要求
+#define SWKEY_SET_S     0x12  // Soft SW1 Short ON
+#define SWKEY_SET_L     0x13  // Soft SW1 Long ON
+#define SWKEY_ADJ_RESET 0x14  // 設定中断
 
 // VFD表示モード
 #define VFD_DISP_DEFAULT                0     // VFD表示　標準表示
