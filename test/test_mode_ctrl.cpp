@@ -32,7 +32,7 @@ TEST(ModeCtrl, ctrlModechg_ini){
 
   // キー入力なし
   modeData = mode.modeSet(0,0);                               // キー入力なし
-  EXPECT_EQ(modeData.ctrlModeSelect, 0);                      // 操作モード選択　0:モード切替
+//  EXPECT_EQ(modeData.ctrlModeSelect, 0);                      // 操作モード選択　0:モード切替
   EXPECT_EQ(modeData.adjKeyData, 0);                          // 設定操作用キー情報
   EXPECT_EQ(modeData.ctrlMode, ctrlMode_VfdDisp);             // 操作モード：VFD表示
   EXPECT_EQ(modeData.dispModeVfdCount, dispModeVfd_Default);  // VFD表示モード：標準表示

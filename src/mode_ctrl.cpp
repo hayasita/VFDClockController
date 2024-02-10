@@ -45,7 +45,7 @@ modeCtrl::modeCtrl(bool ssd1306,bool m5oled)
  */
 void modeCtrl::modeVFDIni(void)
 {
-  displayMode.ctrlModeSelect = 0;                 // 操作モード選択　0:モード切替
+//  displayMode.ctrlModeSelect = 0;                 // 操作モード選択　0:モード切替
   displayMode.adjKeyData = 0;                     // 設定操作用キー情報初期化
 
   displayMode.ctrlMode = ctrlMode_VfdDisp;        // 操作モード初期化
@@ -94,6 +94,15 @@ void modeCtrl::vfdAdjModeIni(void)
   dispModeVfdCtrTbl.push_back(VFD_DISP_CLOCK_1224SEL);  // 12h24h表示切替
   dispModeVfdCtrTbl.push_back(VFD_DISP_FADETIME_ADJ);   // クロスフェード時間設定
   dispModeVfdCtrTbl.push_back(VFD_DISP_BRIGHTNESS_ADJ); // VFD輝度調整
+
+  cntModeVfdCtrTbl.push_back({VFD_DISP_CLOCK_ADJ       ,VFD_DISP_CLOCK_ADJ_SET     ,1,1,0});  // 時計調整 → 時計調整実行
+  cntModeVfdCtrTbl.push_back({VFD_DISP_CLOCK_ADJ       ,VFD_DISP_CLOCK_ADJ_SET     ,0,0,1});  // 時計調整 → 時計調整実行
+  cntModeVfdCtrTbl.push_back({VFD_DISP_CAL_ADJ         ,VFD_DISP_CAL_ADJ_SET       ,1,1,0});  // カレンダー調整 → カレンダー調整実行
+  cntModeVfdCtrTbl.push_back({VFD_DISP_CAL_ADJ         ,VFD_DISP_CAL_ADJ_SET       ,0,0,1});  // カレンダー調整 → カレンダー調整実行
+  cntModeVfdCtrTbl.push_back({VFD_DISP_CLOCK_1224SEL   ,VFD_DISP_CLOCK_1224SEL_SET ,1,1,0});  // 12h24h表示切替 → 12h24h表示切替実行
+  cntModeVfdCtrTbl.push_back({VFD_DISP_CLOCK_1224SEL_SET   ,VFD_DISP_CLOCK_1224SEL ,0,0,1});  // 12h24h表示切替実行 → 12h24h表示切替
+  cntModeVfdCtrTbl.push_back({VFD_DISP_FADETIME_ADJ    ,VFD_DISP_FADETIME_ADJ_SET  ,1,1,0});  // クロスフェード時間設定 → クロスフェード時間設定実行
+  cntModeVfdCtrTbl.push_back({VFD_DISP_FADETIME_ADJ    ,VFD_DISP_FADETIME_ADJ_SET  ,0,0,1});  // クロスフェード時間設定 → クロスフェード時間設定実行
 
   return;
 }
@@ -169,35 +178,37 @@ uint8_t modeCtrl::getDispModeOLED(void)       // OLED表示モード取得
  */
 dispMode modeCtrl::modeSet(uint8_t setKey,uint8_t swKey)        // モード設定
 {
+  displayMode.adjKeyData = 0;  // 設定操作用キー情報設定
   // 操作モード選択　0:モード切替
-  if(displayMode.ctrlModeSelect == 0){
-    displayMode.adjKeyData = 0;     // 設定操作用キー情報クリア
-    if(displayMode.ctrlMode == ctrlMode_VfdDisp){   // 操作モード：VFD表示
-      modeSetVFD(setKey,swKey);       // VFD表示モード設定
-    }
-    else if(displayMode.ctrlMode == ctrlMode_VfdCtrl){  // 操作モード：VFD設定
-      modeSetVfdCnt(setKey,swKey);    // VFD設定表示モード設定
-    }
-    else if(displayMode.ctrlMode == ctrlMode_M5oled){   // 操作モード：M5OLED設定
-      modeSetM5OLED(setKey,swKey);    // M5OLED表示モード設定
-    }
-    else if(displayMode.ctrlMode == ctrlMode_Oled){   // 操作モード：OLED設定
-      modeSetOLED(setKey,swKey);      // OLED表示モード設定
-    }
-    else{
-
-    }
+//  if(displayMode.ctrlModeSelect == 0){
+  if(displayMode.ctrlMode == ctrlMode_VfdDisp){   // 操作モード：VFD表示
+    modeSetVFD(setKey,swKey);       // VFD表示モード設定
+  }
+  else if(displayMode.ctrlMode == ctrlMode_VfdCtrl){  // 操作モード：VFD設定
+    displayMode.adjKeyData = setKey;  // 設定操作用キー情報設定
+    modeSetVfdCnt(setKey,swKey);      // VFD設定表示モード設定
+  }
+  else if(displayMode.ctrlMode == ctrlMode_M5oled){   // 操作モード：M5OLED設定
+    modeSetM5OLED(setKey,swKey);    // M5OLED表示モード設定
+  }
+  else if(displayMode.ctrlMode == ctrlMode_Oled){   // 操作モード：OLED設定
+    modeSetOLED(setKey,swKey);      // OLED表示モード設定
+  }
+  else{
+  }
+/*
   }
   else{
     displayMode.adjKeyData = setKey;     // 設定操作用キー情報設定
     // 操作モード選択　1:設定操作
-     if(swKey == SWKEY_SET_S){   // 
+    if(swKey == SWKEY_SET_S){   // 
 //      else{
        displayMode.ctrlModeSelect = 0;                 // 操作モード選択　1:設定操作
 //       Serial.println("操作モード選択へ移行");
 //      }
       if(displayMode.dispModeVfd == VFD_DISP_CLOCK_1224SEL_SET){
         displayMode.dispModeVfd = VFD_DISP_CLOCK_1224SEL;
+//        Serial.println("設定完了_1");
       }
     }
 
@@ -210,7 +221,7 @@ dispMode modeCtrl::modeSet(uint8_t setKey,uint8_t swKey)        // モード設�
 //      Serial.println(displayMode.adjKeyData);
     }
   }
-
+*/
   return displayMode;
 }
 
@@ -250,6 +261,8 @@ void modeCtrl::modeSetVFD(uint8_t setKey,uint8_t swKey)
  */
 void modeCtrl::modeSetVfdCnt(uint8_t setKey,uint8_t swKey)
 {
+  static bool brockUpdownKeyModeSetb = 0;   // UpDownKeyによる操作モード変更ブロック
+
   if(setKey == kEY_SET_L){        // SETKey SW1 Long ON
     if(ssd1306Valid){
       displayMode.ctrlMode = ctrlMode_Oled;     // M5OLEDなし　OLEDあり 操作モード：VFD設定 -> OLED設定
@@ -265,18 +278,38 @@ void modeCtrl::modeSetVfdCnt(uint8_t setKey,uint8_t swKey)
       displayMode.ctrlMode = ctrlMode_VfdDisp;  // M5OLEDなし　OLEDなし　操作モード：VFD設定 -> VFD表示
     }
   }
-  else if(setKey == KEY_SET_S){
-    displayMode.ctrlModeSelect = 1;                 // 操作モード選択　1:設定操作
+  else if(setKey == KEY_SET_S || swKey == SWKEY_SET_S){
+//    displayMode.ctrlModeSelect = 1;                 // 操作モード選択　1:設定操作
 //        Serial.println("操作設定へ移行");
-      if(displayMode.dispModeVfd == VFD_DISP_CLOCK_1224SEL){
-        displayMode.dispModeVfd = VFD_DISP_CLOCK_1224SEL_SET;
+//      if(displayMode.dispModeVfd == VFD_DISP_CLOCK_1224SEL){
+//        displayMode.dispModeVfd = VFD_DISP_CLOCK_1224SEL_SET;
+//      }
+
+//    if(setKey == KEY_SET_S){Serial.println("KEY_SET_S");}
+//    if(swKey == SWKEY_SET_S){Serial.println("SWKEY_SET_S");}
+
+    std::vector<vfdCntState>::iterator itr = std::find_if(cntModeVfdCtrTbl.begin(), cntModeVfdCtrTbl.end(), [&](vfdCntState &c) {
+      return (c.modeFrom == displayMode.dispModeVfd);
+    });
+    if(itr != cntModeVfdCtrTbl.end()){
+      if(setKey == KEY_SET_S && (*itr).setKeySq ){
+        displayMode.dispModeVfd = (*itr).modeTo;
+        brockUpdownKeyModeSetb = (*itr).brockUpdownKeyModeSet;
+        displayMode.adjKeyData = 0;  // 設定操作用キー情報設定クリア
+//        Serial.println("設定操作用キー情報設定クリア");
       }
-      else if(displayMode.dispModeVfd == VFD_DISP_CLOCK_1224SEL_SET){
-        displayMode.dispModeVfd = VFD_DISP_CLOCK_1224SEL;
+      else if(swKey == SWKEY_SET_S && (*itr).swKeySq ){
+        displayMode.dispModeVfd = (*itr).modeTo;
+        brockUpdownKeyModeSetb = (*itr).brockUpdownKeyModeSet;
       }
 
+    }
+    else{
+      // テーブル検索失敗
+    }
   }
-  else if((setKey == KEY_UP_S) || (setKey == KEY_DOWN_S)){    // ▲Key SW2 Short ON or ▼Key SW3 Short ON
+//  else if((setKey == KEY_UP_S) || (setKey == KEY_DOWN_S)){    // ▲Key SW2 Short ON or ▼Key SW3 Short ON
+  else if( ((setKey == KEY_UP_S) || (setKey == KEY_DOWN_S)) && (!brockUpdownKeyModeSetb) ){    // ▲Key SW2 Short ON or ▼Key SW3 Short ON
     displayMode.dispModeVfd = updownKeyModeSet(setKey,dispModeVfdCtrTbl,&displayMode.dispModeVfdCount);
   }
 
