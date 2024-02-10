@@ -73,6 +73,7 @@ void modeCtrl::modeOledIni(void)                 // OLED,M5OLEDモード初期�
  */
 void modeCtrl::vfdModeIni(void)
 {
+  // 設定項目　遷移テーブル
   dispModeVfdTbl.push_back(VFD_DISP_DEFAULT);        // VFD表示　標準表示
   dispModeVfdTbl.push_back(VFD_DISP_TIMECLOCK);      // VFD表示　時刻表示
   dispModeVfdTbl.push_back(VFD_DISP_CALENDAR);       // VFD表示　カレンダー表示
@@ -88,20 +89,22 @@ void modeCtrl::vfdModeIni(void)
  */
 void modeCtrl::vfdAdjModeIni(void)
 {
+  // 設定項目　遷移テーブル
   dispModeVfdCtrTbl.push_back(VFD_DISP_CLOCK_ADJ);      // VFD設定表示 時計調整
   dispModeVfdCtrTbl.push_back(VFD_DISP_CAL_ADJ);        // カレンダー調整
   dispModeVfdCtrTbl.push_back(VFD_DISP_CLOCK_1224SEL);  // 12h24h表示切替
   dispModeVfdCtrTbl.push_back(VFD_DISP_FADETIME_ADJ);   // クロスフェード時間設定
   dispModeVfdCtrTbl.push_back(VFD_DISP_BRIGHTNESS_ADJ); // VFD輝度調整
 
-  cntModeVfdCtrTbl.push_back({VFD_DISP_CLOCK_ADJ       ,VFD_DISP_CLOCK_ADJ_SET     ,1,1,0});  // 時計調整 → 時計調整実行
-  cntModeVfdCtrTbl.push_back({VFD_DISP_CLOCK_ADJ       ,VFD_DISP_CLOCK_ADJ_SET     ,0,0,1});  // 時計調整 → 時計調整実行
-  cntModeVfdCtrTbl.push_back({VFD_DISP_CAL_ADJ         ,VFD_DISP_CAL_ADJ_SET       ,1,1,0});  // カレンダー調整 → カレンダー調整実行
-  cntModeVfdCtrTbl.push_back({VFD_DISP_CAL_ADJ         ,VFD_DISP_CAL_ADJ_SET       ,0,0,1});  // カレンダー調整 → カレンダー調整実行
-  cntModeVfdCtrTbl.push_back({VFD_DISP_CLOCK_1224SEL   ,VFD_DISP_CLOCK_1224SEL_SET ,1,1,0});  // 12h24h表示切替 → 12h24h表示切替実行
-  cntModeVfdCtrTbl.push_back({VFD_DISP_CLOCK_1224SEL_SET   ,VFD_DISP_CLOCK_1224SEL ,0,0,1});  // 12h24h表示切替実行 → 12h24h表示切替
-  cntModeVfdCtrTbl.push_back({VFD_DISP_FADETIME_ADJ    ,VFD_DISP_FADETIME_ADJ_SET  ,1,1,0});  // クロスフェード時間設定 → クロスフェード時間設定実行
-  cntModeVfdCtrTbl.push_back({VFD_DISP_FADETIME_ADJ    ,VFD_DISP_FADETIME_ADJ_SET  ,0,0,1});  // クロスフェード時間設定 → クロスフェード時間設定実行
+  // 設定モードのタイトル表示 <-> 設定処理　遷移テーブル
+  cntModeVfdCtrTbl.push_back({VFD_DISP_CLOCK_ADJ       ,VFD_DISP_CLOCK_ADJ_SET     ,1,1,0});  // 時計調整 → 時計調整実行 UpDownキーブロック setKeyで遷移
+  cntModeVfdCtrTbl.push_back({VFD_DISP_CLOCK_ADJ       ,VFD_DISP_CLOCK_ADJ_SET     ,0,0,1});  // 時計調整 → 時計調整実行 UpDownキー有効 swKeyで遷移
+  cntModeVfdCtrTbl.push_back({VFD_DISP_CAL_ADJ         ,VFD_DISP_CAL_ADJ_SET       ,1,1,0});  // カレンダー調整 → カレンダー調整実行 UpDownキーブロック setKeyで遷移
+  cntModeVfdCtrTbl.push_back({VFD_DISP_CAL_ADJ         ,VFD_DISP_CAL_ADJ_SET       ,0,0,1});  // カレンダー調整 → カレンダー調整実行 UpDownキー有効 swKeyで遷移
+  cntModeVfdCtrTbl.push_back({VFD_DISP_CLOCK_1224SEL   ,VFD_DISP_CLOCK_1224SEL_SET ,1,1,0});  // 12h24h表示切替 → 12h24h表示切替実行 UpDownキーブロック setKeyで遷移
+  cntModeVfdCtrTbl.push_back({VFD_DISP_CLOCK_1224SEL_SET   ,VFD_DISP_CLOCK_1224SEL ,0,0,1});  // 12h24h表示切替実行 → 12h24h表示切替 UpDownキー有効 swKeyで遷移
+  cntModeVfdCtrTbl.push_back({VFD_DISP_FADETIME_ADJ    ,VFD_DISP_FADETIME_ADJ_SET  ,1,1,0});  // クロスフェード時間設定 → クロスフェード時間設定実行 UpDownキーブロック setKeyで遷移
+  cntModeVfdCtrTbl.push_back({VFD_DISP_FADETIME_ADJ    ,VFD_DISP_FADETIME_ADJ_SET  ,0,0,1});  // クロスフェード時間設定 → クロスフェード時間設定実行 UpDownキー有効 swKeyで遷移
 
   return;
 }
@@ -112,6 +115,7 @@ void modeCtrl::vfdAdjModeIni(void)
  */
 void modeCtrl::oledModeIni(void)
 {
+  // 設定項目　遷移テーブル
   dispModeOledTbl.push_back(OLED_DISP_SENSOR_DATA);     // 環境センサデータ表示
   dispModeOledTbl.push_back(OLED_DISP_EVENTLOG_CTRL);   // EventLog操作情報
   return;
@@ -123,6 +127,7 @@ void modeCtrl::oledModeIni(void)
  */
 void modeCtrl::m5OledModeIni(void)
 {
+  // 設定項目　遷移テーブル
   dispModeM5oledTbl.push_back(M5OLED_DISP_SENSOR_DATA);   // 環境センサデータ表示
   dispModeM5oledTbl.push_back(M5OLED_DISP_EVENTLOG_CTRL); // EventLog操作情報
   return;
@@ -177,21 +182,19 @@ uint8_t modeCtrl::getDispModeOLED(void)       // OLED表示モード取得
  */
 dispMode modeCtrl::modeSet(uint8_t setKey,uint8_t swKey)        // モード設定
 {
-  displayMode.adjKeyData = 0;  // 設定操作用キー情報設定
-  // 操作モード選択　0:モード切替
-//  if(displayMode.ctrlModeSelect == 0){
+  displayMode.adjKeyData = 0;         // 設定操作用キー情報設定
   if(displayMode.ctrlMode == ctrlMode_VfdDisp){   // 操作モード：VFD表示
-    modeSetVFD(setKey,swKey);       // VFD表示モード設定
+    modeSetVFD(setKey,swKey);         // VFD表示モード設定
   }
   else if(displayMode.ctrlMode == ctrlMode_VfdCtrl){  // 操作モード：VFD設定
     displayMode.adjKeyData = setKey;  // 設定操作用キー情報設定
     modeSetVfdCnt(setKey,swKey);      // VFD設定表示モード設定
   }
   else if(displayMode.ctrlMode == ctrlMode_M5oled){   // 操作モード：M5OLED設定
-    modeSetM5OLED(setKey,swKey);    // M5OLED表示モード設定
+    modeSetM5OLED(setKey,swKey);      // M5OLED表示モード設定
   }
   else if(displayMode.ctrlMode == ctrlMode_Oled){   // 操作モード：OLED設定
-    modeSetOLED(setKey,swKey);      // OLED表示モード設定
+    modeSetOLED(setKey,swKey);        // OLED表示モード設定
   }
   else{
   }
