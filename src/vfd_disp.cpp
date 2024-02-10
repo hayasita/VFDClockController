@@ -185,6 +185,28 @@ void dispDatMakeFunc::dispTableIni(void)
   dispTableArray.push_back( {VFD_DISP_BRIGHTNESS_ADJ_SET  ,0  ,[&](){brightnessAdjDispdatMake();}             ,[&](){return dummyExec();}  });   // VFD輝度調整実行
   dispTableArray.push_back( {VFD_DISP_BRIGHTNESS_VIEW     ,0  ,[&](){brightnessDataViewDispdatMake();}        ,[&](){return dummyExec();}  });   // VFD輝度設定値表示
 
+  timeDispData.dispNon = (uint8_t)DISP_NON;   // 表示なし
+  timeDispData.pSet = (uint8_t)0x01;          // ピリオドあり
+  timeDispData.pReset = (uint8_t)0x00;        // ピリオドなし
+
+  dispTimeFormat.push_back( {&timeDispData.dispNon  ,&timeDispData.dispNon  ,&timeDispData.hourH  ,&timeDispData.hourL  ,&timeDispData.minH ,&timeDispData.minL ,&timeDispData.secH   ,&timeDispData.secL   } );  // TimeDisplay Format hh.mm.ss
+  dispTimeFormat.push_back( {&timeDispData.dispNon  ,&timeDispData.dispNon  ,&timeDispData.hourH  ,&timeDispData.hourL  ,&timeDispData.minH ,&timeDispData.minL ,&timeDispData.secH   ,&timeDispData.secL   } );  // TimeDisplay Format h.mm.ss
+  dispTimeFormat.push_back( {&timeDispData.dispNon  ,&timeDispData.dispNon  ,&timeDispData.minH   ,&timeDispData.minL   ,&timeDispData.secH ,&timeDispData.secL ,&timeDispData.hourH  ,&timeDispData.hourL  } );   // TimeDisplay Format mm.ss.hh
+
+  dispCalenderFormat.push_back( {&timeDispData.yearHh   ,&timeDispData.yearHl   ,&timeDispData.yearLh ,&timeDispData.yearLl ,&timeDispData.monthH ,&timeDispData.monthL ,&timeDispData.dayH   ,&timeDispData.dayL   } );  // DateDisplay Format yyyy.mm.dd
+  dispCalenderFormat.push_back( {&timeDispData.dispNon  ,&timeDispData.dispNon  ,&timeDispData.yearLh ,&timeDispData.yearLl ,&timeDispData.monthH ,&timeDispData.monthL ,&timeDispData.dayH   ,&timeDispData.dayL   } );  // DateDisplay Format yy.mm.dd
+  dispCalenderFormat.push_back( {&timeDispData.monthH   ,&timeDispData.monthL   ,&timeDispData.dayH   ,&timeDispData.dayL   ,&timeDispData.yearHh ,&timeDispData.yearHl ,&timeDispData.yearLh ,&timeDispData.yearLl } );  // DateDisplay Format mm.dd.yyyy
+  dispCalenderFormat.push_back( {&timeDispData.dispNon  ,&timeDispData.dispNon  ,&timeDispData.monthH ,&timeDispData.monthL ,&timeDispData.dayH   ,&timeDispData.dayL   ,&timeDispData.yearLh ,&timeDispData.yearLl } );  // DateDisplay Format mm.dd.yy
+  dispCalenderFormat.push_back( {&timeDispData.dayH     ,&timeDispData.dayL     ,&timeDispData.monthH ,&timeDispData.monthL ,&timeDispData.yearHh ,&timeDispData.yearHl ,&timeDispData.yearLh ,&timeDispData.yearLl } );  // DateDisplay Format dd.mm.yyyy
+  dispCalenderFormat.push_back( {&timeDispData.dispNon  ,&timeDispData.dispNon  ,&timeDispData.dayH   ,&timeDispData.dayL   ,&timeDispData.monthH ,&timeDispData.monthL ,&timeDispData.yearLh ,&timeDispData.yearLl } );  // DateDisplay Format dd.mm.yy
+
+  dispCalenderPiriodFormat.push_back( {&timeDispData.pReset  ,&timeDispData.pReset  ,&timeDispData.pReset  ,&timeDispData.pSet  ,&timeDispData.pReset  ,&timeDispData.pSet    ,&timeDispData.pReset  ,&timeDispData.pSet } ); // DateDisplay Format yyyy.mm.dd
+  dispCalenderPiriodFormat.push_back( {&timeDispData.pReset  ,&timeDispData.pReset  ,&timeDispData.pReset  ,&timeDispData.pSet  ,&timeDispData.pReset  ,&timeDispData.pSet    ,&timeDispData.pReset  ,&timeDispData.pSet } ); // DateDisplay Format yy.mm.dd
+  dispCalenderPiriodFormat.push_back( {&timeDispData.pReset  ,&timeDispData.pSet    ,&timeDispData.pReset  ,&timeDispData.pSet  ,&timeDispData.pReset  ,&timeDispData.pReset  ,&timeDispData.pReset  ,&timeDispData.pSet } ); // DateDisplay Format mm.dd.yyyy
+  dispCalenderPiriodFormat.push_back( {&timeDispData.pReset  ,&timeDispData.pReset  ,&timeDispData.pReset  ,&timeDispData.pSet  ,&timeDispData.pReset  ,&timeDispData.pSet    ,&timeDispData.pReset  ,&timeDispData.pSet } ); // DateDisplay Format mm.dd.yy
+  dispCalenderPiriodFormat.push_back( {&timeDispData.pReset  ,&timeDispData.pSet    ,&timeDispData.pReset  ,&timeDispData.pSet  ,&timeDispData.pReset  ,&timeDispData.pReset  ,&timeDispData.pReset  ,&timeDispData.pSet } ); // DateDisplay Format dd.mm.yyyy
+  dispCalenderPiriodFormat.push_back( {&timeDispData.pReset  ,&timeDispData.pReset  ,&timeDispData.pReset  ,&timeDispData.pSet  ,&timeDispData.pReset  ,&timeDispData.pSet    ,&timeDispData.pReset  ,&timeDispData.pSet } ); // DateDisplay Format dd.mm.yy
+
   return;
 }
 
@@ -487,135 +509,48 @@ void dispDatMakeFunc::dispCalender(struct tm timeInfo)
 {
   uint16_t tmpYear = timeInfo.tm_year + 1900;
   uint8_t tmpMonth = timeInfo.tm_mon + 1;
-  uint8_t yearHh,yearHl,yearLh,yearLl;
-  uint8_t monthH,monthL,dayH,dayL;
+  uint8_t tblNum;
 
-  dayL = timeInfo.tm_mday % 10;
-  dayH = timeInfo.tm_mday / 10;
-  monthL = tmpMonth % 10;
-  monthH = tmpMonth / 10;
-  yearLl = tmpYear % 10;
-  yearLh = (tmpYear % 100) / 10;
-  yearHl = (tmpYear % 1000) / 100;
-  yearHh = tmpYear / 1000;
+  timeDispData.dayL = timeInfo.tm_mday % 10;
+  timeDispData.dayH = timeInfo.tm_mday / 10;
+  timeDispData.monthL = tmpMonth % 10;
+  timeDispData.monthH = tmpMonth / 10;
+  timeDispData.yearLl = tmpYear % 10;
+  timeDispData.yearLh = (tmpYear % 100) / 10;
+  timeDispData.yearHl = (tmpYear % 1000) / 100;
+  timeDispData.yearHh = tmpYear / 1000;
 
-  dispTmp[8] = DISP_NON;
-  if(confDat.getDateDisplayFormat() == dateDispFormYymmdd){
-    // DateDisplay Format yy.mm.dd
-    dispTmp[0] = dayL;
-    dispTmp[1] = dayH;
-    dispTmp[2] = monthL;
-    dispTmp[3] = monthH;
-    dispTmp[4] = yearLl;
-    dispTmp[5] = yearLh;
-    dispTmp[6] = DISP_NON;
-    dispTmp[7] = DISP_NON;
-  }
-  else if(confDat.getDateDisplayFormat() == dateDispFormMmddyyyy){
-    // DateDisplay Format mm.dd.yyyy
-    dispTmp[0] = yearLl;
-    dispTmp[1] = yearLh;
-    dispTmp[2] = yearHl;
-    dispTmp[3] = yearHh;
-    dispTmp[4] = dayL;
-    dispTmp[5] = dayH;
-    dispTmp[6] = monthL;
-    dispTmp[7] = monthH;
-   }
-  else if(confDat.getDateDisplayFormat() == dateDispFormMmddyy){
-    // DateDisplay Format mm.dd.yy
-    dispTmp[0] = yearLl;
-    dispTmp[1] = yearLh;
-    dispTmp[2] = dayL;
-    dispTmp[3] = dayH;
-    dispTmp[4] = monthL;
-    dispTmp[5] = monthH;
-    dispTmp[6] = DISP_NON;
-    dispTmp[7] = DISP_NON;
-  }
-  else if(confDat.getDateDisplayFormat() == dateDispFormDdmmyyyy){
-    // DateDisplay Format dd.mm.yyyy
-    dispTmp[0] = yearLl;
-    dispTmp[1] = yearLh;
-    dispTmp[2] = yearHl;
-    dispTmp[3] = yearHh;
-    dispTmp[4] = monthL;
-    dispTmp[5] = monthH;
-    dispTmp[6] = dayL;
-    dispTmp[7] = dayH;
-  }
-  else if(confDat.getDateDisplayFormat() == dateDispFormDdmmyy){
-    // DateDisplay Format dd.mm.yy
-    dispTmp[0] = yearLl;
-    dispTmp[1] = yearLh;
-    dispTmp[2] = monthL;
-    dispTmp[3] = monthH;
-    dispTmp[4] = dayL;
-    dispTmp[5] = dayH;
-    dispTmp[6] = DISP_NON;
-    dispTmp[7] = DISP_NON;
-  }
-//  if(confDat.getDateDisplayFormat() == dateDispFormYyyymmdd){
-  else{
-    // DateDisplay Format yyyy.mm.dd
-    dispTmp[0] = dayL;
-    dispTmp[1] = dayH;
-    dispTmp[2] = monthL;
-    dispTmp[3] = monthH;
-    dispTmp[4] = yearLl;
-    dispTmp[5] = yearLh;
-    dispTmp[6] = yearHl;
-    dispTmp[7] = yearHh;
-  }
+  tblNum = confDat.getDateDisplayFormat() -1;
 
-  if( (confDat.getDateDisplayFormat() == dateDispFormYymmdd)  // DateDisplay Format yy.mm.dd
-   || (confDat.getDateDisplayFormat() == dateDispFormMmddyy)  // DateDisplay Format mm.dd.yy
-   || (confDat.getDateDisplayFormat() == dateDispFormDdmmyy)  // DateDisplay Format dd.mm.yy
-  ){
-    piriodTmp[0] = 0x01;
-    piriodTmp[1] = 0x00;
-    piriodTmp[2] = 0x01;
-    piriodTmp[3] = 0x00;
-    piriodTmp[4] = 0x01;
-    piriodTmp[5] = 0x00;
-    piriodTmp[6] = 0x00;
-    piriodTmp[7] = 0x00;
-    piriodTmp[8] = 0x00;
-  }
-  else if( (confDat.getDateDisplayFormat() == dateDispFormMmddyyyy) // DateDisplay Format mm.dd.yyyy
-   || (confDat.getDateDisplayFormat() == dateDispFormDdmmyyyy)      // DateDisplay Format dd.mm.yyyy
-  ){
-    piriodTmp[0] = 0x01;
-    piriodTmp[1] = 0x00;
-    piriodTmp[2] = 0x00;
-    piriodTmp[3] = 0x00;
-    piriodTmp[4] = 0x01;
-    piriodTmp[5] = 0x00;
-    piriodTmp[6] = 0x01;
-    piriodTmp[7] = 0x00;
-    piriodTmp[8] = 0x00;
-  }
-  else{
-    // DateDisplay Format yyyy.mm.dd
-    piriodTmp[0] = 0x01;
-    piriodTmp[1] = 0x00;
-    piriodTmp[2] = 0x01;
-    piriodTmp[3] = 0x00;
-    piriodTmp[4] = 0x01;
-    piriodTmp[5] = 0x00;
-    piriodTmp[6] = 0x00;
-    piriodTmp[7] = 0x00;
-    piriodTmp[8] = 0x00;
-  }
+  dispTmp[0] = (uint16_t)(*dispCalenderFormat[tblNum].disp0);
+  dispTmp[1] = (uint16_t)(*dispCalenderFormat[tblNum].disp1);
+  dispTmp[2] = (uint16_t)(*dispCalenderFormat[tblNum].disp2);
+  dispTmp[3] = (uint16_t)(*dispCalenderFormat[tblNum].disp3);
+  dispTmp[4] = (uint16_t)(*dispCalenderFormat[tblNum].disp4);
+  dispTmp[5] = (uint16_t)(*dispCalenderFormat[tblNum].disp5);
+  dispTmp[6] = (uint16_t)(*dispCalenderFormat[tblNum].disp6);
+  dispTmp[7] = (uint16_t)(*dispCalenderFormat[tblNum].disp7);
+  dispTmp[8] = timeDispData.dispNon;
+
+  piriodTmp[0] = (uint16_t)(*dispCalenderPiriodFormat[tblNum].disp0);
+  piriodTmp[1] = (uint16_t)(*dispCalenderPiriodFormat[tblNum].disp1);
+  piriodTmp[2] = (uint16_t)(*dispCalenderPiriodFormat[tblNum].disp2);
+  piriodTmp[3] = (uint16_t)(*dispCalenderPiriodFormat[tblNum].disp3);
+  piriodTmp[4] = (uint16_t)(*dispCalenderPiriodFormat[tblNum].disp4);
+  piriodTmp[5] = (uint16_t)(*dispCalenderPiriodFormat[tblNum].disp5);
+  piriodTmp[6] = (uint16_t)(*dispCalenderPiriodFormat[tblNum].disp6);
+  piriodTmp[7] = (uint16_t)(*dispCalenderPiriodFormat[tblNum].disp7);
+  piriodTmp[8] = timeDispData.pReset;
 
   return;
 }
+
 // 時計表示データ作成
 void dispDatMakeFunc::dispClock(struct tm timeInfo)
 {
   uint8_t hour;
-  uint8_t hourH,hourL,minH,minL,secH,secL;
   uint8_t ampm,piriodAmpm;
+  uint8_t tblNum;
 
   hour = timeInfo.tm_hour;
   if(confDat.GetFormatHw() == 0){
@@ -635,39 +570,32 @@ void dispDatMakeFunc::dispClock(struct tm timeInfo)
 //    piriodAmpm = 0x01;
   }
 
-  secL = timeInfo.tm_sec % 10;
-  secH = timeInfo.tm_sec / 10;
-  minL = timeInfo.tm_min % 10;
-  minH = timeInfo.tm_min / 10;
-  hourL = hour % 10;
+  timeDispData.secL = timeInfo.tm_sec % 10;
+  timeDispData.secH = timeInfo.tm_sec / 10;
+  timeDispData.minL = timeInfo.tm_min % 10;
+  timeDispData.minH = timeInfo.tm_min / 10;
+  timeDispData.hourL = hour % 10;
+  
   if(((confDat.getTimeDisplayFormat() == timeDispFormHmmss))
    && ((hour / 10) == 0)){
-    hourH = DISP_NON;
+    timeDispData.hourH = DISP_NON;
   }
   else{
-    hourH = hour / 10;
+    timeDispData.hourH = hour / 10;
   }
 
-  if(confDat.getTimeDisplayFormat() == timeDispFormMmsshh){
-    dispTmp[0] = (uint16_t)hourL;
-    dispTmp[1] = (uint16_t)hourH;
-    dispTmp[2] = (uint16_t)secL;
-    dispTmp[3] = (uint16_t)secH;
-    dispTmp[4] = (uint16_t)minL;
-    dispTmp[5] = (uint16_t)minH;
-  }
-  else if((confDat.getTimeDisplayFormat() == timeDispFormHhmmss) || (confDat.getTimeDisplayFormat() == timeDispFormHmmss)){
-    dispTmp[0] = (uint16_t)secL;
-    dispTmp[1] = (uint16_t)secH;
-    dispTmp[2] = (uint16_t)minL;
-    dispTmp[3] = (uint16_t)minH;
-    dispTmp[4] = (uint16_t)hourL;
-    dispTmp[5] = (uint16_t)hourH;
-  }
+  tblNum = confDat.getTimeDisplayFormat() -1;
 
-  dispTmp[6] = (uint16_t)DISP_NON;
+  dispTmp[0] = (uint16_t)(*dispTimeFormat[tblNum].disp0);
+  dispTmp[1] = (uint16_t)(*dispTimeFormat[tblNum].disp1);
+  dispTmp[2] = (uint16_t)(*dispTimeFormat[tblNum].disp2);
+  dispTmp[3] = (uint16_t)(*dispTimeFormat[tblNum].disp3);
+  dispTmp[4] = (uint16_t)(*dispTimeFormat[tblNum].disp4);
+  dispTmp[5] = (uint16_t)(*dispTimeFormat[tblNum].disp5);
+
+  dispTmp[6] = (uint16_t)timeDispData.dispNon;
   dispTmp[7] = (uint16_t)ampm;
-  dispTmp[8] = (uint16_t)DISP_NON;
+  dispTmp[8] = (uint16_t)timeDispData.dispNon;
 
   piriodTmp[0] = 0x00;
   piriodTmp[1] = 0x00;

@@ -146,6 +146,51 @@ struct DISPLAY_DATA{
 };
 
 /**
+ * @brief 表示用時刻情報
+ * 
+ */
+class TimeDispData{
+  public:
+    uint8_t yearHh;   // 年1000
+    uint8_t yearHl;   // 年100
+    uint8_t yearLh;   // 年10
+    uint8_t yearLl;   // 年1
+
+    uint8_t monthH;   // 月10
+    uint8_t monthL;   // 月1
+    uint8_t dayH;     // 日10
+    uint8_t dayL;     // 日1
+
+    uint8_t hourH;    // 時10
+    uint8_t hourL;    // 時1
+    uint8_t minH;     // 分10
+    uint8_t minL;     // 分1
+    uint8_t secH;     // 秒10
+    uint8_t secL;     // 秒1
+
+    uint8_t dispNon;  // 表示なし
+
+    uint8_t pSet;    // ピリオドあり
+    uint8_t pReset;  // ピリオドなし
+};
+
+/**
+ * @brief 時刻表示フォーマット
+ * 
+ */
+class DispClockTbl{
+  public:
+    uint8_t* disp7;
+    uint8_t* disp6;
+    uint8_t* disp5;
+    uint8_t* disp4;
+    uint8_t* disp3;
+    uint8_t* disp2;
+    uint8_t* disp1;
+    uint8_t* disp0;
+};
+
+/**
  * @brief 表示データ作成処理テーブル
  * 
  */
@@ -222,6 +267,11 @@ class dispDatMakeFunc{
     uint8_t vfdDispNum;                     // VFD表示フォーマット表示番号
     struct tm adjTimeInfo;                  // 設定用時刻情報
     uint8_t adjKeyData;                     // 設定操作用キー情報
+
+    std::vector<DispClockTbl> dispTimeFormat;       // 時計表示フォーマットテーブル
+    std::vector<DispClockTbl> dispCalenderFormat;   // カレンダー表示フォーマットテーブル
+    std::vector<DispClockTbl> dispCalenderPiriodFormat;   // カレンダーピリオド表示フォーマットテーブル
+    TimeDispData timeDispData;                      // 時計・カレンダー表示用データ
 
 };
 
