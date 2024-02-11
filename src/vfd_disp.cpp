@@ -832,6 +832,10 @@ void dispDatMakeFunc::dispScrolldatMake(const char *disp_data,uint8_t startp,uin
   return;
 }
 
+/**
+ * @brief VFD表示データ点滅初期化
+ * 
+ */
 void dispDatMakeFunc::dispBlinkingMakeIni(void)             // 表示データ点滅初期化
 {
   blinkingState = 0;
@@ -840,18 +844,27 @@ void dispDatMakeFunc::dispBlinkingMakeIni(void)             // 表示データ�
   return;
 }
 
+/**
+ * @brief VFD表示データ点滅処理
+ * 
+ * @param startp        点滅開始位置
+ * @param dispnum       点滅個数
+ * @param mode          点滅モード
+ * @param blinkInterval 点滅間隔時間(ms)
+ */
 void dispDatMakeFunc::dispBlinkingMake(uint8_t startp,uint8_t dispnum,uint8_t mode,long blinkInterval)
 {
   uint8_t blink_switch;           // 点滅スイッチ
+  uint8_t maxNum = (DISP_KETAMAX -1);
 
   if((mode == 0) || (mode > 2)){
     mode = 1;
   }
-  if(startp > 8){
-    startp = 8;
+  if(startp > maxNum){
+    startp = maxNum;
   }
-  if(dispnum > startp){
-    dispnum = startp;
+  if((startp+dispnum-1) >= maxNum){
+    dispnum = maxNum - startp + 1;
   }
 
   if( ( millis() - blinkingTimNowl ) > blinkInterval){
@@ -881,7 +894,7 @@ void dispDatMakeFunc::dispBlinkingMake(uint8_t startp,uint8_t dispnum,uint8_t mo
 
   // 消灯処理
   if(blink_switch == 1){
-    for(uint8_t i=0;i<1;i++){
+    for(uint8_t i=0;i<dispnum;i++){
       dispTmp[startp + i] = DISP_NON;
     }
   }
