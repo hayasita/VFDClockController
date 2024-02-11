@@ -461,13 +461,28 @@ uint8_t dispDatMakeFunc::fadetimeAdjExec(void)
   String status;
   uint8_t swKey = 0;
 
-  if(adjKeyData == KEY_SET_S){    // setキーで設定完了条件満たす場合の条件を追加
-//    confDat.SetFormatHw(confDat.GetFormatHwTmp());
-    swKey = SWKEY_SET_S;              // 設定モード完了要求
+  if(adjKeyData == KEY_UP_S){         // ▲Key SW2 Short ON
+    status = "Up!";
+    uint8_t tmp = confDat.GetFadetimewTmp();
+    if(tmp < 9){
+      confDat.SetFadetimewTmp(tmp+1);
+    }
+
+  }
+  else if(adjKeyData == KEY_DOWN_S){  // ▼Key SW3 Short ON
+    status = "Down!";
+    uint8_t tmp = confDat.GetFadetimewTmp();
+    if(tmp > 0){
+      confDat.SetFadetimewTmp(tmp-1);
+    }
+  }
+  else if(adjKeyData == KEY_SET_S){    // setキーで設定完了条件満たす場合の条件を追加
+    confDat.SetFadetimew(confDat.GetFadetimewTmp());  // 設定値設定
+    swKey = SWKEY_SET_S;                              // 設定モード完了要求
     status = "設定モード完了要求";
   }
   else if(adjKeyData == SWKEY_ADJ_RESET){
-//    confDat.SetFormatHwTmp(confDat.GetFormatHw());    // 設定値初期化
+    confDat.SetFadetimewTmp(confDat.GetFadetimew());  // 設定値初期化
     swKey = SWKEY_SET_L;                              // 設定モード中断要求
     status = "設定モード中断要求";
   }
