@@ -376,42 +376,42 @@ uint8_t dispDatMakeFunc::clockAdjExec(void)
     status = "Up!";
     timeAdjExecl = true;              // 時刻設定操作有り
 
-    if(adjSq == 0){
-      epoch_seconds = mktime(&adjTimeInfo) + (time_t)3600;
-      localtime_r(&epoch_seconds, &timeTmp);
-      if(timeTmp.tm_hour == 0){
-        epoch_seconds -= (time_t)(3600*24);
+    if(adjSq == 0){                   // 時++
+      if(adjTimeInfo.tm_hour < 23){
+        adjTimeInfo.tm_hour += 1;
       }
-      localtime_r(&epoch_seconds, &adjTimeInfo);
+      else{
+        adjTimeInfo.tm_hour = 0;
+      }
     }
-    else if(adjSq == 1){
-      epoch_seconds = mktime(&adjTimeInfo) + (time_t)60;
-      localtime_r(&epoch_seconds, &timeTmp);
-      if(timeTmp.tm_min == 0){
-        epoch_seconds -= (time_t)(60*60);
+    else if(adjSq == 1){              // 分++
+      if(adjTimeInfo.tm_min < 59){
+        adjTimeInfo.tm_min += 1;
       }
-      localtime_r(&epoch_seconds, &adjTimeInfo);
+      else{
+        adjTimeInfo.tm_min = 0;
+      }
     }
   }
   else if(adjKeyData == KEY_DOWN_S){  // ▼Key SW3 Short ON
     status = "Down!";
     timeAdjExecl = true;              // 時刻設定操作有り
 
-    if(adjSq == 0){
-      epoch_seconds = mktime(&adjTimeInfo) - (time_t)3600;
-      localtime_r(&epoch_seconds, &timeTmp);
-      if(timeTmp.tm_hour == 23){
-        epoch_seconds += (time_t)(3600*24);
+    if(adjSq == 0){                   // 時--
+      if(adjTimeInfo.tm_hour > 0){
+        adjTimeInfo.tm_hour -= 1;
       }
-      localtime_r(&epoch_seconds, &adjTimeInfo);
+      else{
+        adjTimeInfo.tm_hour = 23;
+      }
     }
-    else if(adjSq == 1){
-      epoch_seconds = mktime(&adjTimeInfo) - (time_t)60;;
-      localtime_r(&epoch_seconds, &timeTmp);
-      if(timeTmp.tm_min == 59){
-        epoch_seconds += (time_t)(60*60);
+    else if(adjSq == 1){              // 分--
+      if(adjTimeInfo.tm_min > 0){
+        adjTimeInfo.tm_min -= 1;
       }
-      localtime_r(&epoch_seconds, &adjTimeInfo);
+      else{
+        adjTimeInfo.tm_min = 59;
+      }
     }
   }
   else if(adjKeyData == KEY_SET_S){    // setキーで設定完了条件満たす場合の条件を追加
