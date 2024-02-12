@@ -10,6 +10,8 @@
 #endif
 
 #include <M5Unified.h>
+#include <ctime>
+#include <iostream>
 
 const unsigned long keta_dat[] = {
   0x040000,    // 1
@@ -265,8 +267,10 @@ class dispDatMakeFunc{
     uint8_t fadetimeAdjExec(void);                  // クロスフェード時間設定処理
     
     uint8_t vfdDispNum;                     // VFD表示フォーマット表示番号
-    struct tm adjTimeInfo;                  // 設定用時刻情報
     uint8_t adjKeyData;                     // 設定操作用キー情報
+    struct tm adjTimeInfo;                  // 設定用時刻情報
+    uint8_t adjSq;                          // 設定シーケンス
+    bool timeAdjExecl;                      // 時刻設定操作有無
 
     std::vector<DispClockTbl> dispTimeFormat;       // 時計表示フォーマットテーブル
     std::vector<DispClockTbl> dispCalenderFormat;   // カレンダー表示フォーマットテーブル

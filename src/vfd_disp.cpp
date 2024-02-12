@@ -2,6 +2,7 @@
 #include "vfd_driver.h"
 #include "vfd_conf.h"
 #include "mode_ctrl.h"
+#include "vfd_rtc.h"
 
 #ifdef ARDUINO_M5Stick_C
 TFT_eSprite tftSprite = TFT_eSprite(&M5.Lcd); // スプライト
@@ -367,16 +368,82 @@ uint8_t dispDatMakeFunc::clockAdjExec(void)
 {
   String status;
   uint8_t swKey = 0;
+  static long execDispTime;    // 設定完了表示用タイマ
+  struct tm timeTmp;
+  time_t epoch_seconds;
 
-  if(adjKeyData == KEY_SET_S){    // setキーで設定完了条件満たす場合の条件を追加
-//    confDat.SetFormatHw(confDat.GetFormatHwTmp());
-    swKey = SWKEY_SET_S;              // 設定モード完了要求
-    status = "設定モード完了要求";
+  if(adjKeyData == KEY_UP_S){         // ▲Key SW2 Short ON
+    status = "Up!";
+    timeAdjExecl = true;              // 時刻設定操作有り
+
+    if(adjSq == 0){
+      epoch_seconds = mktime(&adjTimeInfo) + (time_t)3600;
+      localtime_r(&epoch_seconds, &timeTmp);
+      if(timeTmp.tm_hour == 0){
+        epoch_seconds -= (time_t)(3600*24);
+      }
+      localtime_r(&epoch_seconds, &adjTimeInfo);
+    }
+    else if(adjSq == 1){
+      epoch_seconds = mktime(&adjTimeInfo) + (time_t)60;
+      localtime_r(&epoch_seconds, &timeTmp);
+      if(timeTmp.tm_min == 0){
+        epoch_seconds -= (time_t)(60*60);
+      }
+      localtime_r(&epoch_seconds, &adjTimeInfo);
+    }
+  }
+  else if(adjKeyData == KEY_DOWN_S){  // ▼Key SW3 Short ON
+    status = "Down!";
+    timeAdjExecl = true;              // 時刻設定操作有り
+
+    if(adjSq == 0){
+      epoch_seconds = mktime(&adjTimeInfo) - (time_t)3600;
+      localtime_r(&epoch_seconds, &timeTmp);
+      if(timeTmp.tm_hour == 23){
+        epoch_seconds += (time_t)(3600*24);
+      }
+      localtime_r(&epoch_seconds, &adjTimeInfo);
+    }
+    else if(adjSq == 1){
+      epoch_seconds = mktime(&adjTimeInfo) - (time_t)60;;
+      localtime_r(&epoch_seconds, &timeTmp);
+      if(timeTmp.tm_min == 59){
+        epoch_seconds += (time_t)(60*60);
+      }
+      localtime_r(&epoch_seconds, &adjTimeInfo);
+    }
+  }
+  else if(adjKeyData == KEY_SET_S){    // setキーで設定完了条件満たす場合の条件を追加
+    execDispTime = millis();
+    adjSq++;
+    if((adjSq == 2) && (!timeAdjExecl)){  // 時刻設定操作無の場合、設定変更しない
+      adjSq = 3;
+    }
+    status = "設定桁更新";
   }
   else if(adjKeyData == SWKEY_ADJ_RESET){
-//    confDat.SetFormatHwTmp(confDat.GetFormatHw());    // 設定値初期化
     swKey = SWKEY_SET_L;                              // 設定モード中断要求
     status = "設定モード中断要求";
+  }
+
+  // 設定モード終了処理
+  if(adjSq == 2){
+    if( ( millis() - execDispTime ) > 800){
+      // 設定変更処理
+      confDat.setNtpset(0);             // NTP無効
+      localTimeCont.timeSync(adjTimeInfo); // システム時刻設定
+      localTimeCont.timeDisp();
+      ntpSetup = true;                  // NTP時刻 → RTC設定要求
+
+      status = "設定変更処理";
+      adjSq++;
+    }
+  }
+  else if(adjSq == 3){
+    adjSq = 0;
+    swKey = SWKEY_SET_S;              // 設定モード完了要求
+    status = "設定モード完了要求";
   }
 
   if(status.length() != 0){
@@ -395,16 +462,98 @@ uint8_t dispDatMakeFunc::calenderAdjExec(void)
 {
   String status;
   uint8_t swKey = 0;
+  static long execDispTime;    // 設定完了表示用タイマ
+  struct tm timeTmp;
+  time_t epoch_seconds;
 
-  if(adjKeyData == KEY_SET_S){    // setキーで設定完了条件満たす場合の条件を追加
-//    confDat.SetFormatHw(confDat.GetFormatHwTmp());
-    swKey = SWKEY_SET_S;              // 設定モード完了要求
-    status = "設定モード完了要求";
+  if(adjKeyData == KEY_UP_S){         // ▲Key SW2 Short ON
+    status = "Up!";
+    timeAdjExecl = true;              // 時刻設定操作有り
+
+    if(adjSq == 0){                   // 年++
+      if((adjTimeInfo.tm_year+1)<138){    // 2038年問題
+        adjTimeInfo.tm_year += 1;
+      }
+    }
+    else if(adjSq == 1){              // 月++
+      if((adjTimeInfo.tm_mon+1)<12){
+        adjTimeInfo.tm_mon += 1;
+      }
+      else{
+        adjTimeInfo.tm_mon = 0;
+      }
+    }
+    else if(adjSq == 2){              // 日++
+      epoch_seconds = mktime(&adjTimeInfo) + (time_t)(3600*24);
+      localtime_r(&epoch_seconds, &timeTmp);
+      if(timeTmp.tm_mday == 1){
+        timeTmp.tm_mon -=1;       // 前の月に戻す
+        epoch_seconds = mktime(&timeTmp);
+      }
+      localtime_r(&epoch_seconds, &adjTimeInfo);
+    }
+
+  }
+  else if(adjKeyData == KEY_DOWN_S){  // ▼Key SW3 Short ON
+    status = "Down!";
+    timeAdjExecl = true;              // 時刻設定操作有り
+
+    if(adjSq == 0){                   // 年++
+      if((adjTimeInfo.tm_year-1) != 100){    // 2038年問題
+        adjTimeInfo.tm_year -= 1;
+      }
+    }
+    else if(adjSq == 1){              // 月++
+      if((adjTimeInfo.tm_mon) != 0){
+        adjTimeInfo.tm_mon -= 1;
+      }
+      else{
+        adjTimeInfo.tm_mon = 11;
+      }
+    }
+    else if(adjSq == 2){              // 日++
+      if(adjTimeInfo.tm_mday == 1){
+        timeTmp = adjTimeInfo;
+        timeTmp.tm_mon += 1;
+        epoch_seconds = mktime(&timeTmp) - (time_t)(3600*24);
+        localtime_r(&epoch_seconds, &adjTimeInfo);
+      }
+      else{
+        adjTimeInfo.tm_mday -= 1;
+      }
+    }
+  }
+  else if(adjKeyData == KEY_SET_S){    // setキーで設定完了条件満たす場合の条件を追加
+    execDispTime = millis();
+    adjSq++;
+    if((adjSq == 3) && (!timeAdjExecl)){  // 時刻設定操作無の場合、設定変更しない
+      adjSq = 4;
+    }
+    status = "設定桁更新";
   }
   else if(adjKeyData == SWKEY_ADJ_RESET){
 //    confDat.SetFormatHwTmp(confDat.GetFormatHw());    // 設定値初期化
     swKey = SWKEY_SET_L;                              // 設定モード中断要求
     status = "設定モード中断要求";
+  }
+
+  // 設定モード終了処理
+  if(adjSq == 3){
+    if( ( millis() - execDispTime ) > 800){
+      // 設定変更処理
+      confDat.setNtpset(0);             // NTP無効
+      localTimeCont.timeSync(adjTimeInfo); // システム時刻設定
+//      localTimeCont.timeDisp();
+      ntpSetup = true;                  // NTP時刻 → RTC設定要求
+
+      status = "設定変更処理";
+      adjSq++;
+    }
+  }
+  else if(adjSq == 4){
+    adjSq = 0;
+    swKey = SWKEY_SET_S;              // 設定モード完了要求
+    status = "設定モード完了要求";
   }
 
   if(status.length() != 0){
@@ -569,7 +718,7 @@ void dispDatMakeFunc::dispClock(struct tm timeInfo)
 
   hour = timeInfo.tm_hour;
   if(confDat.GetFormatHw() == 0){
-    if(hour > 12){
+    if(hour >= 12){
       hour -= 12;
       ampm = DISP_P;
     }
@@ -590,7 +739,7 @@ void dispDatMakeFunc::dispClock(struct tm timeInfo)
   timeDispData.minL = timeInfo.tm_min % 10;
   timeDispData.minH = timeInfo.tm_min / 10;
   timeDispData.hourL = hour % 10;
-  
+
   if(((confDat.getTimeDisplayFormat() == timeDispFormHmmss))
    && ((hour / 10) == 0)){
     timeDispData.hourH = DISP_NON;
@@ -916,7 +1065,10 @@ void dispDatMakeFunc::clockAdjtitleDispdatMake(struct tm timeInfo){
   dispTmp[8] = DISP_K1;
   piriodTmp[7] = 0x01;
 
+  timeInfo.tm_sec = 0;      // 設定画面では秒表示は0にする
   adjTimeInfo = timeInfo;   // 設定用時刻設定
+  adjSq = 0;                // 設定シーケンス初期化
+  timeAdjExecl = false;     // 時刻設定操作有無初期化
 
   return;
 }
@@ -926,17 +1078,30 @@ void dispDatMakeFunc::clockAdjtitleDispdatMake(struct tm timeInfo){
  * 
  * @param adjKeyData 操作キー入力
  */
-void dispDatMakeFunc::clockAdjDispdatMake(void){  // カレンダー調整
-/*
-  const char disptxt[] = "CLOCK ADJ";
-  dispScrolldatMake(disptxt,5,5);
-  dispTmp[6] = DISP_NON;
-  dispTmp[7] = DISP_01;
-  dispTmp[8] = DISP_K1;
-  piriodTmp[7] = 0x01;
-*/
+void dispDatMakeFunc::clockAdjDispdatMake(void)  // カレンダー調整
+{
+  const uint8_t brinkPosi[][2] = {
+    {4,2},    // TimeDisplay Format hh.mm.ss
+    {4,2},    // TimeDisplay Format h.mm.ss
+    {0,4}     // TimeDisplay Format mm.ss.hh
+  };
+
+  uint8_t tblNum = confDat.getTimeDisplayFormat() -1;
+
   dispClock(adjTimeInfo);
   dispTmp[8] = DISP_K1;
+
+  if(adjSq == 0){         // 時調整
+    dispBlinkingMake(brinkPosi[tblNum][0],2,1,500);
+    dispBlinkingMake(8,1,1,500);
+  }
+  else if(adjSq == 1){    // 分調整
+    dispBlinkingMake(brinkPosi[tblNum][1],2,1,500);
+    dispBlinkingMake(8,1,1,500);
+  }
+  else if(adjSq == 2){    // 設定終了
+    dispBlinkingMake(0,9,1,200);
+  }
 
   return;
 }
@@ -953,14 +1118,43 @@ void dispDatMakeFunc::calenderAdjtitleDispdatMake(struct tm timeInfo)         //
   piriodTmp[7] = 0x01;
 
   adjTimeInfo = timeInfo;   // 設定用時刻設定
+  adjSq = 0;                // 設定シーケンス初期化
 
   return;
 }
 
 void dispDatMakeFunc::calenderAdjDispdatMake(void)  // カレンダー調整実行
 {
+  const uint8_t brinkPosi[][3][2] = {
+    {{4,4},{2,2},{0,2}},    // DateDisplay Format yyyy.mm.dd
+    {{4,2},{2,2},{0,2}},    // DateDisplay Format yy.mm.dd
+    {{0,4},{6,2},{4,2}},    // DateDisplay Format mm.dd.yyyy
+    {{0,2},{4,2},{2,2}},    // DateDisplay Format mm.dd.yy
+    {{0,4},{4,2},{6,2}},    // DateDisplay Format dd.mm.yyyy
+    {{0,2},{2,2},{4,2}}     // DateDisplay Format dd.mm.yy
+  };
+
+  uint8_t tblNum = confDat.getDateDisplayFormat() -1;
+
   dispCalender(adjTimeInfo);
   dispTmp[8] = DISP_K1;
+
+  if(adjSq == 0){         // 年調整
+    dispBlinkingMake(brinkPosi[tblNum][0][0],brinkPosi[tblNum][0][1],1,500);
+    dispBlinkingMake(8,1,1,500);
+  }
+  else if(adjSq == 1){    // 月調整
+    dispBlinkingMake(brinkPosi[tblNum][1][0],brinkPosi[tblNum][1][1],1,500);
+    dispBlinkingMake(8,1,1,500);
+  }
+  else if(adjSq == 2){    // 日調整
+    dispBlinkingMake(brinkPosi[tblNum][2][0],brinkPosi[tblNum][2][1],1,500);
+    dispBlinkingMake(8,1,1,500);
+  }
+  else if(adjSq == 3){    // 設定終了
+    dispBlinkingMake(0,9,1,200);
+  }
+
 
   return;
 }
