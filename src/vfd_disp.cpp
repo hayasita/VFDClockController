@@ -174,33 +174,33 @@ void dispDatMakeFunc::dispTableIni(void)
   dispTableArray.push_back( {VFD_DISP_TIME_SENSOR3      ,1  ,[&](){dispLoop1(dispInputData);}                 ,[&](){return dispDefaultSetExec();}  }); // 時刻＋温度＋湿度＋気圧
   dispTableArray.push_back( {VFD_DISP_TMP               ,1  ,[&](){dispTemp(dispInputData);}                  ,[&](){return dispDefaultSetExec();}  }); // 温度表示データ作成
 
-  dispTableArray.push_back( {VFD_DISP_CLOCK_ADJ           ,0  ,[&](){clockAdjtitleDispdatMake(dispInputData.timeInfo);}     ,[&](){return dummyExec();}  });          // 時計調整
-  dispTableArray.push_back( {VFD_DISP_CLOCK_ADJ_SET       ,0  ,[&](){clockAdjDispdatMake();}                  ,[&](){return clockAdjExec();}  });          // 時計調整
-  dispTableArray.push_back( {VFD_DISP_CAL_ADJ             ,0  ,[&](){calenderAdjtitleDispdatMake(dispInputData.timeInfo);}  ,[&](){return dummyExec();}  });          // カレンダー調整
+  dispTableArray.push_back( {VFD_DISP_CLOCK_ADJ           ,0  ,[&](){clockAdjtitleDispdatMake(dispInputData.timeInfo);}     ,[&](){return dummyExec();}  });  // 時計調整
+  dispTableArray.push_back( {VFD_DISP_CLOCK_ADJ_SET       ,0  ,[&](){clockAdjDispdatMake();}                  ,[&](){return clockAdjExec();}  });             // 時計調整
+  dispTableArray.push_back( {VFD_DISP_CAL_ADJ             ,0  ,[&](){calenderAdjtitleDispdatMake(dispInputData.timeInfo);}  ,[&](){return dummyExec();}  });  // カレンダー調整
   dispTableArray.push_back( {VFD_DISP_CAL_ADJ_SET         ,0  ,[&](){calenderAdjDispdatMake();}               ,[&](){return calenderAdjExec();}  });          // カレンダー調整実行
-  dispTableArray.push_back( {VFD_DISP_CLOCK_1224SEL       ,0  ,[&](){clock1224setAdjtitleDispdatMake();}      ,[&](){return dummyExec();}  });          // 12h24h表示切替
-  dispTableArray.push_back( {VFD_DISP_CLOCK_1224SEL_SET   ,0  ,[&](){clock1224setDispdatMake();}              ,[&](){return clock1224setAdjExec();} }); // 12h24h表示切替実行
-  dispTableArray.push_back( {VFD_DISP_FADETIME_ADJ        ,0  ,[&](){crossfadeAdjTitleDispdatMake();}         ,[&](){return dummyExec();}  });   // クロスフェード時間設定
-  dispTableArray.push_back( {VFD_DISP_FADETIME_ADJ_SET    ,0  ,[&](){crossfadeAdjDispdatMake();}              ,[&](){return fadetimeAdjExec();}     }); // クロスフェード時間設定実行
-  dispTableArray.push_back( {VFD_DISP_BRIGHTNESS_ADJ      ,0  ,[&](){brightnessAdjtitleDispdatMake();}        ,[&](){return dummyExec();}  });   // VFD輝度調整
-  dispTableArray.push_back( {VFD_DISP_BRIGHTNESS_ADJ_SET  ,0  ,[&](){brightnessAdjDispdatMake();}             ,[&](){return dummyExec();}  });   // VFD輝度調整実行
-  dispTableArray.push_back( {VFD_DISP_BRIGHTNESS_VIEW     ,0  ,[&](){brightnessDataViewDispdatMake();}        ,[&](){return dummyExec();}  });   // VFD輝度設定値表示
+  dispTableArray.push_back( {VFD_DISP_CLOCK_1224SEL       ,0  ,[&](){clock1224setAdjtitleDispdatMake();}      ,[&](){return dummyExec();}  });                // 12h24h表示切替
+  dispTableArray.push_back( {VFD_DISP_CLOCK_1224SEL_SET   ,0  ,[&](){clock1224setDispdatMake();}              ,[&](){return clock1224setAdjExec();} });       // 12h24h表示切替実行
+  dispTableArray.push_back( {VFD_DISP_FADETIME_ADJ        ,0  ,[&](){crossfadeAdjTitleDispdatMake();}         ,[&](){return dummyExec();}  });                // クロスフェード時間設定
+  dispTableArray.push_back( {VFD_DISP_FADETIME_ADJ_SET    ,0  ,[&](){crossfadeAdjDispdatMake();}              ,[&](){return fadetimeAdjExec();}     });       // クロスフェード時間設定実行
+  dispTableArray.push_back( {VFD_DISP_BRIGHTNESS_ADJ      ,0  ,[&](){brightnessAdjtitleDispdatMake();}        ,[&](){return dummyExec();}  });                // VFD輝度調整
+  dispTableArray.push_back( {VFD_DISP_BRIGHTNESS_ADJ_SET  ,0  ,[&](){brightnessAdjDispdatMake();}             ,[&](){return dummyExec();}  });                // VFD輝度調整実行
+  dispTableArray.push_back( {VFD_DISP_BRIGHTNESS_VIEW     ,0  ,[&](){brightnessDataViewDispdatMake();}        ,[&](){return dummyExec();}  });                // VFD輝度設定値表示
 
   timeDispData.dispNon = (uint8_t)DISP_NON;   // 表示なし
   timeDispData.pSet = (uint8_t)0x01;          // ピリオドあり
   timeDispData.pReset = (uint8_t)0x00;        // ピリオドなし
-
+  // 時刻表示位置情報
   dispTimeFormat.push_back( {&timeDispData.dispNon  ,&timeDispData.dispNon  ,&timeDispData.hourH  ,&timeDispData.hourL  ,&timeDispData.minH ,&timeDispData.minL ,&timeDispData.secH   ,&timeDispData.secL   } );  // TimeDisplay Format hh.mm.ss
   dispTimeFormat.push_back( {&timeDispData.dispNon  ,&timeDispData.dispNon  ,&timeDispData.hourH  ,&timeDispData.hourL  ,&timeDispData.minH ,&timeDispData.minL ,&timeDispData.secH   ,&timeDispData.secL   } );  // TimeDisplay Format h.mm.ss
   dispTimeFormat.push_back( {&timeDispData.dispNon  ,&timeDispData.dispNon  ,&timeDispData.minH   ,&timeDispData.minL   ,&timeDispData.secH ,&timeDispData.secL ,&timeDispData.hourH  ,&timeDispData.hourL  } );   // TimeDisplay Format mm.ss.hh
-
+  // カレンダー表示位置情報
   dispCalenderFormat.push_back( {&timeDispData.yearHh   ,&timeDispData.yearHl   ,&timeDispData.yearLh ,&timeDispData.yearLl ,&timeDispData.monthH ,&timeDispData.monthL ,&timeDispData.dayH   ,&timeDispData.dayL   } );  // DateDisplay Format yyyy.mm.dd
   dispCalenderFormat.push_back( {&timeDispData.dispNon  ,&timeDispData.dispNon  ,&timeDispData.yearLh ,&timeDispData.yearLl ,&timeDispData.monthH ,&timeDispData.monthL ,&timeDispData.dayH   ,&timeDispData.dayL   } );  // DateDisplay Format yy.mm.dd
   dispCalenderFormat.push_back( {&timeDispData.monthH   ,&timeDispData.monthL   ,&timeDispData.dayH   ,&timeDispData.dayL   ,&timeDispData.yearHh ,&timeDispData.yearHl ,&timeDispData.yearLh ,&timeDispData.yearLl } );  // DateDisplay Format mm.dd.yyyy
   dispCalenderFormat.push_back( {&timeDispData.dispNon  ,&timeDispData.dispNon  ,&timeDispData.monthH ,&timeDispData.monthL ,&timeDispData.dayH   ,&timeDispData.dayL   ,&timeDispData.yearLh ,&timeDispData.yearLl } );  // DateDisplay Format mm.dd.yy
   dispCalenderFormat.push_back( {&timeDispData.dayH     ,&timeDispData.dayL     ,&timeDispData.monthH ,&timeDispData.monthL ,&timeDispData.yearHh ,&timeDispData.yearHl ,&timeDispData.yearLh ,&timeDispData.yearLl } );  // DateDisplay Format dd.mm.yyyy
   dispCalenderFormat.push_back( {&timeDispData.dispNon  ,&timeDispData.dispNon  ,&timeDispData.dayH   ,&timeDispData.dayL   ,&timeDispData.monthH ,&timeDispData.monthL ,&timeDispData.yearLh ,&timeDispData.yearLl } );  // DateDisplay Format dd.mm.yy
-
+  // カレンダーピリオド表示位置情報
   dispCalenderPiriodFormat.push_back( {&timeDispData.pReset  ,&timeDispData.pReset  ,&timeDispData.pReset  ,&timeDispData.pSet  ,&timeDispData.pReset  ,&timeDispData.pSet    ,&timeDispData.pReset  ,&timeDispData.pSet } ); // DateDisplay Format yyyy.mm.dd
   dispCalenderPiriodFormat.push_back( {&timeDispData.pReset  ,&timeDispData.pReset  ,&timeDispData.pReset  ,&timeDispData.pSet  ,&timeDispData.pReset  ,&timeDispData.pSet    ,&timeDispData.pReset  ,&timeDispData.pSet } ); // DateDisplay Format yy.mm.dd
   dispCalenderPiriodFormat.push_back( {&timeDispData.pReset  ,&timeDispData.pSet    ,&timeDispData.pReset  ,&timeDispData.pSet  ,&timeDispData.pReset  ,&timeDispData.pReset  ,&timeDispData.pReset  ,&timeDispData.pSet } ); // DateDisplay Format mm.dd.yyyy
@@ -433,7 +433,6 @@ uint8_t dispDatMakeFunc::clockAdjExec(void)
       // 設定変更処理
       confDat.setNtpset(0);             // NTP無効
       localTimeCont.timeSync(adjTimeInfo); // システム時刻設定
-      localTimeCont.timeDisp();
       ntpSetup = true;                  // NTP時刻 → RTC設定要求
 
       status = "設定変更処理";
@@ -543,7 +542,6 @@ uint8_t dispDatMakeFunc::calenderAdjExec(void)
       // 設定変更処理
       confDat.setNtpset(0);             // NTP無効
       localTimeCont.timeSync(adjTimeInfo); // システム時刻設定
-//      localTimeCont.timeDisp();
       ntpSetup = true;                  // NTP時刻 → RTC設定要求
 
       status = "設定変更処理";
