@@ -94,7 +94,7 @@ void modeCtrl::vfdAdjModeIni(void)
   dispModeVfdCtrTbl.push_back(VFD_DISP_CAL_ADJ);        // カレンダー調整
   dispModeVfdCtrTbl.push_back(VFD_DISP_CLOCK_1224SEL);  // 12h24h表示切替
   dispModeVfdCtrTbl.push_back(VFD_DISP_FADETIME_ADJ);   // クロスフェード時間設定
-  dispModeVfdCtrTbl.push_back(VFD_DISP_BRIGHTNESS_ADJ); // VFD輝度調整
+//  dispModeVfdCtrTbl.push_back(VFD_DISP_BRIGHTNESS_ADJ); // VFD輝度調整
 
   // 設定モードのタイトル表示 <-> 設定処理　遷移テーブル
   cntModeVfdCtrTbl.push_back({VFD_DISP_CLOCK_ADJ        ,VFD_DISP_CLOCK_ADJ_SET     ,1,1,0,1});  // 時計調整 → 時計調整実行             UpDownキーブロック  setKeyで遷移  Abote無効
