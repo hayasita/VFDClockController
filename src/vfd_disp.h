@@ -10,6 +10,8 @@
 #endif
 
 #include <M5Unified.h>
+#include <ctime>
+#include <iostream>
 
 const unsigned long keta_dat[] = {
   0x040000,    // 1
@@ -146,45 +148,80 @@ struct DISPLAY_DATA{
 };
 
 /**
+ * @brief 表示用時刻情報
+ * 
+ */
+class TimeDispData{
+  public:
+    uint8_t yearHh;   // 年1000
+    uint8_t yearHl;   // 年100
+    uint8_t yearLh;   // 年10
+    uint8_t yearLl;   // 年1
+
+    uint8_t monthH;   // 月10
+    uint8_t monthL;   // 月1
+    uint8_t dayH;     // 日10
+    uint8_t dayL;     // 日1
+
+    uint8_t hourH;    // 時10
+    uint8_t hourL;    // 時1
+    uint8_t minH;     // 分10
+    uint8_t minL;     // 分1
+    uint8_t secH;     // 秒10
+    uint8_t secL;     // 秒1
+
+    uint8_t dispNon;  // 表示なし
+
+    uint8_t pSet;    // ピリオドあり
+    uint8_t pReset;  // ピリオドなし
+};
+
+/**
+ * @brief 時刻表示フォーマット
+ * 
+ */
+class DispClockTbl{
+  public:
+    uint8_t* disp7;
+    uint8_t* disp6;
+    uint8_t* disp5;
+    uint8_t* disp4;
+    uint8_t* disp3;
+    uint8_t* disp2;
+    uint8_t* disp1;
+    uint8_t* disp0;
+};
+
+/**
  * @brief 表示データ作成処理テーブル
  * 
  */
 class dispTbl{
   public:
     uint8_t dispModeVfd;                      // VFD表示モード
-    std::function<void()> dispDatMakeFunc;    // 表示データ作成関数
+    uint8_t dispNumSq;                        // VFD表示フォーマット表示有無　0:無 1:有
+    std::function<void()> dispDatMakeFunc;    // 表示データ作成メンバ
+    std::function<uint8_t()> dispAdjFunc;     // 設定処理メンバ
 };
 
-class DispCtr{
+class dispDatMakeFunc{
   public:
-    DispCtr(void);
-    void init(void);
+    dispDatMakeFunc(void);
     uint8_t dispModeSet(dispMode);                  // 表示モード設定
-    void dataMake(struct DISPLAY_DATA inputData);   // 表示データ作成
-    void dispLCD(struct tm timeInfo);
+    void vfdDispDataMakeSel(struct DISPLAY_DATA inputData);          // VFD表示データ作製処理選択
+    void dispTableIni(void);                      // 表示データ作成処理テーブル初期化
 
-
-  private:
-    void brightness_ini(void);
     uint16_t *dispTmp;                      // 各桁表示データ
     uint8_t *piriodTmp;                     // 各桁ピリオド
-    uint16_t *dispdataTmp;                  // 各桁表示データ(font情報)
-    uint16_t dispdata;                      // 表示データ作成用tmp
-    uint16_t fadetime_tmpw;                 // クロスフェード時間受け渡し用データ
-    uint8_t fade;                           // クロスフェードON/OFF
-
-    uint8_t displayMode;                    // 表示モード(表示/設定表示)
-    uint8_t lastDispMode;                   // 前回表示モード
-
     uint8_t vfdDispFormat;                  // VFD表示フォーマット指定
     uint8_t lastVfdDispFormat;              // 前回VFD表示フォーマット指定
-    uint8_t lastAdjVfdDispFormat;
-    uint8_t vfdDispNum;                     // VFD表示フォーマット表示番号
 
-    // 設定画面表示制御
-    uint8_t ctrlModeSelect;                 // 操作モード選択　0:モード切替 1:設定操作
-    uint8_t adjKeyData;                     // 設定操作用キー情報
-
+  private:
+    // 表示データ作成処理実行テーブル処理
+    std::vector<dispTbl> dispTableArray;          // 表示データ作成処理テーブル
+    struct DISPLAY_DATA dispInputData;            // 表示用データ
+    void dispDataMakeExec(uint8_t index);         // 表示データ作成処理実行
+    
     // 表示データスクロール処理
     unsigned long scroll_tim_nowl;
     uint8_t disp_point;
@@ -207,9 +244,9 @@ class DispCtr{
     void dispPres(struct DISPLAY_DATA inputData);   // 気圧表示データ作成
     void dispLoop1(struct DISPLAY_DATA inputData);  // 時刻＋温度＋湿度＋気圧
 
-    void clockAdjtitleDispdatMake(void);            // 時刻設定タイトル表示
+    void clockAdjtitleDispdatMake(struct tm timeInfo);  // 時刻設定タイトル表示
     void clockAdjDispdatMake(void);                 // 時刻設定画面表示
-    void calenderAdjtitleDispdatMake(void);         // カレンダー設定タイトル表示
+    void calenderAdjtitleDispdatMake(struct tm timeInfo); // カレンダー設定タイトル表示
     void calenderAdjDispdatMake(void);              // カレンダー調整実行
     void clock1224setAdjtitleDispdatMake(void);     // 12h24h表示切替
     void clock1224setDispdatMake(void);             // 12h24h表示切替実行
@@ -219,15 +256,43 @@ class DispCtr{
     void brightnessAdjDispdatMake(void);            // VFD輝度調整実行
     void brightnessDataViewDispdatMake(void);       // VFD輝度設定値表示
 
-    // 表示データ作成処理実行テーブル処理
-    std::vector<dispTbl> dispTableArray;          // 表示データ作成処理テーブル
-    void dispTableIni(void);                      // 表示データ作成処理テーブル初期化
-    struct DISPLAY_DATA dispInputData;            // 表示用データ
-    void dispDataMakeExec(uint8_t index);         // 表示データ作成処理実行
+    // 各設定モードの実行処理
+    uint8_t dummyExec(void);                        // 処理なし
+    uint8_t dispDefaultSetExec(void);               // 標準表示設定処理
+
+    uint8_t clockAdjExec(void);                     // 時刻設定処理
+    uint8_t calenderAdjExec(void);                  // カレンダー設定処理
+
+    uint8_t clock1224setAdjExec(void);              // 12h24h表示切替処理
+    uint8_t fadetimeAdjExec(void);                  // クロスフェード時間設定処理
     
-    // 設定表示　設定処理実行テーブル処理
-    std::vector<dispTbl> adjTableArray;           // 設定実行処理テーブル
-    void adjTableIni(void);                       // 設定実行処理テーブル初期化
+    uint8_t vfdDispNum;                     // VFD表示フォーマット表示番号
+    uint8_t adjKeyData;                     // 設定操作用キー情報
+    struct tm adjTimeInfo;                  // 設定用時刻情報
+    uint8_t adjSq;                          // 設定シーケンス
+    bool timeAdjExecl;                      // 時刻設定操作有無
+
+    std::vector<DispClockTbl> dispTimeFormat;       // 時計表示フォーマットテーブル
+    std::vector<DispClockTbl> dispCalenderFormat;   // カレンダー表示フォーマットテーブル
+    std::vector<DispClockTbl> dispCalenderPiriodFormat;   // カレンダーピリオド表示フォーマットテーブル
+    TimeDispData timeDispData;                      // 時計・カレンダー表示用データ
+
+};
+
+class DispCtr : public dispDatMakeFunc
+{
+  public:
+    DispCtr(void);
+    void init(void);
+    void dataMake(struct DISPLAY_DATA inputData);   // 表示データ作成
+    void dispLCD(struct tm timeInfo);
+
+  private:
+    void brightness_ini(void);
+    uint16_t *dispdataTmp;                  // 各桁表示データ(font情報)
+    uint16_t dispdata;                      // 表示データ作成用tmp
+    uint16_t fadetime_tmpw;                 // クロスフェード時間受け渡し用データ
+    uint8_t fade;                           // クロスフェードON/OFF
 
     // 
     void timeDispLcd(struct tm timeInfo);
@@ -235,7 +300,6 @@ class DispCtr{
     void debugDispConf(void);
 
 };
-//GLOBAL DispCtr dispVFD;
 
 // 時刻表示フォーマット
 #define timeDispFormHhmmss    1   // TimeDisplay Format hh.mm.ss
@@ -249,8 +313,6 @@ class DispCtr{
 #define dateDispFormMmddyy    4   // DateDisplay Format mm.dd.yy
 #define dateDispFormDdmmyyyy  5   // DateDisplay Format dd.mm.yyyy
 #define dateDispFormDdmmyy    6   // DateDisplay Format dd.mm.yy
-
-//GLOBAL DispCtr dispVFD;
 
 #undef GLOBAL
 #endif

@@ -17,6 +17,7 @@
 #define GLOBAL extern
 #endif
 
+#include <algorithm>
 #include <cstdint>
 #include <vector>
 
@@ -36,8 +37,10 @@
 #define KEY_UP_L    0x84  // Hard SW2 Long ON
 #define KEY_DOWN_L  0x88  // Hard SW3 Long ON
 
-#define SWKEY_SET_S   0x02  // Soft SW1 Short ON
 #define SWKEY_DISP_MODE_VFD_CLR 0x11  // VFD表示モードクリア要求
+#define SWKEY_SET_S     0x12  // Soft SW1 Short ON
+#define SWKEY_SET_L     0x13  // Soft SW1 Long ON
+#define SWKEY_ADJ_RESET 0x14  // 設定中断
 
 // VFD表示モード
 #define VFD_DISP_DEFAULT                0     // VFD表示　標準表示
@@ -70,7 +73,6 @@
 #define M5OLED_DISP_EVENTLOG_CTRL       2     // EventLog操作情報
 
 struct dispMode{
-  uint8_t ctrlModeSelect;       // 操作モード選択　0:モード切替 1:設定操作
   uint8_t adjKeyData;           // 設定操作用キー情報
 
   uint8_t ctrlMode;             // 操作モード
@@ -86,10 +88,21 @@ struct dispMode{
 
 };
 
+class vfdCntState{
+  public:
+    uint8_t modeFrom;             // 遷移元モード
+    uint8_t modeTo;               // 遷移先モード
+    bool brockUpdownKeyModeSet;   // UpDownKeyによる操作モード変更ブロック
+    bool setKeySq;                // setKeyで遷移有効
+    bool swKeySq;                 // swKeyで遷移有効
+    bool abote;                   // 設定中断・モード初期化有効
+};
+
 class modeCtrl{
   public:
     modeCtrl(bool ssd1306,bool m5oled);     // コンストラクタ
-    void modeIni(void);                     // モード初期化
+    void modeVFDIni(void);                  // VFDモード初期化
+    void modeOledIni(void);                 // OLED,M5OLEDモード初期化
 
     uint8_t getCtrlMode(void);              // 操作モード取得
     uint8_t getDispModeVfd(void);           // VFD表示モード取得
@@ -118,6 +131,8 @@ class modeCtrl{
     std::vector<uint8_t> dispModeM5oledTbl;     // M5OLRD表示モードテーブル
 
     uint8_t updownKeyModeSet(uint8_t setKey,std::vector<uint8_t> modeTbl,uint8_t *modeCount);   // UpDownKeyによる操作モードテーブル参照
+
+    std::vector<vfdCntState> cntModeVfdCtrTbl;  // VFD設定処理モードテーブル
 
 };
 
