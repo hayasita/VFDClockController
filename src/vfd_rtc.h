@@ -42,8 +42,9 @@ class RtcCont{
 //    void init(void);
     void timeSync(struct tm timeInfo);  // RTC時刻書込み
 //    void timeDisp(struct tm timeInfo);
-    uint8_t timeRead(struct tm *timeInfo);
+    bool timeRead(struct tm *timeInfo); // RTC時刻読出し
   private:
+    RTC_DS1307 rtc;
 };
 GLOBAL bool ntpSetup;           // RTC設定要求
 

@@ -353,12 +353,6 @@ void RtcCont::timeDisp(struct tm timeInfo)
 #else
 
 /**
- * @brief RTC DS1307 インスタンス　クラスのprivateにすべき
- * 
- */
-RTC_DS1307 rtc;
-
-/**
  * @brief 曜日表示用テキスト
  * 
  */
@@ -492,9 +486,9 @@ void RtcCont::init(void)
  * @brief RTC 時刻読み出し　返値をboolに変更すべき
  * 
  * @param timeInfo 時刻読み出し結果
- * @return uint8_t 読み出し成功・失敗。boolにすべき
+ * @return uint8_t 読み出し成功・失敗。
  */
-uint8_t RtcCont::timeRead(struct tm *timeInfo)
+bool RtcCont::timeRead(struct tm *timeInfo)
 {
   uint8_t ret = true;
 
