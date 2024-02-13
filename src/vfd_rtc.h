@@ -39,9 +39,9 @@ class RtcCont{
   public:
     RtcCont(void);        // コンストラクタ
     ~RtcCont(void);
-    void init(void);
+//    void init(void);
     void timeSync(struct tm timeInfo);  // RTC時刻書込み
-    void timeDisp(struct tm timeInfo);
+//    void timeDisp(struct tm timeInfo);
     uint8_t timeRead(struct tm *timeInfo);
   private:
 };

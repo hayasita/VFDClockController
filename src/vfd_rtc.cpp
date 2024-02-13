@@ -3,6 +3,17 @@
 #include "vfd_driver.h"
 #include "vfd_wificnt.h"
 
+void timePrint(struct tm timeInfo)
+{
+  char txt[25];//文字格納用
+  sprintf(txt, "RTC: %04d/%02d/%02d %02d:%02d:%02d",
+          ((uint16_t)timeInfo.tm_year), timeInfo.tm_mon, timeInfo.tm_mday,
+          timeInfo.tm_hour, timeInfo.tm_min, timeInfo.tm_sec);//人間が読める形式に変換
+  Serial.println(txt);
+
+  return;
+}
+
 void LocalTimeCont::init(void)
 {
   time_t now;
@@ -16,7 +27,8 @@ void LocalTimeCont::init(void)
   rtc->timeRead(&timeInfo);
   Serial.println(timeInfo.tm_year);
   Serial.println("-- RtcTimeDisp --");
-  rtc->timeDisp(timeInfo);
+//  rtc->timeDisp(timeInfo);
+  timePrint(timeInfo);
   delete rtc;
 
   timeSync(timeInfo);
@@ -352,28 +364,6 @@ RTC_DS1307 rtc;
  */
 char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
 
-/**
- * @brief Construct a new Rtc Cont:: Rtc Cont object
- * 
- */
-RtcCont::RtcCont(void)
-{
-  init();
-
-  return;
-}
-
-/**
- * @brief Destroy the Rtc Cont:: Rtc Cont object
- * 
- */
-RtcCont::~RtcCont(void)
-{
-  Serial.println("-- RtcCont::デストラクタ --");
-
-  return;
-}
-
 /*
 volatile byte state = LOW;
 void IRAM_ATTR onButton() {
@@ -402,10 +392,66 @@ void IRAM_ATTR rtcPlusCount(void){
 //  }
 }
 
+
+/**
+ * @brief Construct a new Rtc Cont:: Rtc Cont object
+ * 
+ */
+RtcCont::RtcCont(void)
+{
+//  init();
+
+//  Wire.setPins(26,25);
+  if(deviceChk.rtc() != true){
+    Serial.println("Couldn't find RTC. I2C Device");
+    return;
+  }
+
+  Wire.setPins(SDA_PIN,SCL_PIN);
+
+  if (! rtc.begin()) {
+    Serial.println("Couldn't find RTC. Wire Begin");
+  }
+
+  if (! rtc.isrunning()) {
+    Serial.println("RTC is NOT running, let's set the time!");
+    rtc.adjust(DateTime(2022, 1, 1, 8, 0, 0));  // 仮設定
+  }
+  else{
+    Serial.println("RTC is running!");
+  }
+
+//  rtc.writeSqwPinMode(DS1307_SquareWave32kHz);  // 32kHz square wave
+  rtc.writeSqwPinMode(DS1307_SquareWave1HZ);  // 1Hz square wave
+  
+  hzCount = 0;
+  pinMode(RTC_PLS_GPIO, INPUT);
+//  attachInterrupt(RTC_PLS_GPIO, onButton, FALLING);
+  attachInterrupt(RTC_PLS_GPIO, rtcPlusCount, FALLING);
+
+
+  ntpSetup = false;   // 初期化
+
+
+  return;
+}
+
+/**
+ * @brief Destroy the Rtc Cont:: Rtc Cont object
+ * 
+ */
+RtcCont::~RtcCont(void)
+{
+  Serial.println("-- RtcCont::デストラクタ --");
+
+  return;
+}
+
 /**
  * @brief 初期化
  * 
  */
+/*
 void RtcCont::init(void)
 {
 //  Wire.setPins(26,25);
@@ -441,7 +487,7 @@ void RtcCont::init(void)
 
   return;
 }
-
+*/
 /**
  * @brief RTC 時刻読み出し　返値をboolに変更すべき
  * 
@@ -526,6 +572,7 @@ void RtcCont::timeSync(struct tm timeInfo)
  * 
  * @param timeInfo 表示する時刻情報
  */
+/*
 void RtcCont::timeDisp(struct tm timeInfo)
 {
   char txt[25];//文字格納用
@@ -536,6 +583,7 @@ void RtcCont::timeDisp(struct tm timeInfo)
 
   return;
 }
+*/
 
 
 // -----
