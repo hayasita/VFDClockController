@@ -19,6 +19,10 @@
 #define NTPSERVER "ntp.nict.jp"   // NTPサーバ
 #define RTC_PLS_GPIO  40          // RTC GPIO割り込み入力端子
 
+// RTC Unit Select
+#define RTCUNIT_DS1307
+//#define RTCUNIT_DS3231
+
 class RtcCont{
   public:
     RtcCont(void);
@@ -26,7 +30,11 @@ class RtcCont{
     void timeSync(struct tm timeInfo);  // RTC時刻書込み
     bool timeRead(struct tm *timeInfo); // RTC時刻読出し
   private:
+#ifdef RTCUNIT_DS1307
     RTC_DS1307 rtc;
+#elif defined RTCUNIT_DS3231
+    RTC_DS3231 rtc;
+#endif
 };
 GLOBAL bool ntpSetup;           // RTC設定要求
 
