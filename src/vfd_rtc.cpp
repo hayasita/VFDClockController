@@ -160,212 +160,7 @@ void setNtpTime(void)
   return;
 }
 
-
-#ifdef ARDUINO_M5Stick_C
-
-/*
-Rtccont::Rtccont(void)
-{
-  RTC_TimeTypeDef TimeStruct;
-  TimeStruct.Hours   = 18;  //Set the time.  设置时间
-  TimeStruct.Minutes = 56;
-  TimeStruct.Seconds = 10;
-  M5.Rtc.SetTime(&TimeStruct);  //writes the set time to the real time clock.  将设置的时间写入实时时钟
-  RTC_DateTypeDef DateStruct;
-  DateStruct.WeekDay = 3; //Set the date.  设置日期
-  DateStruct.Month = 3;
-  DateStruct.Date = 22;
-  DateStruct.Year = 2019;
-  M5.Rtc.SetData(&DateStruct);  //writes the set date to the real time clock.  将设置的日期写入实时时钟
-  
-//  xSemaphore = xSemaphoreCreateBinary();
-  return;
-}
-*/
-RtcCont::RtcCont(void)
-{
-
-  init();
-
-  return;
-}
-
-RtcCont::~RtcCont(void)
-{
-  Serial.println("-- RtcCont::デストラクタ --");
-
-  return;
-}
-
-void RtcCont::init(void)
-{
-  Serial.println("-- RtcCont::init --");
-/*  
-  RTC_DateTypeDef DateStruct;
-  DateStruct.WeekDay = 3;
-  DateStruct.Month = 3;
-  DateStruct.Date = 22;
-  DateStruct.Year = 2019;
-  M5.Rtc.SetData(&DateStruct);
-
-  RTC_TimeTypeDef TimeStruct;
-  TimeStruct.Hours   = 18;
-  TimeStruct.Minutes = 56;
-  TimeStruct.Seconds = 10;
-  M5.Rtc.SetTime(&TimeStruct);
-*/
-  ntpSetup = false;   // 初期化
-
-  return;
-}
-/*
-void Rtccont::gettime(RTC_TimeTypeDef *TimeStruct,RTC_DateTypeDef *DateStruct)
-{
-//  portENTER_CRITICAL(&mutex_rtc);
-  M5.Rtc.GetTime(TimeStruct);  //Gets the time in the real-time clock.
-  M5.Rtc.GetData(DateStruct);
-//  portEXIT_CRITICAL(&mutex_rtc);
-
-  return;
-}
-*/
-uint8_t RtcCont::timeRead(struct tm *timeInfo)
-{
-/*
-  if(deviceChk.rtc() != true){
-//    Serial.println("Couldn't find RTC");
-    time_t now;
-    time(&now);
-    localtime_r(&now, timeInfo);
-//    getLocalTime(timeInfo,500);
-    timeInfo->tm_year = 1900 + timeInfo->tm_year;
-    timeInfo->tm_mon += 1;
-    return false;
-  }
-*/
-
-  RTC_TimeTypeDef TimeStruct;
-  RTC_DateTypeDef DateStruct;
-
-  M5.Rtc.GetTime(&TimeStruct);  //Gets the time in the real-time clock.
-  M5.Rtc.GetData(&DateStruct);
-
-  timeInfo->tm_year = DateStruct.Year - 1900;
-  timeInfo->tm_mon = DateStruct.Month - 1;
-  timeInfo->tm_mday = DateStruct.Date;
-  timeInfo->tm_hour = TimeStruct.Hours;
-  timeInfo->tm_min = TimeStruct.Minutes;
-  timeInfo->tm_sec = TimeStruct.Seconds;
-
-  char txt[50];//文字格納用
-/*
-  sprintf(txt, "Data : %04d-%02d-%02d",DateStruct.Year, DateStruct.Month,DateStruct.Date);
-  Serial.println(txt);
-  sprintf(txt, "Week : %d",DateStruct.WeekDay);
-  Serial.println(txt);
-  sprintf(txt, "Time : %02d : %02d : %02d",TimeStruct.Hours, TimeStruct.Minutes, TimeStruct.Seconds);
-  Serial.println(txt);
-*/
-/*
-  sprintf(txt, "RtcCont::timeRead: %04d/%02d/%02d %02d:%02d:%02d",
-          ((uint16_t)timeInfo->tm_year), timeInfo->tm_mon, timeInfo->tm_mday,
-          timeInfo->tm_hour, timeInfo->tm_min, timeInfo->tm_sec);//人間が読める形式に変換
-  Serial.println(txt);
-*/
-  return true;
-}
-
-
-void RtcCont::timeSync(struct tm time)
-{
-  Serial.println("RtcCont::timeSync");
-
-/*
-  char txt[50];//文字格納用
-
-  sprintf(txt, "RtcCont::timeSync: %04d/%02d/%02d %02d:%02d:%02d",
-          time.tm_year + 1900, time.tm_mon + 1, time.tm_mday,
-          time.tm_hour, time.tm_min, time.tm_sec);//人間が読める形式に変換
-  Serial.println(txt);
-
-  RTC_TimeTypeDef TimeStruct;
-  TimeStruct.Hours   = time.tm_hour;  //Set the time.  设置时间
-  TimeStruct.Minutes = time.tm_min;
-  TimeStruct.Seconds = time.tm_sec;
-  RTC_DateTypeDef DateStruct;
-  DateStruct.Month = time.tm_mon+1;
-  DateStruct.Date = time.tm_mday;
-  DateStruct.Year = time.tm_year+1900;// + 1900 - 2000 + 30;
-
-Serial.println("1:");
-//  portENTER_CRITICAL(&mutex_rtc);
-  M5.Rtc.SetTime(&TimeStruct);  //writes the set time to the real time clock.  将设置的时间写入实时时钟
-Serial.println("2:");
-  M5.Rtc.SetData(&DateStruct);  //writes the set date to the real time clock.  将设置的日期写入实时时钟
-//  portEXIT_CRITICAL(&mutex_rtc);
-Serial.println("3:");
-
-    // testtest
-    struct tm timeInfo;
-    timeRead(&timeInfo);
-    timeDisp(timeInfo);
-    // testtest
-*/
-    struct tm timeInfo;
-
-    getLocalTime(&timeInfo);
-
-    RTC_TimeTypeDef TimeStruct;
-    TimeStruct.Hours   = timeInfo.tm_hour;
-    TimeStruct.Minutes = timeInfo.tm_min;
-    TimeStruct.Seconds = timeInfo.tm_sec;
-    M5.Rtc.SetTime(&TimeStruct);
-    RTC_DateTypeDef DateStruct;
-    DateStruct.WeekDay = timeInfo.tm_wday;
-    DateStruct.Month = timeInfo.tm_mon + 1;
-    DateStruct.Date = timeInfo.tm_mday;
-    DateStruct.Year = timeInfo.tm_year + 1900;
-    M5.Rtc.SetData(&DateStruct);
-/*
-    Serial.println(DateStruct.Year);
-    Serial.println(DateStruct.Month);
-    Serial.println(DateStruct.Date);
-    Serial.println(TimeStruct.Hours);
-    Serial.println(TimeStruct.Minutes);
-    Serial.println(TimeStruct.Seconds);
-*/
-    timeRead(&timeInfo);
-    timeDisp(timeInfo);
-
-  return;
-}
-
-void RtcCont::timeDisp(struct tm timeInfo)
-{
-  char txt[50];//文字格納用
-  sprintf(txt, "RtcCont::timeDisp: %04d/%02d/%02d %02d:%02d:%02d",
-          ((uint16_t)timeInfo.tm_year+1900), timeInfo.tm_mon+1, timeInfo.tm_mday,
-          timeInfo.tm_hour, timeInfo.tm_min, timeInfo.tm_sec);//人間が読める形式に変換
-  Serial.println(txt);
-
-  return;
-}
-#else
-
-/**
- * @brief 曜日表示用テキスト
- * 
- */
-char daysOfTheWeek[7][12] = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
-
-/*
-volatile byte state = LOW;
-void IRAM_ATTR onButton() {
-  state = !state;
-  Serial.print("onButton:");
-  Serial.println(state);
-}
-*/
+// -----
 
 /**
  * @brief RTCのパルス割り込みのカウント用変数
@@ -393,9 +188,7 @@ void IRAM_ATTR rtcPlusCount(void){
  */
 RtcCont::RtcCont(void)
 {
-//  init();
-
-//  Wire.setPins(26,25);
+  // RTC有無判別
   if(deviceChk.rtc() != true){
     Serial.println("Couldn't find RTC. I2C Device");
     return;
@@ -415,17 +208,16 @@ RtcCont::RtcCont(void)
     Serial.println("RTC is running!");
   }
 
+  // RTCパルス出力設定
 //  rtc.writeSqwPinMode(DS1307_SquareWave32kHz);  // 32kHz square wave
   rtc.writeSqwPinMode(DS1307_SquareWave1HZ);  // 1Hz square wave
-  
-  hzCount = 0;
-  pinMode(RTC_PLS_GPIO, INPUT);
-//  attachInterrupt(RTC_PLS_GPIO, onButton, FALLING);
-  attachInterrupt(RTC_PLS_GPIO, rtcPlusCount, FALLING);
 
+  // パルスカウント処理初期化
+  hzCount = 0;                                            // パルスカウンタ初期化
+  pinMode(RTC_PLS_GPIO, INPUT);                           // パルス入力ポート初期化
+  attachInterrupt(RTC_PLS_GPIO, rtcPlusCount, FALLING);   // パルス入力割り込み設定
 
-  ntpSetup = false;   // 初期化
-
+  ntpSetup = false;     // RTC設定要求初期化
 
   return;
 }
@@ -442,47 +234,6 @@ RtcCont::~RtcCont(void)
 }
 
 /**
- * @brief 初期化
- * 
- */
-/*
-void RtcCont::init(void)
-{
-//  Wire.setPins(26,25);
-  if(deviceChk.rtc() != true){
-    Serial.println("Couldn't find RTC. I2C Device");
-    return;
-  }
-
-  Wire.setPins(SDA_PIN,SCL_PIN);
-
-  if (! rtc.begin()) {
-    Serial.println("Couldn't find RTC. Wire Begin");
-  }
-
-  if (! rtc.isrunning()) {
-    Serial.println("RTC is NOT running, let's set the time!");
-    rtc.adjust(DateTime(2022, 1, 1, 8, 0, 0));  // 仮設定
-  }
-  else{
-    Serial.println("RTC is running!");
-  }
-
-//  rtc.writeSqwPinMode(DS1307_SquareWave32kHz);  // 32kHz square wave
-  rtc.writeSqwPinMode(DS1307_SquareWave1HZ);  // 1Hz square wave
-  
-  hzCount = 0;
-  pinMode(RTC_PLS_GPIO, INPUT);
-//  attachInterrupt(RTC_PLS_GPIO, onButton, FALLING);
-  attachInterrupt(RTC_PLS_GPIO, rtcPlusCount, FALLING);
-
-
-  ntpSetup = false;   // 初期化
-
-  return;
-}
-*/
-/**
  * @brief RTC 時刻読み出し　返値をboolに変更すべき
  * 
  * @param timeInfo 時刻読み出し結果
@@ -497,9 +248,7 @@ bool RtcCont::timeRead(struct tm *timeInfo)
     time_t now;
     time(&now);
     localtime_r(&now, timeInfo);
-//    getLocalTime(timeInfo,500);
-//    timeInfo->tm_year = 1900 + timeInfo->tm_year;
-//    timeInfo->tm_mon += 1;
+
     return false;
   }
 
@@ -507,20 +256,14 @@ bool RtcCont::timeRead(struct tm *timeInfo)
   if(now.year() == 2000U){
     ret = false;
   }
-
+  // RTC読出し情報設定
   timeInfo->tm_year = now.year() - 1900;
   timeInfo->tm_mon = now.month() - 1;
   timeInfo->tm_mday = now.day();
   timeInfo->tm_hour = now.hour();
   timeInfo->tm_min = now.minute();
   timeInfo->tm_sec = now.second();
-/*
-  char txt[50];//文字格納用
-  sprintf(txt, "RtcCont::timeRead: %04d/%02d/%02d %02d:%02d:%02d",
-          ((uint16_t)timeInfo->tm_year), timeInfo->tm_mon, timeInfo->tm_mday,
-          timeInfo->tm_hour, timeInfo->tm_min, timeInfo->tm_sec);//人間が読める形式に変換
-  Serial.println(txt);
-*/
+
   return ret;
 }
 
@@ -531,8 +274,6 @@ bool RtcCont::timeRead(struct tm *timeInfo)
  */
 void RtcCont::timeSync(struct tm timeInfo)
 {
-//  struct tm tmRead;
-//  char txt[25];//文字格納用
 
   Serial.println("-- RtcCont::timeSync --");
   if(deviceChk.rtc() != true){
@@ -540,19 +281,6 @@ void RtcCont::timeSync(struct tm timeInfo)
     return;
   }
 
-//  timeRead(&tmRead);   // RTC Read
-  /*
-  sprintf(txt, "RTC: %04d/%02d/%02d %02d:%02d:%02d",
-          ((uint16_t)tmRead.tm_year), tmRead.tm_mon, tmRead.tm_mday,
-          tmRead.tm_hour, tmRead.tm_min, tmRead.tm_sec);  //人間が読める形式に変換
-  Serial.println(txt);
-  */
-/*
-  sprintf(txt, "NTP: %04d/%02d/%02d %02d:%02d:%02d",
-          timeInfo.tm_year + 1900, timeInfo.tm_mon + 1, timeInfo.tm_mday,
-          timeInfo.tm_hour, timeInfo.tm_min, timeInfo.tm_sec);  //人間が読める形式に変換
-  Serial.println(txt);
-*/
   Serial.println(&timeInfo, "%A, %B %d %Y %H:%M:%S");
 
   rtc.adjust(DateTime(timeInfo.tm_year % 100, timeInfo.tm_mon+1, timeInfo.tm_mday, timeInfo.tm_hour, timeInfo.tm_min, timeInfo.tm_sec));
@@ -560,25 +288,6 @@ void RtcCont::timeSync(struct tm timeInfo)
   Serial.println("RtcCont::timeSync : Conplete");
   return;
 }
-
-/**
- * @brief 時刻を表示する。（クラスでは無く、汎用にすべき
- * 
- * @param timeInfo 表示する時刻情報
- */
-/*
-void RtcCont::timeDisp(struct tm timeInfo)
-{
-  char txt[25];//文字格納用
-  sprintf(txt, "RTC: %04d/%02d/%02d %02d:%02d:%02d",
-          ((uint16_t)timeInfo.tm_year), timeInfo.tm_mon, timeInfo.tm_mday,
-          timeInfo.tm_hour, timeInfo.tm_min, timeInfo.tm_sec);//人間が読める形式に変換
-  Serial.println(txt);
-
-  return;
-}
-*/
-
 
 // -----
 
@@ -684,4 +393,3 @@ void SystemTimeCont::timeAdd(void)
 }
 
 
-#endif

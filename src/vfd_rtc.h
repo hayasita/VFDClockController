@@ -19,34 +19,18 @@
 #define NTPSERVER "ntp.nict.jp"   // NTPサーバ
 #define RTC_PLS_GPIO  40          // RTC GPIO割り込み入力端子
 
-/*
-class Rtccont{
-  public:
-    Rtccont(void);        // コンストラクタ
-    void timesync(struct tm time);  // RTC時刻書込み
-    void timedisp(void);
-    void gettime(RTC_TimeTypeDef *,RTC_DateTypeDef *);
-//    bool timeread(tmElements_t &time);
-  
-  private:
-    RTC_TimeTypeDef RTC_TimeStruct;
-    RTC_DateTypeDef RTC_DateStruct;
-//    portMUX_TYPE mutex_rtc = portMUX_INITIALIZER_UNLOCKED; // Mutex
-//    SemaphoreHandle_t xSemaphore;
-    
-};*/
 class RtcCont{
   public:
-    RtcCont(void);        // コンストラクタ
+    RtcCont(void);
     ~RtcCont(void);
-//    void init(void);
     void timeSync(struct tm timeInfo);  // RTC時刻書込み
-//    void timeDisp(struct tm timeInfo);
     bool timeRead(struct tm *timeInfo); // RTC時刻読出し
   private:
     RTC_DS1307 rtc;
 };
 GLOBAL bool ntpSetup;           // RTC設定要求
+
+GLOBAL volatile SemaphoreHandle_t rtcPalsSemaphore;   // RTCパルス計時要求
 
 class LocalTimeCont{
   public:
@@ -83,9 +67,6 @@ class SystemTimeCont{
     portMUX_TYPE systimeMutex = portMUX_INITIALIZER_UNLOCKED; // Mutex
     time_t sysTime;                   // システム用時刻情報
 };
-//GLOBAL SystemTimeCont sysTimCnt;
-
-GLOBAL volatile SemaphoreHandle_t rtcPalsSemaphore;   // RTCパルス計時要求
 
 #undef GLOBAL
 #endif
