@@ -20,8 +20,8 @@
 #define RTC_PLS_GPIO  40          // RTC GPIO割り込み入力端子
 
 // RTC Unit Select
-#define RTCUNIT_DS1307
-//#define RTCUNIT_DS3231
+//#define RTCUNIT_DS1307
+#define RTCUNIT_DS3231
 
 class RtcCont{
   public:

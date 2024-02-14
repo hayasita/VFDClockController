@@ -7,7 +7,7 @@ void timePrint(struct tm timeInfo)
 {
   char txt[25];//文字格納用
   sprintf(txt, "RTC: %04d/%02d/%02d %02d:%02d:%02d",
-          ((uint16_t)timeInfo.tm_year), timeInfo.tm_mon, timeInfo.tm_mday,
+          ((uint16_t)timeInfo.tm_year+1900), timeInfo.tm_mon+1, timeInfo.tm_mday,
           timeInfo.tm_hour, timeInfo.tm_min, timeInfo.tm_sec);//人間が読める形式に変換
   Serial.println(txt);
 
@@ -28,7 +28,10 @@ volatile static uint16_t hzCount;
 void IRAM_ATTR rtcPlusCount(void){
   hzCount++;
 //  if(hzCount >= 32768){
+/*
+  if(hzCount >= 32650){
     hzCount = 0;
+*/
 //    Serial.println("rtcPlusCount!!");
 
     xSemaphoreGiveFromISR(rtcPalsSemaphore, NULL);    // RTCパルス計時要求
@@ -48,7 +51,7 @@ RtcCont::RtcCont(void)
     return;
   }
 
-  Wire.setPins(SDA_PIN,SCL_PIN);
+//  Wire.setPins(SDA_PIN,SCL_PIN);
 
   if (! rtc.begin()) {
     Serial.println("Couldn't find RTC. Wire Begin");
@@ -155,7 +158,9 @@ RtcCont::RtcCont(void)
     return;
   }
 
-  Wire.setPins(SDA_PIN,SCL_PIN);
+  if (! rtc.begin()) {
+    Serial.println("Couldn't find RTC. Wire Begin");
+  }
 
   if (rtc.lostPower()) {
     Serial.println("RTC is NOT running, let's set the time!");
@@ -169,10 +174,11 @@ RtcCont::RtcCont(void)
 //  rtc.writeSqwPinMode(DS1307_SquareWave32kHz);  // 32kHz square wave
 //  rtc.writeSqwPinMode(DS1307_SquareWave1HZ);  // 1Hz square wave
   rtc.enable32K();    // Enable 32KHz Output
+  rtc.writeSqwPinMode(DS3231_SquareWave1Hz);    // DS3231 SQW pin mode settings
 
   // パルスカウント処理初期化
   hzCount = 0;                                            // パルスカウンタ初期化
-  pinMode(RTC_PLS_GPIO, INPUT);                           // パルス入力ポート初期化
+  pinMode(RTC_PLS_GPIO, INPUT_PULLUP);                    // パルス入力ポート初期化
   attachInterrupt(RTC_PLS_GPIO, rtcPlusCount, FALLING);   // パルス入力割り込み設定
 
   ntpSetup = false;     // RTC設定要求初期化
