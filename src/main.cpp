@@ -213,7 +213,7 @@ void taskDisplayCtrl(void *pvParameters) {
   modeCtrl vfdModeCtrl(i2cStartDat.ssd1306Valid,i2cStartDat.m5oledValid);
 
   while (1) {
-    struct tm *sysTimeInfo;
+    static struct tm *sysTimeInfo = &i2cStartDat.rtcTimeInfo;   // 初期値代入必要
     struct tm rtcTimeInfo;
     dispMode dispModeData;    // 動作モード
 
