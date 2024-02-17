@@ -244,17 +244,15 @@ void modeCtrl::modeSetVfdCnt(uint8_t setKey,uint8_t swKey)
   if((setKey == kEY_SET_L) && !aboteb){        // SETKey SW1 Long ON
     if(ssd1306Valid){
       displayMode.ctrlMode = ctrlMode_Oled;     // M5OLEDなし　OLEDあり 操作モード：VFD設定 -> OLED設定
-      displayMode.dispModeVfdCount = 0;
-      displayMode.dispModeVfd = dispModeVfdTbl[displayMode.dispModeVfdCount];  // VFD表示モード初期化
     }
     else if(m5oledValid){
       displayMode.ctrlMode = ctrlMode_M5oled;   // M5OLEDあり　操作モード：VFD設定 -> M5OLED設定
-      displayMode.dispModeVfdCount = 0;
-      displayMode.dispModeVfd = dispModeVfdTbl[displayMode.dispModeVfdCount];  // VFD表示モード初期化
     }
     else{
       displayMode.ctrlMode = ctrlMode_VfdDisp;  // M5OLEDなし　OLEDなし　操作モード：VFD設定 -> VFD表示
     }
+      displayMode.dispModeVfdCount = 0;
+      displayMode.dispModeVfd = dispModeVfdTbl[displayMode.dispModeVfdCount];  // VFD表示モード初期化
   }
   else if((setKey == kEY_SET_L) && aboteb){     // SETKey SW1 Long ON 設定中断要求
 //    Serial.println("SETKey SW1 Long ON 設定中断要求");

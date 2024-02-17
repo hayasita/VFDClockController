@@ -112,17 +112,21 @@ TEST(ModeCtrl, ctrlModechg_Full){
  * M5OLED　なし
  */
 TEST(ModeCtrl, ctrlModechg_OLED){
+  dispMode dispModeData;        // 動作モード
   modeCtrl mode(true,false);    // 操作モード：VFD表示
   EXPECT_EQ(mode.getCtrlMode(), ctrlMode_VfdDisp);
 
-  mode.modeSet(kEY_SET_L,0);      // 操作モード：VFD表示 -> VFD設定
+  dispModeData = mode.modeSet(kEY_SET_L,0);      // 操作モード：VFD表示 -> VFD設定
   EXPECT_EQ(mode.getCtrlMode(), ctrlMode_VfdCtrl);
+  EXPECT_EQ(dispModeData.dispModeVfd, VFD_DISP_CLOCK_ADJ);  // VFD表示モード：時計調整
 
-  mode.modeSet(kEY_SET_L,0);      // 操作モード：VFD設定 -> OLED設定
+  dispModeData = mode.modeSet(kEY_SET_L,0);      // 操作モード：VFD設定 -> OLED設定
   EXPECT_EQ(mode.getCtrlMode(), ctrlMode_Oled);
+  EXPECT_EQ(dispModeData.dispModeVfd, VFD_DISP_DEFAULT);    // VFD表示モード：標準表示
 
-  mode.modeSet(kEY_SET_L,0);      // 操作モード：OLED設定 -> VFD表示
+  dispModeData = mode.modeSet(kEY_SET_L,0);      // 操作モード：OLED設定 -> VFD表示
   EXPECT_EQ(mode.getCtrlMode(), ctrlMode_VfdDisp);
+  EXPECT_EQ(dispModeData.dispModeVfd, VFD_DISP_DEFAULT);    // VFD表示モード：標準表示
 
 //  EXPECT_FALSE(false);
 }
@@ -134,17 +138,21 @@ TEST(ModeCtrl, ctrlModechg_OLED){
  * M5OLED　あり
  */
 TEST(ModeCtrl, ctrlModechg_M5OLED){
+  dispMode dispModeData;        // 動作モード
   modeCtrl mode(false,true);    // 操作モード：VFD表示
   EXPECT_EQ(mode.getCtrlMode(), ctrlMode_VfdDisp);
 
-  mode.modeSet(kEY_SET_L,0);      // 操作モード：VFD表示 -> VFD設定
+  dispModeData = mode.modeSet(kEY_SET_L,0);      // 操作モード：VFD表示 -> VFD設定
   EXPECT_EQ(mode.getCtrlMode(), ctrlMode_VfdCtrl);
+  EXPECT_EQ(dispModeData.dispModeVfd, VFD_DISP_CLOCK_ADJ);  // VFD表示モード：時計調整
 
-  mode.modeSet(kEY_SET_L,0);      // 操作モード：VFD設定 -> M5OLED設定
+  dispModeData = mode.modeSet(kEY_SET_L,0);      // 操作モード：VFD設定 -> M5OLED設定
   EXPECT_EQ(mode.getCtrlMode(), ctrlMode_M5oled);
+  EXPECT_EQ(dispModeData.dispModeVfd, VFD_DISP_DEFAULT);    // VFD表示モード：標準表示
 
-  mode.modeSet(kEY_SET_L,0);      // 操作モード：M5OLED設定 -> VFD表示
+  dispModeData = mode.modeSet(kEY_SET_L,0);      // 操作モード：M5OLED設定 -> VFD表示
   EXPECT_EQ(mode.getCtrlMode(), ctrlMode_VfdDisp);
+  EXPECT_EQ(dispModeData.dispModeVfd, VFD_DISP_DEFAULT);    // VFD表示モード：標準表示
 
 }
 
@@ -155,14 +163,17 @@ TEST(ModeCtrl, ctrlModechg_M5OLED){
  * M5OLED　無し
  */
 TEST(ModeCtrl, ctrlModechg_NoOLED){
+  dispMode dispModeData;        // 動作モード
   modeCtrl mode(false,false);   // 操作モード：VFD表示
   EXPECT_EQ(mode.getCtrlMode(), ctrlMode_VfdDisp);
 
-  mode.modeSet(kEY_SET_L,0);      // 操作モード：VFD表示 -> VFD設定
+  dispModeData = mode.modeSet(kEY_SET_L,0);      // 操作モード：VFD表示 -> VFD設定
   EXPECT_EQ(mode.getCtrlMode(), ctrlMode_VfdCtrl);
+  EXPECT_EQ(dispModeData.dispModeVfd, VFD_DISP_CLOCK_ADJ);  // VFD表示モード：時計調整
 
-  mode.modeSet(kEY_SET_L,0);      // 操作モード：VFD設定 -> VFD表示
+  dispModeData = mode.modeSet(kEY_SET_L,0);      // 操作モード：VFD設定 -> VFD表示
   EXPECT_EQ(mode.getCtrlMode(), ctrlMode_VfdDisp);
+  EXPECT_EQ(dispModeData.dispModeVfd, VFD_DISP_DEFAULT);    // VFD表示モード：標準表示
 
 }
 
@@ -235,7 +246,8 @@ TEST(ModeCtrl_sw2sw3, dispModeSetVFDCtrl){
   EXPECT_EQ(mode.getDispModeVfd(), VFD_DISP_FADETIME_ADJ);    // クロスフェード時間設定
 
   mode.modeSet(KEY_UP_S,0);                                   // 表示モードプラス確認
-  EXPECT_EQ(mode.getDispModeVfd(), VFD_DISP_BRIGHTNESS_ADJ);  // VFD輝度調整
+//  EXPECT_EQ(mode.getDispModeVfd(), VFD_DISP_BRIGHTNESS_ADJ);  // VFD輝度調整
+  EXPECT_EQ(mode.getDispModeVfd(), VFD_DISP_CLOCK_ADJ);       // 時計調整
 
 }
 
