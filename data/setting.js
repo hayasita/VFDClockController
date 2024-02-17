@@ -1,4 +1,4 @@
-export const _initial_setting_ = '{\
+const _initial_setting_ = '{\
     "title":"VFD Clock Controler",\
     "localesId": "1",\
 \
