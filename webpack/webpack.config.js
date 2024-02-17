@@ -6,9 +6,14 @@ const purgecss = require('@fullhuman/postcss-purgecss')
 module.exports = {
   entry: './src/index.js',
   output: {
-    path: path.resolve(__dirname, 'dist'),
-    publicPath: '/dist/',
+    path: path.resolve(__dirname, 'dist/dist'),
+    publicPath: '/dist/dist/',
     filename: 'bundle.js'
+  },
+  devServer: {
+    static:{
+      directory: path.join(__dirname,'dist')
+    }
   },
   module: {
     rules: [
@@ -41,11 +46,11 @@ module.exports = {
               sourceMap: true,
               postcssOptions: {
                 // ベンダープレフィックスを自動付与する
-                plugins: ["autoprefixer"],
-                // purgecss
                 plugins: [
+                  "autoprefixer",
+                  //CSS削減
                   purgecss({
-                    content: ['./dist/bundle.js']
+                    content: ['./dist/dist/bundle.js']
                   })
                 ],
               },
@@ -78,6 +83,10 @@ module.exports = {
         use: [
           {
             loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-env']
+            }
+  
           }
         ]
       },
