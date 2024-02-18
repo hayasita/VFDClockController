@@ -3478,28 +3478,6 @@ __webpack_require__.r(__webpack_exports__);
 
       // -- センサデータ --
       console.log("-- センサデータ --");
-/*
-      const brDigSet = document.getElementById("sensorDataTable");
-      const frag = document.createDocumentFragment();
-      const newTable = document.createElement("table");
-      newTable.id = 'table1'
-      const newTbody = document.createElement("tbody");
-      for(let i=0; i<2; i++){
-        console.log(sensorList[i].name)
-        var btnum = i + 1;
-        const newTr = document.createElement("tr");
-        const newTd1 = document.createElement("td");
-        newTd1.innerHTML = this.sensorList[i].name;
-        newTr.appendChild(newTd1);
-        const newTd2 = document.createElement("td");
-        newTd2.innerHTML = `<div id=sensor${btnum}></div>`;
-        newTr.appendChild(newTd2);
-        frag.appendChild(newTr);
-      }
-      newTbody.appendChild(frag);
-      newTable.appendChild(newTbody);
-      brDigSet.appendChild(newTable);
-*/
 
       for(let i=0; i<6; i++){
         document.getElementById(this.sensorList[i].data).innerHTML =  (i+2) * (10**this.sensorList[i].index);
@@ -3533,6 +3511,11 @@ __webpack_require__.r(__webpack_exports__);
       this.graphData.labels.push(Time);
       this.graphData.datasets[0].data.push(chartdat[0]);
       this.graphData.datasets[1].data.push(chartdat[1]);
+      if(this.graphData.labels.length > 100){
+        this.graphData.labels.shift();
+        this.graphData.datasets[0].data.shift();
+        this.graphData.datasets[1].data.shift();
+      }
       this.chart.update();
 
       this.dcdcGraphData.labels.push(Time);
@@ -3541,6 +3524,14 @@ __webpack_require__.r(__webpack_exports__);
       this.dcdcGraphData.datasets[2].data.push(chartdat[3]);
       this.dcdcGraphData.datasets[3].data.push(chartdat[6]);
       this.dcdcGraphData.datasets[4].data.push(chartdat[7]);
+      if(this.dcdcGraphData.labels.length > 100){
+        this.dcdcGraphData.labels.shift();
+        this.dcdcGraphData.datasets[0].data.shift();
+        this.dcdcGraphData.datasets[1].data.shift();
+        this.dcdcGraphData.datasets[2].data.shift();
+        this.dcdcGraphData.datasets[3].data.shift();
+        this.dcdcGraphData.datasets[4].data.shift();
+      }
       this.dcdcChart.update();
 
     }
@@ -3552,11 +3543,11 @@ __webpack_require__.r(__webpack_exports__);
     bindingTypes,
     getComponent
   ) => template(
-    '<h1>Dash Bord</h1><div class="card"><div class="card-header">\r\n\t\t\tGraph\r\n\t\t</div><div class="card-body"><h5 class="card-title">Chart</h5><p class="card-text"><div style="width: 100%;"><canvas id="sensorChart"></canvas></div><div style="width: 100%;"><canvas id="dcdcChart"></canvas></div></p></div></div><div class="row"><div class="col-md-6"><div class="card h-100"><div class="card-header">\r\n\t\t\t\tネットワーク接続設定\r\n\t\t\t</div><div class="card-body"><h5 class="card-title">Current Settings</h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><table class="table"><tr><td>STAモード SSID</td><td expr4="expr4"> </td></tr><tr><td>STAモード IP Adress</td><td expr5="expr5"> </td></tr><tr><td>APモード SSID</td><td expr6="expr6"> </td></tr><tr><td>APモード IP Adress</td><td expr7="expr7"> </td></tr></table></div></p></div></div></div><div class="col-md-6"><div class="card h-100"><div class="card-header">\r\n\t\t\t\tWiFi Station 設定\r\n\t\t\t</div><div class="card-body"><h2 class="card-title">センサ情報</h2><div class="col-sm-9 offset-sm-1"><table class="table"><tr expr8="expr8"></tr></table></div></div></div></div><div class="col-md-12"><div class="card h-100"><div class="card-header">\r\n      Log message\r\n    </div><div class="card-body"><div id="logAll" style="overflow-y: scroll; height: 200px; border: 1px solid #ccc;padding: 10px;"></div></div></div></div><div class="col-md-12"><div class="card h-100"><div class="card-header"></div><div class="card-body"><h2 class="card-title">センサ情報</h2><div class="col-1"></div><div class="col-7"><div id="sensorDataTable"></div></div><div class="col-7"></div><a href="./setting.js">setting.js</a><br/><a href="./_setting.js">_setting.js</a><br/><a href="./setting.json">setting.json</a><br/></div></div></div></div>',
+    '<h1>Dash Bord</h1><div class="card"><div class="card-header">\r\n\t\t\tGraph\r\n\t\t</div><div class="card-body"><h5 class="card-title">Chart</h5><p class="card-text"><div style="width: 100%;"><canvas id="sensorChart"></canvas></div><div style="width: 100%;"><canvas id="dcdcChart"></canvas></div></p></div></div><div class="row"><div class="col-md-6"><div class="card h-100"><div class="card-header">\r\n\t\t\t\tネットワーク接続設定\r\n\t\t\t</div><div class="card-body"><h5 class="card-title">Current Settings</h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><table class="table"><tr><td>STAモード SSID</td><td expr1="expr1"> </td></tr><tr><td>STAモード IP Adress</td><td expr2="expr2"> </td></tr><tr><td>APモード SSID</td><td expr3="expr3"> </td></tr><tr><td>APモード IP Adress</td><td expr4="expr4"> </td></tr></table></div></p></div></div></div><div class="col-md-6"><div class="card h-100"><div class="card-header">\r\n\t\t\t\tWiFi Station 設定\r\n\t\t\t</div><div class="card-body"><h2 class="card-title">センサ情報</h2><div class="col-sm-9 offset-sm-1"><table class="table"><tr expr5="expr5"></tr></table></div></div></div></div><div class="col-md-12"><div class="card h-100"><div class="card-header">\r\n      Log message\r\n    </div><div class="card-body"><div id="logAll" style="overflow-y: scroll; height: 200px; border: 1px solid #ccc;padding: 10px;"></div></div></div></div><div class="col-md-12"><div class="card h-100"><div class="card-header"></div><div class="card-body"><h2 class="card-title">センサ情報</h2><div class="col-1"></div><div class="col-7"><div id="sensorDataTable"></div></div><div class="col-7"></div><a href="./setting.js">setting.js</a><br/><a href="./_setting.js">_setting.js</a><br/><a href="./setting.json">setting.json</a><br/></div></div></div></div>',
     [
       {
-        redundantAttribute: 'expr4',
-        selector: '[expr4]',
+        redundantAttribute: 'expr1',
+        selector: '[expr1]',
 
         expressions: [
           {
@@ -3567,8 +3558,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr5',
-        selector: '[expr5]',
+        redundantAttribute: 'expr2',
+        selector: '[expr2]',
 
         expressions: [
           {
@@ -3579,8 +3570,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr6',
-        selector: '[expr6]',
+        redundantAttribute: 'expr3',
+        selector: '[expr3]',
 
         expressions: [
           {
@@ -3591,8 +3582,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr7',
-        selector: '[expr7]',
+        redundantAttribute: 'expr4',
+        selector: '[expr4]',
 
         expressions: [
           {
@@ -3608,11 +3599,11 @@ __webpack_require__.r(__webpack_exports__);
         condition: null,
 
         template: template(
-          '<td expr9="expr9"> </td><td expr10="expr10"></td>',
+          '<td expr6="expr6"> </td><td expr7="expr7"></td>',
           [
             {
-              redundantAttribute: 'expr9',
-              selector: '[expr9]',
+              redundantAttribute: 'expr6',
+              selector: '[expr6]',
 
               expressions: [
                 {
@@ -3623,8 +3614,8 @@ __webpack_require__.r(__webpack_exports__);
               ]
             },
             {
-              redundantAttribute: 'expr10',
-              selector: '[expr10]',
+              redundantAttribute: 'expr7',
+              selector: '[expr7]',
 
               expressions: [
                 {
@@ -3637,8 +3628,8 @@ __webpack_require__.r(__webpack_exports__);
           ]
         ),
 
-        redundantAttribute: 'expr8',
-        selector: '[expr8]',
+        redundantAttribute: 'expr5',
+        selector: '[expr5]',
         itemName: 'senser',
         indexName: null,
         evaluate: _scope => _scope.sensorList
@@ -3793,11 +3784,11 @@ __webpack_require__.r(__webpack_exports__);
     bindingTypes,
     getComponent
   ) => template(
-    '<h1>デバイス設定</h1><div class="row"><div class="col-md-6"><div class="card h-100"><div class="card-header">\r\n\t\t\tシステム設定\r\n\t\t</div><div class="card-body"><p class="card-text"><div class="col-sm-11 offset-sm-1"><div expr87="expr87" class="form-check form-switch"><input expr88="expr88" class="form-check-input" type="checkbox" type="checkbox"/> </div><div></div><table class="table"><tr><td class="itemname-width">WiFi切断</td><td><div><button expr89="expr89" class="btn btn-outline-primary btn-sm" value="Setting">Execute Action</button></div></td></tr><tr><td class="itemname-width">再起動</td><td><div><button expr90="expr90" class="btn btn-outline-primary btn-sm" value="Setting">Execute Action</button></div></td></tr><tr><td class="itemname-width">EEROM 初期化</td><td><div><button expr91="expr91" class="btn btn-outline-primary btn-sm" value="Setting">Execute Action</button></div></td></tr><tr><td class="itemname-width">内部情報初期化</td><td><div><button expr92="expr92" class="btn btn-outline-primary btn-sm" value="Setting">Execute Action</button></div></td></tr></table></div></p></div></div></div><div class="col-md-6"><div class="card h-100"><div class="card-header">\r\n\t\t\tデバイス状態\r\n\t\t</div><div class="card-body"><h5 class="card-title">i2c接続デバイス</h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><table class="table"><tr><td class="itemname-width">WiFi切断</td><td><div><button type="button" class="btn btn-primary btn-sm">Small button</button><input class="btn btn-primary btn-sm" type="reset" value="Reset"/><button expr93="expr93" class="btn btn-outline-primary btn-sm" value="Setting">Setting</button></div></td></tr><tr><td class="itemname-width">再起動</td><td><div><button expr94="expr94" class="btn btn-outline-primary btn-sm" value="Setting">Setting</button></div></td></tr><tr><td class="itemname-width">EEROM 初期化</td><td><div><button expr95="expr95" class="btn btn-outline-primary btn-sm" value="Setting">Setting</button></div></td></tr><tr><td class="itemname-width">内部情報初期化</td><td><div><button expr96="expr96" class="btn btn-outline-primary btn-sm" value="Setting">Setting</button></div></td></tr></table></div></p><h5 class="card-title">DC-DCコンバータ</h5></div></div></div></div><div class="card"><div class="card-header">\r\n\t\t\tIR機能設定\r\n\t\t</div><div class="card-body"><h5 class="card-title">赤外線リモコン 使用</h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><div expr97="expr97" class="form-check form-switch"><input expr98="expr98" class="form-check-input" type="checkbox" type="checkbox"/> </div></div></p><h5 class="card-title">受信データ</h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><div id="logNtpSetting" style="overflow-y: scroll; height: 100px; border: 1px solid #ccc;padding: 10px;"></div></div></p><h5 class="card-title">機能設定</h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><button expr99="expr99" type="submit" id="ssidSubmit" class="btn btn-outline-primary btn-sm" style="margin-top: 5px;"><span class="spinner-border spinner-border-sm visually-hidden" role="status" aria-hidden="true"></span>\r\n        Data Scan\r\n      </button><table class="table"><tr><td><div class="form-check"><input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1"/><label class="form-check-label" for="flexRadioDefault1">\r\n            表示切替\r\n          </label></div></td><td><div><button expr100="expr100" class="btn btn-outline-primary btn-sm" value="Setting">Setting</button></div></td></tr><tr><td class="itemname-width">表示切替</td><td><div><button type="button" class="btn btn-primary btn-sm">Small button</button><input class="btn btn-primary btn-sm" type="reset" value="Reset"/><button expr101="expr101" class="btn btn-outline-primary btn-sm" value="Setting">Setting</button></div></td></tr><tr><td class="itemname-width">再起動</td><td><div><button expr102="expr102" class="btn btn-outline-primary btn-sm" value="Setting">Setting</button></div></td></tr><tr><td class="itemname-width">EEROM 初期化</td><td><div><button expr103="expr103" class="btn btn-outline-primary btn-sm" value="Setting">Setting</button></div></td></tr><tr><td class="itemname-width">内部情報初期化</td><td><div><button expr104="expr104" class="btn btn-outline-primary btn-sm" value="Setting">Setting</button></div></td></tr></table></div></p><p><div id="irSetRadioButton"></div></p></div></div>',
+    '<h1>デバイス設定</h1><div class="row"><div class="col-md-6"><div class="card h-100"><div class="card-header">\r\n\t\t\tシステム設定\r\n\t\t</div><div class="card-body"><p class="card-text"><div class="col-sm-11 offset-sm-1"><div expr38="expr38" class="form-check form-switch"><input expr39="expr39" class="form-check-input" type="checkbox" type="checkbox"/> </div><div></div><table class="table"><tr><td class="itemname-width">WiFi切断</td><td><div><button expr40="expr40" class="btn btn-outline-primary btn-sm" value="Setting">Execute Action</button></div></td></tr><tr><td class="itemname-width">再起動</td><td><div><button expr41="expr41" class="btn btn-outline-primary btn-sm" value="Setting">Execute Action</button></div></td></tr><tr><td class="itemname-width">EEROM 初期化</td><td><div><button expr42="expr42" class="btn btn-outline-primary btn-sm" value="Setting">Execute Action</button></div></td></tr><tr><td class="itemname-width">内部情報初期化</td><td><div><button expr43="expr43" class="btn btn-outline-primary btn-sm" value="Setting">Execute Action</button></div></td></tr></table></div></p></div></div></div><div class="col-md-6"><div class="card h-100"><div class="card-header">\r\n\t\t\tデバイス状態\r\n\t\t</div><div class="card-body"><h5 class="card-title">i2c接続デバイス</h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><table class="table"><tr><td class="itemname-width">WiFi切断</td><td><div><button type="button" class="btn btn-primary btn-sm">Small button</button><input class="btn btn-primary btn-sm" type="reset" value="Reset"/><button expr44="expr44" class="btn btn-outline-primary btn-sm" value="Setting">Setting</button></div></td></tr><tr><td class="itemname-width">再起動</td><td><div><button expr45="expr45" class="btn btn-outline-primary btn-sm" value="Setting">Setting</button></div></td></tr><tr><td class="itemname-width">EEROM 初期化</td><td><div><button expr46="expr46" class="btn btn-outline-primary btn-sm" value="Setting">Setting</button></div></td></tr><tr><td class="itemname-width">内部情報初期化</td><td><div><button expr47="expr47" class="btn btn-outline-primary btn-sm" value="Setting">Setting</button></div></td></tr></table></div></p><h5 class="card-title">DC-DCコンバータ</h5></div></div></div></div><div class="card"><div class="card-header">\r\n\t\t\tIR機能設定\r\n\t\t</div><div class="card-body"><h5 class="card-title">赤外線リモコン 使用</h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><div expr48="expr48" class="form-check form-switch"><input expr49="expr49" class="form-check-input" type="checkbox" type="checkbox"/> </div></div></p><h5 class="card-title">受信データ</h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><div id="logNtpSetting" style="overflow-y: scroll; height: 100px; border: 1px solid #ccc;padding: 10px;"></div></div></p><h5 class="card-title">機能設定</h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><button expr50="expr50" type="submit" id="ssidSubmit" class="btn btn-outline-primary btn-sm" style="margin-top: 5px;"><span class="spinner-border spinner-border-sm visually-hidden" role="status" aria-hidden="true"></span>\r\n        Data Scan\r\n      </button><table class="table"><tr><td><div class="form-check"><input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1"/><label class="form-check-label" for="flexRadioDefault1">\r\n            表示切替\r\n          </label></div></td><td><div><button expr51="expr51" class="btn btn-outline-primary btn-sm" value="Setting">Setting</button></div></td></tr><tr><td class="itemname-width">表示切替</td><td><div><button type="button" class="btn btn-primary btn-sm">Small button</button><input class="btn btn-primary btn-sm" type="reset" value="Reset"/><button expr52="expr52" class="btn btn-outline-primary btn-sm" value="Setting">Setting</button></div></td></tr><tr><td class="itemname-width">再起動</td><td><div><button expr53="expr53" class="btn btn-outline-primary btn-sm" value="Setting">Setting</button></div></td></tr><tr><td class="itemname-width">EEROM 初期化</td><td><div><button expr54="expr54" class="btn btn-outline-primary btn-sm" value="Setting">Setting</button></div></td></tr><tr><td class="itemname-width">内部情報初期化</td><td><div><button expr55="expr55" class="btn btn-outline-primary btn-sm" value="Setting">Setting</button></div></td></tr></table></div></p><p><div id="irSetRadioButton"></div></p></div></div>',
     [
       {
-        redundantAttribute: 'expr87',
-        selector: '[expr87]',
+        redundantAttribute: 'expr38',
+        selector: '[expr38]',
 
         expressions: [
           {
@@ -3813,8 +3804,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr88',
-        selector: '[expr88]',
+        redundantAttribute: 'expr39',
+        selector: '[expr39]',
 
         expressions: [
           {
@@ -3830,8 +3821,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr89',
-        selector: '[expr89]',
+        redundantAttribute: 'expr40',
+        selector: '[expr40]',
 
         expressions: [
           {
@@ -3847,8 +3838,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr90',
-        selector: '[expr90]',
+        redundantAttribute: 'expr41',
+        selector: '[expr41]',
 
         expressions: [
           {
@@ -3864,8 +3855,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr91',
-        selector: '[expr91]',
+        redundantAttribute: 'expr42',
+        selector: '[expr42]',
 
         expressions: [
           {
@@ -3881,8 +3872,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr92',
-        selector: '[expr92]',
+        redundantAttribute: 'expr43',
+        selector: '[expr43]',
 
         expressions: [
           {
@@ -3898,8 +3889,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr93',
-        selector: '[expr93]',
+        redundantAttribute: 'expr44',
+        selector: '[expr44]',
 
         expressions: [
           {
@@ -3915,8 +3906,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr94',
-        selector: '[expr94]',
+        redundantAttribute: 'expr45',
+        selector: '[expr45]',
 
         expressions: [
           {
@@ -3932,8 +3923,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr95',
-        selector: '[expr95]',
+        redundantAttribute: 'expr46',
+        selector: '[expr46]',
 
         expressions: [
           {
@@ -3949,8 +3940,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr96',
-        selector: '[expr96]',
+        redundantAttribute: 'expr47',
+        selector: '[expr47]',
 
         expressions: [
           {
@@ -3966,8 +3957,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr97',
-        selector: '[expr97]',
+        redundantAttribute: 'expr48',
+        selector: '[expr48]',
 
         expressions: [
           {
@@ -3983,8 +3974,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr98',
-        selector: '[expr98]',
+        redundantAttribute: 'expr49',
+        selector: '[expr49]',
 
         expressions: [
           {
@@ -4000,8 +3991,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr99',
-        selector: '[expr99]',
+        redundantAttribute: 'expr50',
+        selector: '[expr50]',
 
         expressions: [
           {
@@ -4018,8 +4009,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr100',
-        selector: '[expr100]',
+        redundantAttribute: 'expr51',
+        selector: '[expr51]',
 
         expressions: [
           {
@@ -4035,8 +4026,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr101',
-        selector: '[expr101]',
+        redundantAttribute: 'expr52',
+        selector: '[expr52]',
 
         expressions: [
           {
@@ -4052,8 +4043,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr102',
-        selector: '[expr102]',
+        redundantAttribute: 'expr53',
+        selector: '[expr53]',
 
         expressions: [
           {
@@ -4069,8 +4060,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr103',
-        selector: '[expr103]',
+        redundantAttribute: 'expr54',
+        selector: '[expr54]',
 
         expressions: [
           {
@@ -4086,8 +4077,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr104',
-        selector: '[expr104]',
+        redundantAttribute: 'expr55',
+        selector: '[expr55]',
 
         expressions: [
           {
@@ -4427,11 +4418,11 @@ __webpack_require__.r(__webpack_exports__);
     bindingTypes,
     getComponent
   ) => template(
-    '<h1>表示設定</h1><div class="row"><div class="col-md-6"><div class="card h-100"><div class="card-header">\r\n\t\t\t表示フォーマット\r\n\t\t</div><div class="card-body"><h5 class="card-title">表示フォーマット</h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><table class="table"><tr><td class="itemname-width">Display Format</td><td><div class="input-group"><button expr11="expr11" type="button" class="btn btn-primary btn-dispconf-number" id="dispFormatMinus" data-type="minus" data-field="dispFormatUnit" pear-button="dispFormatPlus">-</button><input expr12="expr12" type="number" class="form-control input-sm no-spin" name="dispFormat" id="dispFormatUnit" min="0" max="9" placeholder="0-9"/><button expr13="expr13" type="button" class="btn btn-primary btn-dispconf-number" id="dispFormatPlus" data-type="plus" data-field="dispFormatUnit" pear-button="dispFormatMinus">+</button></div></td></tr><tr><td class="itemname-width">TimeDisplay Format</td><td><div><select expr14="expr14" class="form-select form-select-sm" aria-label="Set TimeDisplay Format" name="timeDisplayFormat" id="timeDisplayFormat"><option value="1">hh.mm.ss</option><option value="2"> h.mm.ss</option><option value="3">mm.ss.hh</option></select></div></td></tr><tr><td class="itemname-width">DateDisplay Format</td><td><div><select expr15="expr15" class="form-select form-select-sm" aria-label="Set DateDateDisplay Format" name="dateDisplayFormat" id="dateDisplayFormat"><option value="1">yyyy.mm.dd</option><option value="2">yy.mm.dd</option><option value="3">mm.dd.yyyy</option><option value="4">mm.dd.yy</option><option value="5">dd.mm.yyyy</option><option value="6">dd.mm.yy</option></select></div></td></tr></table></div></p><h5 class="card-title">時刻表示</h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><div class="form-check"><input expr16="expr16" class="form-check-input" type="radio" name="TimeFormat" name="flexRadioDefault" id="flexRadioDefault1"/><label class="form-check-label" for="flexRadioDefault1">\r\n            12 time indication\r\n            </label></div><div class="form-check"><input expr17="expr17" class="form-check-input" type="radio" name="TimeFormat" name="flexRadioDefault" id="flexRadioDefault2"/><label class="form-check-label" for="flexRadioDefault2">\r\n            24 time indication\r\n            </label></div></div></p></div></div></div><div class="col-md-6"><div class="card h-100"><div class="card-header">\r\n\t\t\t表示効果\r\n\t\t</div><div class="card-body"><h5 class="card-title">アニメーション動作</h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><select expr18="expr18" class="form-select form-select-sm" name="displayEffect" id="displayEffect"><option value="0">通常</option><option value="1">シャッフル（各桁同時）</option><option value="2">シャッフル（各桁順番）</option><option value="3">シャッフル（全桁同時）</option></select></div></p><h5 class="card-title">クロスフェード時間</h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><table class="table"><tr><td class="itemname-width">Fade time</td><td><div class="input-group"><button expr19="expr19" type="button" class="btn btn-primary btn-dispconf-number" id="fadeTimeMinus" data-type="minus" data-field="fadeTimeUnit" pear-button="fadeTimePlus">-</button><input expr20="expr20" type="number" class="form-control input-sm no-spin" name="fadeTime" id="fadeTimeUnit" min="0" max="9" placeholder="0-9"/><button expr21="expr21" type="button" class="btn btn-primary btn-dispconf-number" id="fadeTimePlus" data-type="plus" data-field="fadeTimeUnit" pear-button="fadeTimeMinus">+</button></div></td></tr></table></div></p></div></div></div></div><div class="card"><div class="card-header">\r\n\t\t\t表示輝度設定\r\n\t\t</div><div class="card-body"><h5 class="card-title">Display Brightness</h5><p class="card-text"><div class="col-sm-11 offset-sm-1">\r\n        Bright : <span id="glowInTheBrightId">5</span><input expr22="expr22" type="range" class="form-range" id="glowInTheBrighttmp" min="50" max="100" step="1"/>\r\n        Dark : <span id="glowInTheDarkId">5</span><input expr23="expr23" type="range" class="form-range" id="glowInTheDarktmp" min="50" max="100" step="1"/></div><div class="col-sm-11 offset-sm-1"><button type="button" class="btn btn-outline-secondary btm-sm" data-bs-toggle="collapse" data-bs-target="#collapseBrDig" aria-expanded="false" aria-controls="collapseBrDig">\r\n        各桁の個別輝度設定\r\n      </button><div class="collapse" id="collapseBrDig"><div class="card card-body"><table class="table"><tr><th class="itemname-width">Display digit</th><th>Brightness setting</th></tr><tr><td>Dig.9</td><td><div class="input-group"><button expr24="expr24" type="button" class="btn btn-primary btn-dispconf-number" id="brDig9Minus" data-type="minus" data-field="brDig9Unit" pear-button="brDig9Plus">-</button><input expr25="expr25" type="number" class="form-control input-sm no-spin" name="brightDig9" id="brDig9Unit" min="1" max="15" placeholder="1-15"/><button expr26="expr26" type="button" class="btn btn-primary btn-dispconf-number" id="brDig9Plus" data-type="plus" data-field="brDig9Unit" pear-button="brDig9Minus">+</button></div></td></tr><tr><td>Dig.8</td><td><div class="input-group"><button expr27="expr27" type="button" class="btn btn-primary btn-dispconf-number" id="brDig8Minus" data-type="minus" data-field="brDig8Unit" pear-button="brDig8Plus">-</button><input expr28="expr28" type="number" class="form-control input-sm no-spin" name="brightDig8" id="brDig8Unit" min="1" max="15" placeholder="1-15"/><button expr29="expr29" type="button" class="btn btn-primary btn-dispconf-number" id="brDig8Plus" data-type="plus" data-field="brDig8Unit" pear-button="brDig8Minus">+</button></div></td></tr><tr><td>Dig.7</td><td><div class="input-group"><button expr30="expr30" type="button" class="btn btn-primary btn-dispconf-number" id="brDig7Minus" data-type="minus" data-field="brDig7Unit" pear-button="brDig7Plus">-</button><input expr31="expr31" type="number" class="form-control input-sm no-spin" name="brightDig7" id="brDig7Unit" min="1" max="15" placeholder="1-15"/><button expr32="expr32" type="button" class="btn btn-primary btn-dispconf-number" id="brDig7Plus" data-type="plus" data-field="brDig7Unit" pear-button="brDig7Minus">+</button></div></td></tr><tr><td>Dig.6</td><td><div class="input-group"><button expr33="expr33" type="button" class="btn btn-primary btn-dispconf-number" id="brDig6Minus" data-type="minus" data-field="brDig6Unit" pear-button="brDig6Plus">-</button><input expr34="expr34" type="number" class="form-control input-sm no-spin" name="brightDig6" id="brDig6Unit" min="1" max="15" placeholder="1-15"/><button expr35="expr35" type="button" class="btn btn-primary btn-dispconf-number" id="brDig6Plus" data-type="plus" data-field="brDig6Unit" pear-button="brDig6Minus">+</button></div></td></tr><tr><td>Dig.5</td><td><div class="input-group"><button expr36="expr36" type="button" class="btn btn-primary btn-dispconf-number" id="brDig5Minus" data-type="minus" data-field="brDig5Unit" pear-button="brDig5Plus">-</button><input expr37="expr37" type="number" class="form-control input-sm no-spin" name="brightDig5" id="brDig5Unit" min="1" max="15" placeholder="1-15"/><button expr38="expr38" type="button" class="btn btn-primary btn-dispconf-number" id="brDig5Plus" data-type="plus" data-field="brDig5Unit" pear-button="brDig5Minus">+</button></div></td></tr><tr><td>Dig.4</td><td><div class="input-group"><button expr39="expr39" type="button" class="btn btn-primary btn-dispconf-number" id="brDig4Minus" data-type="minus" data-field="brDig4Unit" pear-button="brDig4Plus">-</button><input expr40="expr40" type="number" class="form-control input-sm no-spin" name="brightDig4" id="brDig4Unit" min="1" max="15" placeholder="1-15"/><button expr41="expr41" type="button" class="btn btn-primary btn-dispconf-number" id="brDig4Plus" data-type="plus" data-field="brDig4Unit" pear-button="brDig4Minus">+</button></div></td></tr><tr><td>Dig.3</td><td><div class="input-group"><button expr42="expr42" type="button" class="btn btn-primary btn-dispconf-number" id="brDig3Minus" data-type="minus" data-field="brDig3Unit" pear-button="brDig3Plus">-</button><input expr43="expr43" type="number" class="form-control input-sm no-spin" name="brightDig3" id="brDig3Unit" min="1" max="15" placeholder="1-15"/><button expr44="expr44" type="button" class="btn btn-primary btn-dispconf-number" id="brDig3Plus" data-type="plus" data-field="brDig3Unit" pear-button="brDig3Minus">+</button></div></td></tr><tr><td>Dig.2</td><td><div class="input-group"><button expr45="expr45" type="button" class="btn btn-primary btn-dispconf-number" id="brDig2Minus" data-type="minus" data-field="brDig2Unit" pear-button="brDig2Plus">-</button><input expr46="expr46" type="number" class="form-control input-sm no-spin" name="brightDig2" id="brDig2Unit" min="1" max="15" placeholder="1-15"/><button expr47="expr47" type="button" class="btn btn-primary btn-dispconf-number" id="brDig2Plus" data-type="plus" data-field="brDig2Unit" pear-button="brDig2Minus">+</button></div></td></tr><tr><td>Dig.1</td><td><div class="input-group"><button expr48="expr48" type="button" class="btn btn-primary btn-dispconf-number" id="brDig1Minus" data-type="minus" data-field="brDig1Unit" pear-button="brDig1Plus">-</button><input expr49="expr49" type="number" class="form-control input-sm no-spin" name="brightDig1" id="brDig1Unit" min="1" max="15" placeholder="1-15"/><button expr50="expr50" type="button" class="btn btn-primary btn-dispconf-number" id="brDig1Plus" data-type="plus" data-field="brDig1Unit" pear-button="brDig1Minus">+</button></div></td></tr></table><div class="col-sm-4 offset-sm-8"><div class="btn-group" role="group" aria-label="Basic example"><button expr51="expr51" type="button" class="btn btn-outline-primary ">保存</button><button expr52="expr52" type="button" class="btn btn-outline-primary ">リセット</button></div></div></div></div></div></p></div></div>',
+    '<h1>表示設定</h1><div class="row"><div class="col-md-6"><div class="card h-100"><div class="card-header">\r\n\t\t\t表示フォーマット\r\n\t\t</div><div class="card-body"><h5 class="card-title">表示フォーマット</h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><table class="table"><tr><td class="itemname-width">Display Format</td><td><div class="input-group"><button expr56="expr56" type="button" class="btn btn-primary btn-dispconf-number" id="dispFormatMinus" data-type="minus" data-field="dispFormatUnit" pear-button="dispFormatPlus">-</button><input expr57="expr57" type="number" class="form-control input-sm no-spin" name="dispFormat" id="dispFormatUnit" min="0" max="9" placeholder="0-9"/><button expr58="expr58" type="button" class="btn btn-primary btn-dispconf-number" id="dispFormatPlus" data-type="plus" data-field="dispFormatUnit" pear-button="dispFormatMinus">+</button></div></td></tr><tr><td class="itemname-width">TimeDisplay Format</td><td><div><select expr59="expr59" class="form-select form-select-sm" aria-label="Set TimeDisplay Format" name="timeDisplayFormat" id="timeDisplayFormat"><option value="1">hh.mm.ss</option><option value="2"> h.mm.ss</option><option value="3">mm.ss.hh</option></select></div></td></tr><tr><td class="itemname-width">DateDisplay Format</td><td><div><select expr60="expr60" class="form-select form-select-sm" aria-label="Set DateDateDisplay Format" name="dateDisplayFormat" id="dateDisplayFormat"><option value="1">yyyy.mm.dd</option><option value="2">yy.mm.dd</option><option value="3">mm.dd.yyyy</option><option value="4">mm.dd.yy</option><option value="5">dd.mm.yyyy</option><option value="6">dd.mm.yy</option></select></div></td></tr></table></div></p><h5 class="card-title">時刻表示</h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><div class="form-check"><input expr61="expr61" class="form-check-input" type="radio" name="TimeFormat" name="flexRadioDefault" id="flexRadioDefault1"/><label class="form-check-label" for="flexRadioDefault1">\r\n            12 time indication\r\n            </label></div><div class="form-check"><input expr62="expr62" class="form-check-input" type="radio" name="TimeFormat" name="flexRadioDefault" id="flexRadioDefault2"/><label class="form-check-label" for="flexRadioDefault2">\r\n            24 time indication\r\n            </label></div></div></p></div></div></div><div class="col-md-6"><div class="card h-100"><div class="card-header">\r\n\t\t\t表示効果\r\n\t\t</div><div class="card-body"><h5 class="card-title">アニメーション動作</h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><select expr63="expr63" class="form-select form-select-sm" name="displayEffect" id="displayEffect"><option value="0">通常</option><option value="1">シャッフル（各桁同時）</option><option value="2">シャッフル（各桁順番）</option><option value="3">シャッフル（全桁同時）</option></select></div></p><h5 class="card-title">クロスフェード時間</h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><table class="table"><tr><td class="itemname-width">Fade time</td><td><div class="input-group"><button expr64="expr64" type="button" class="btn btn-primary btn-dispconf-number" id="fadeTimeMinus" data-type="minus" data-field="fadeTimeUnit" pear-button="fadeTimePlus">-</button><input expr65="expr65" type="number" class="form-control input-sm no-spin" name="fadeTime" id="fadeTimeUnit" min="0" max="9" placeholder="0-9"/><button expr66="expr66" type="button" class="btn btn-primary btn-dispconf-number" id="fadeTimePlus" data-type="plus" data-field="fadeTimeUnit" pear-button="fadeTimeMinus">+</button></div></td></tr></table></div></p></div></div></div></div><div class="card"><div class="card-header">\r\n\t\t\t表示輝度設定\r\n\t\t</div><div class="card-body"><h5 class="card-title">Display Brightness</h5><p class="card-text"><div class="col-sm-11 offset-sm-1">\r\n        Bright : <span id="glowInTheBrightId">5</span><input expr67="expr67" type="range" class="form-range" id="glowInTheBrighttmp" min="50" max="100" step="1"/>\r\n        Dark : <span id="glowInTheDarkId">5</span><input expr68="expr68" type="range" class="form-range" id="glowInTheDarktmp" min="50" max="100" step="1"/></div><div class="col-sm-11 offset-sm-1"><button type="button" class="btn btn-outline-secondary btm-sm" data-bs-toggle="collapse" data-bs-target="#collapseBrDig" aria-expanded="false" aria-controls="collapseBrDig">\r\n        各桁の個別輝度設定\r\n      </button><div class="collapse" id="collapseBrDig"><div class="card card-body"><table class="table"><tr><th class="itemname-width">Display digit</th><th>Brightness setting</th></tr><tr><td>Dig.9</td><td><div class="input-group"><button expr69="expr69" type="button" class="btn btn-primary btn-dispconf-number" id="brDig9Minus" data-type="minus" data-field="brDig9Unit" pear-button="brDig9Plus">-</button><input expr70="expr70" type="number" class="form-control input-sm no-spin" name="brightDig9" id="brDig9Unit" min="1" max="15" placeholder="1-15"/><button expr71="expr71" type="button" class="btn btn-primary btn-dispconf-number" id="brDig9Plus" data-type="plus" data-field="brDig9Unit" pear-button="brDig9Minus">+</button></div></td></tr><tr><td>Dig.8</td><td><div class="input-group"><button expr72="expr72" type="button" class="btn btn-primary btn-dispconf-number" id="brDig8Minus" data-type="minus" data-field="brDig8Unit" pear-button="brDig8Plus">-</button><input expr73="expr73" type="number" class="form-control input-sm no-spin" name="brightDig8" id="brDig8Unit" min="1" max="15" placeholder="1-15"/><button expr74="expr74" type="button" class="btn btn-primary btn-dispconf-number" id="brDig8Plus" data-type="plus" data-field="brDig8Unit" pear-button="brDig8Minus">+</button></div></td></tr><tr><td>Dig.7</td><td><div class="input-group"><button expr75="expr75" type="button" class="btn btn-primary btn-dispconf-number" id="brDig7Minus" data-type="minus" data-field="brDig7Unit" pear-button="brDig7Plus">-</button><input expr76="expr76" type="number" class="form-control input-sm no-spin" name="brightDig7" id="brDig7Unit" min="1" max="15" placeholder="1-15"/><button expr77="expr77" type="button" class="btn btn-primary btn-dispconf-number" id="brDig7Plus" data-type="plus" data-field="brDig7Unit" pear-button="brDig7Minus">+</button></div></td></tr><tr><td>Dig.6</td><td><div class="input-group"><button expr78="expr78" type="button" class="btn btn-primary btn-dispconf-number" id="brDig6Minus" data-type="minus" data-field="brDig6Unit" pear-button="brDig6Plus">-</button><input expr79="expr79" type="number" class="form-control input-sm no-spin" name="brightDig6" id="brDig6Unit" min="1" max="15" placeholder="1-15"/><button expr80="expr80" type="button" class="btn btn-primary btn-dispconf-number" id="brDig6Plus" data-type="plus" data-field="brDig6Unit" pear-button="brDig6Minus">+</button></div></td></tr><tr><td>Dig.5</td><td><div class="input-group"><button expr81="expr81" type="button" class="btn btn-primary btn-dispconf-number" id="brDig5Minus" data-type="minus" data-field="brDig5Unit" pear-button="brDig5Plus">-</button><input expr82="expr82" type="number" class="form-control input-sm no-spin" name="brightDig5" id="brDig5Unit" min="1" max="15" placeholder="1-15"/><button expr83="expr83" type="button" class="btn btn-primary btn-dispconf-number" id="brDig5Plus" data-type="plus" data-field="brDig5Unit" pear-button="brDig5Minus">+</button></div></td></tr><tr><td>Dig.4</td><td><div class="input-group"><button expr84="expr84" type="button" class="btn btn-primary btn-dispconf-number" id="brDig4Minus" data-type="minus" data-field="brDig4Unit" pear-button="brDig4Plus">-</button><input expr85="expr85" type="number" class="form-control input-sm no-spin" name="brightDig4" id="brDig4Unit" min="1" max="15" placeholder="1-15"/><button expr86="expr86" type="button" class="btn btn-primary btn-dispconf-number" id="brDig4Plus" data-type="plus" data-field="brDig4Unit" pear-button="brDig4Minus">+</button></div></td></tr><tr><td>Dig.3</td><td><div class="input-group"><button expr87="expr87" type="button" class="btn btn-primary btn-dispconf-number" id="brDig3Minus" data-type="minus" data-field="brDig3Unit" pear-button="brDig3Plus">-</button><input expr88="expr88" type="number" class="form-control input-sm no-spin" name="brightDig3" id="brDig3Unit" min="1" max="15" placeholder="1-15"/><button expr89="expr89" type="button" class="btn btn-primary btn-dispconf-number" id="brDig3Plus" data-type="plus" data-field="brDig3Unit" pear-button="brDig3Minus">+</button></div></td></tr><tr><td>Dig.2</td><td><div class="input-group"><button expr90="expr90" type="button" class="btn btn-primary btn-dispconf-number" id="brDig2Minus" data-type="minus" data-field="brDig2Unit" pear-button="brDig2Plus">-</button><input expr91="expr91" type="number" class="form-control input-sm no-spin" name="brightDig2" id="brDig2Unit" min="1" max="15" placeholder="1-15"/><button expr92="expr92" type="button" class="btn btn-primary btn-dispconf-number" id="brDig2Plus" data-type="plus" data-field="brDig2Unit" pear-button="brDig2Minus">+</button></div></td></tr><tr><td>Dig.1</td><td><div class="input-group"><button expr93="expr93" type="button" class="btn btn-primary btn-dispconf-number" id="brDig1Minus" data-type="minus" data-field="brDig1Unit" pear-button="brDig1Plus">-</button><input expr94="expr94" type="number" class="form-control input-sm no-spin" name="brightDig1" id="brDig1Unit" min="1" max="15" placeholder="1-15"/><button expr95="expr95" type="button" class="btn btn-primary btn-dispconf-number" id="brDig1Plus" data-type="plus" data-field="brDig1Unit" pear-button="brDig1Minus">+</button></div></td></tr></table><div class="col-sm-4 offset-sm-8"><div class="btn-group" role="group" aria-label="Basic example"><button expr96="expr96" type="button" class="btn btn-outline-primary ">保存</button><button expr97="expr97" type="button" class="btn btn-outline-primary ">リセット</button></div></div></div></div></div></p></div></div>',
     [
       {
-        redundantAttribute: 'expr11',
-        selector: '[expr11]',
+        redundantAttribute: 'expr56',
+        selector: '[expr56]',
 
         expressions: [
           {
@@ -4442,8 +4433,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr12',
-        selector: '[expr12]',
+        redundantAttribute: 'expr57',
+        selector: '[expr57]',
 
         expressions: [
           {
@@ -4453,8 +4444,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr13',
-        selector: '[expr13]',
+        redundantAttribute: 'expr58',
+        selector: '[expr58]',
 
         expressions: [
           {
@@ -4465,8 +4456,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr14',
-        selector: '[expr14]',
+        redundantAttribute: 'expr59',
+        selector: '[expr59]',
 
         expressions: [
           {
@@ -4477,8 +4468,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr15',
-        selector: '[expr15]',
+        redundantAttribute: 'expr60',
+        selector: '[expr60]',
 
         expressions: [
           {
@@ -4489,8 +4480,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr16',
-        selector: '[expr16]',
+        redundantAttribute: 'expr61',
+        selector: '[expr61]',
 
         expressions: [
           {
@@ -4506,8 +4497,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr17',
-        selector: '[expr17]',
+        redundantAttribute: 'expr62',
+        selector: '[expr62]',
 
         expressions: [
           {
@@ -4523,8 +4514,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr18',
-        selector: '[expr18]',
+        redundantAttribute: 'expr63',
+        selector: '[expr63]',
 
         expressions: [
           {
@@ -4535,8 +4526,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr19',
-        selector: '[expr19]',
+        redundantAttribute: 'expr64',
+        selector: '[expr64]',
 
         expressions: [
           {
@@ -4547,8 +4538,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr20',
-        selector: '[expr20]',
+        redundantAttribute: 'expr65',
+        selector: '[expr65]',
 
         expressions: [
           {
@@ -4558,8 +4549,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr21',
-        selector: '[expr21]',
+        redundantAttribute: 'expr66',
+        selector: '[expr66]',
 
         expressions: [
           {
@@ -4570,8 +4561,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr22',
-        selector: '[expr22]',
+        redundantAttribute: 'expr67',
+        selector: '[expr67]',
 
         expressions: [
           {
@@ -4586,8 +4577,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr23',
-        selector: '[expr23]',
+        redundantAttribute: 'expr68',
+        selector: '[expr68]',
 
         expressions: [
           {
@@ -4602,8 +4593,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr24',
-        selector: '[expr24]',
+        redundantAttribute: 'expr69',
+        selector: '[expr69]',
 
         expressions: [
           {
@@ -4614,8 +4605,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr25',
-        selector: '[expr25]',
+        redundantAttribute: 'expr70',
+        selector: '[expr70]',
 
         expressions: [
           {
@@ -4625,8 +4616,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr26',
-        selector: '[expr26]',
+        redundantAttribute: 'expr71',
+        selector: '[expr71]',
 
         expressions: [
           {
@@ -4637,8 +4628,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr27',
-        selector: '[expr27]',
+        redundantAttribute: 'expr72',
+        selector: '[expr72]',
 
         expressions: [
           {
@@ -4649,8 +4640,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr28',
-        selector: '[expr28]',
+        redundantAttribute: 'expr73',
+        selector: '[expr73]',
 
         expressions: [
           {
@@ -4660,8 +4651,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr29',
-        selector: '[expr29]',
+        redundantAttribute: 'expr74',
+        selector: '[expr74]',
 
         expressions: [
           {
@@ -4672,8 +4663,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr30',
-        selector: '[expr30]',
+        redundantAttribute: 'expr75',
+        selector: '[expr75]',
 
         expressions: [
           {
@@ -4684,8 +4675,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr31',
-        selector: '[expr31]',
+        redundantAttribute: 'expr76',
+        selector: '[expr76]',
 
         expressions: [
           {
@@ -4695,8 +4686,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr32',
-        selector: '[expr32]',
+        redundantAttribute: 'expr77',
+        selector: '[expr77]',
 
         expressions: [
           {
@@ -4707,8 +4698,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr33',
-        selector: '[expr33]',
+        redundantAttribute: 'expr78',
+        selector: '[expr78]',
 
         expressions: [
           {
@@ -4719,8 +4710,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr34',
-        selector: '[expr34]',
+        redundantAttribute: 'expr79',
+        selector: '[expr79]',
 
         expressions: [
           {
@@ -4730,8 +4721,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr35',
-        selector: '[expr35]',
+        redundantAttribute: 'expr80',
+        selector: '[expr80]',
 
         expressions: [
           {
@@ -4742,8 +4733,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr36',
-        selector: '[expr36]',
+        redundantAttribute: 'expr81',
+        selector: '[expr81]',
 
         expressions: [
           {
@@ -4754,8 +4745,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr37',
-        selector: '[expr37]',
+        redundantAttribute: 'expr82',
+        selector: '[expr82]',
 
         expressions: [
           {
@@ -4765,8 +4756,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr38',
-        selector: '[expr38]',
+        redundantAttribute: 'expr83',
+        selector: '[expr83]',
 
         expressions: [
           {
@@ -4777,8 +4768,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr39',
-        selector: '[expr39]',
+        redundantAttribute: 'expr84',
+        selector: '[expr84]',
 
         expressions: [
           {
@@ -4789,8 +4780,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr40',
-        selector: '[expr40]',
+        redundantAttribute: 'expr85',
+        selector: '[expr85]',
 
         expressions: [
           {
@@ -4800,8 +4791,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr41',
-        selector: '[expr41]',
+        redundantAttribute: 'expr86',
+        selector: '[expr86]',
 
         expressions: [
           {
@@ -4812,8 +4803,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr42',
-        selector: '[expr42]',
+        redundantAttribute: 'expr87',
+        selector: '[expr87]',
 
         expressions: [
           {
@@ -4824,8 +4815,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr43',
-        selector: '[expr43]',
+        redundantAttribute: 'expr88',
+        selector: '[expr88]',
 
         expressions: [
           {
@@ -4835,8 +4826,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr44',
-        selector: '[expr44]',
+        redundantAttribute: 'expr89',
+        selector: '[expr89]',
 
         expressions: [
           {
@@ -4847,8 +4838,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr45',
-        selector: '[expr45]',
+        redundantAttribute: 'expr90',
+        selector: '[expr90]',
 
         expressions: [
           {
@@ -4859,8 +4850,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr46',
-        selector: '[expr46]',
+        redundantAttribute: 'expr91',
+        selector: '[expr91]',
 
         expressions: [
           {
@@ -4870,8 +4861,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr47',
-        selector: '[expr47]',
+        redundantAttribute: 'expr92',
+        selector: '[expr92]',
 
         expressions: [
           {
@@ -4882,8 +4873,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr48',
-        selector: '[expr48]',
+        redundantAttribute: 'expr93',
+        selector: '[expr93]',
 
         expressions: [
           {
@@ -4894,8 +4885,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr49',
-        selector: '[expr49]',
+        redundantAttribute: 'expr94',
+        selector: '[expr94]',
 
         expressions: [
           {
@@ -4905,8 +4896,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr50',
-        selector: '[expr50]',
+        redundantAttribute: 'expr95',
+        selector: '[expr95]',
 
         expressions: [
           {
@@ -4917,8 +4908,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr51',
-        selector: '[expr51]',
+        redundantAttribute: 'expr96',
+        selector: '[expr96]',
 
         expressions: [
           {
@@ -4929,8 +4920,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr52',
-        selector: '[expr52]',
+        redundantAttribute: 'expr97',
+        selector: '[expr97]',
 
         expressions: [
           {
@@ -5138,11 +5129,11 @@ function brdig(item){
     bindingTypes,
     getComponent
   ) => template(
-    '<h1 expr80="expr80"> </h1><h1 expr81="expr81"> </h1><h1 expr82="expr82"> </h1><div class="form-group"><label for="select1">Select:</label><select id="select1" class="form-control"><option expr83="expr83"></option></select></div><hr/><div id="div1"></div><hr/><table class="table"><tr><th class="itemname-width">Display digit</th><th>Brightness setting</th></tr><tr><td>Dig.9</td><td><div class="input-group"><button expr84="expr84" type="button" class="btn btn-primary btn-dispconf-number" id="brDig9Minus" data-type="minus" data-field="brDig9Unit" pear-button="brDig9Plus">-</button><input expr85="expr85" type="number" class="form-control input-sm no-spin" name="brightDig9" id="brDig9Unit" min="1" max="15" placeholder="1-15"/><button expr86="expr86" type="button" class="btn btn-primary btn-dispconf-number" id="brDig9Plus" data-type="plus" data-field="brDig9Unit" pear-button="brDig9Minus">+</button></div></td></tr></table><div id="brDigSetting"></div><p><button type="button" class="btn btn-primary">Primary</button><button type="button" class="btn btn-secondary">Secondary</button><button type="button" class="btn btn-success">Success</button><button type="button" class="btn btn-danger">Danger</button><button type="button" class="btn btn-warning">Warning</button><button type="button" class="btn btn-info">Info</button></p><div class="accordion" id="accordionExample"><div class="accordion-item"><h2 class="accordion-header" id="headingOne"><button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">\r\n        Accordion Item #1\r\n      </button></h2><div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample"><div class="accordion-body"><strong>This is the first item\'s accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It\'s also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.\r\n      </div></div></div><div class="accordion-item"><h2 class="accordion-header" id="headingTwo"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">\r\n        Accordion Item #2\r\n      </button></h2><div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample"><div class="accordion-body"><strong>This is the second item\'s accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It\'s also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.\r\n      </div></div></div><div class="accordion-item"><h2 class="accordion-header" id="headingThree"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">\r\n        Accordion Item #3\r\n      </button></h2><div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample"><div class="accordion-body"><strong>This is the third item\'s accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It\'s also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.\r\n      </div></div></div><p><a class="btn btn-primary" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">\r\n      Link with href\r\n    </a><button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">\r\n      Button with data-bs-target\r\n    </button></p><div class="collapse" id="collapseExample"><div class="card card-body">\r\n      Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.\r\n    </div></div></div>',
+    '<h1 expr98="expr98"> </h1><h1 expr99="expr99"> </h1><h1 expr100="expr100"> </h1><div class="form-group"><label for="select1">Select:</label><select id="select1" class="form-control"><option expr101="expr101"></option></select></div><hr/><div id="div1"></div><hr/><table class="table"><tr><th class="itemname-width">Display digit</th><th>Brightness setting</th></tr><tr><td>Dig.9</td><td><div class="input-group"><button expr102="expr102" type="button" class="btn btn-primary btn-dispconf-number" id="brDig9Minus" data-type="minus" data-field="brDig9Unit" pear-button="brDig9Plus">-</button><input expr103="expr103" type="number" class="form-control input-sm no-spin" name="brightDig9" id="brDig9Unit" min="1" max="15" placeholder="1-15"/><button expr104="expr104" type="button" class="btn btn-primary btn-dispconf-number" id="brDig9Plus" data-type="plus" data-field="brDig9Unit" pear-button="brDig9Minus">+</button></div></td></tr></table><div id="brDigSetting"></div><p><button type="button" class="btn btn-primary">Primary</button><button type="button" class="btn btn-secondary">Secondary</button><button type="button" class="btn btn-success">Success</button><button type="button" class="btn btn-danger">Danger</button><button type="button" class="btn btn-warning">Warning</button><button type="button" class="btn btn-info">Info</button></p><div class="accordion" id="accordionExample"><div class="accordion-item"><h2 class="accordion-header" id="headingOne"><button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">\r\n        Accordion Item #1\r\n      </button></h2><div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample"><div class="accordion-body"><strong>This is the first item\'s accordion body.</strong> It is shown by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It\'s also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.\r\n      </div></div></div><div class="accordion-item"><h2 class="accordion-header" id="headingTwo"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">\r\n        Accordion Item #2\r\n      </button></h2><div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample"><div class="accordion-body"><strong>This is the second item\'s accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It\'s also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.\r\n      </div></div></div><div class="accordion-item"><h2 class="accordion-header" id="headingThree"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">\r\n        Accordion Item #3\r\n      </button></h2><div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample"><div class="accordion-body"><strong>This is the third item\'s accordion body.</strong> It is hidden by default, until the collapse plugin adds the appropriate classes that we use to style each element. These classes control the overall appearance, as well as the showing and hiding via CSS transitions. You can modify any of this with custom CSS or overriding our default variables. It\'s also worth noting that just about any HTML can go within the <code>.accordion-body</code>, though the transition does limit overflow.\r\n      </div></div></div><p><a class="btn btn-primary" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">\r\n      Link with href\r\n    </a><button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample">\r\n      Button with data-bs-target\r\n    </button></p><div class="collapse" id="collapseExample"><div class="card card-body">\r\n      Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.\r\n    </div></div></div>',
     [
       {
-        redundantAttribute: 'expr80',
-        selector: '[expr80]',
+        redundantAttribute: 'expr98',
+        selector: '[expr98]',
 
         expressions: [
           {
@@ -5153,8 +5144,8 @@ function brdig(item){
         ]
       },
       {
-        redundantAttribute: 'expr81',
-        selector: '[expr81]',
+        redundantAttribute: 'expr99',
+        selector: '[expr99]',
 
         expressions: [
           {
@@ -5165,8 +5156,8 @@ function brdig(item){
         ]
       },
       {
-        redundantAttribute: 'expr82',
-        selector: '[expr82]',
+        redundantAttribute: 'expr100',
+        selector: '[expr100]',
 
         expressions: [
           {
@@ -5196,15 +5187,15 @@ function brdig(item){
           ]
         ),
 
-        redundantAttribute: 'expr83',
-        selector: '[expr83]',
+        redundantAttribute: 'expr101',
+        selector: '[expr101]',
         itemName: 'tz',
         indexName: null,
         evaluate: _scope => _scope.tzlist
       },
       {
-        redundantAttribute: 'expr84',
-        selector: '[expr84]',
+        redundantAttribute: 'expr102',
+        selector: '[expr102]',
 
         expressions: [
           {
@@ -5215,8 +5206,8 @@ function brdig(item){
         ]
       },
       {
-        redundantAttribute: 'expr85',
-        selector: '[expr85]',
+        redundantAttribute: 'expr103',
+        selector: '[expr103]',
 
         expressions: [
           {
@@ -5226,8 +5217,8 @@ function brdig(item){
         ]
       },
       {
-        redundantAttribute: 'expr86',
-        selector: '[expr86]',
+        redundantAttribute: 'expr104',
+        selector: '[expr104]',
 
         expressions: [
           {
@@ -5458,11 +5449,11 @@ __webpack_require__.r(__webpack_exports__);
     bindingTypes,
     getComponent
   ) => template(
-    '<nav class="navbar navbar-expand-lg bg-body-tertiary"><div class="container-fluid"><a expr1="expr1" class="navbar-brand" href="#"> </a><div><span expr2="expr2" class="navbar-text"> </span></div><button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="ナビゲーションの切替"><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse" id="navbarNav"><ul class="navbar-nav"><li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">\r\n            Language setting\r\n          </a><ul class="dropdown-menu" aria-labelledby="navbarDropdown"><li><select expr3="expr3" class="form-select form-select-sm" name="select" id="localesSel"><option value="ja">日本語</option><option value="en">English</option></select></li></ul></li></ul></div></div></nav>',
+    '<nav class="navbar navbar-expand-lg bg-body-tertiary"><div class="container-fluid"><a expr8="expr8" class="navbar-brand" href="#"> </a><div><span expr9="expr9" class="navbar-text"> </span></div><button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="ナビゲーションの切替"><span class="navbar-toggler-icon"></span></button><div class="collapse navbar-collapse" id="navbarNav"><ul class="navbar-nav"><li class="nav-item dropdown"><a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">\r\n            Language setting\r\n          </a><ul class="dropdown-menu" aria-labelledby="navbarDropdown"><li><select expr10="expr10" class="form-select form-select-sm" name="select" id="localesSel"><option value="ja">日本語</option><option value="en">English</option></select></li></ul></li></ul></div></div></nav>',
     [
       {
-        redundantAttribute: 'expr1',
-        selector: '[expr1]',
+        redundantAttribute: 'expr8',
+        selector: '[expr8]',
 
         expressions: [
           {
@@ -5473,8 +5464,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr2',
-        selector: '[expr2]',
+        redundantAttribute: 'expr9',
+        selector: '[expr9]',
 
         expressions: [
           {
@@ -5485,8 +5476,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr3',
-        selector: '[expr3]',
+        redundantAttribute: 'expr10',
+        selector: '[expr10]',
 
         expressions: [
           {
@@ -6501,11 +6492,11 @@ return rtn;
     bindingTypes,
     getComponent
   ) => template(
-    '<h1>時刻設定</h1><div class="row"><div class="col-md-6"><div class="card h-100"><div class="card-header">\r\n\t\t\t\t\tSNTP設定\r\n\t\t\t\t</div><div class="card-body"><h5 class="card-title">SNTP 使用</h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><div expr53="expr53" class="form-check form-switch"><input expr54="expr54" class="form-check-input" type="checkbox" type="checkbox"/> </div></div></p><h5 expr55="expr55" class="card-title"> </h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><div><select expr56="expr56" class="form-select form-select-sm" aria-label="Time Zone Area" name="timeZoneDataArea" id="timeZoneDataArea"></select></div><div><select expr57="expr57" class="form-select form-select-sm" aria-label="Time Zone2" name="timeZoneData" id="timeZoneData"></select></div></div></p><h5 class="card-title">SNTP auto update time</h5><p class="card-text"><div expr58="expr58" class="col-sm-11 offset-sm-1"> <form expr59="expr59"><div class="mb-3"><input expr60="expr60" type="time" class="form-control form-control-sm" id="ntpUpTime" name="ntpUpTime"/></div><div class="form-group row"><div><button expr61="expr61" class="btn btn-outline-primary btn-sm" value="Setting">Setting</button></div></div></form></div></p><h5 class="card-title">SNTP manual connection</h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><div><button expr62="expr62" type="submit" id="ntpConnectButton" class="btn btn-outline-primary btn-sm"><span class="spinner-border spinner-border-sm visually-hidden" role="status" aria-hidden="true"></span>\r\n\t\t\t\t\t\t\t\tConnection\r\n\t\t\t\t\t\t\t\t</button></div></div></p><h5 class="card-title">SNTP Log message</h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><div id="logNtpSetting" style="overflow-y: scroll; height: 100px; border: 1px solid #ccc;padding: 10px;"></div></div></p></div></div></div><div class="col-md-6"><div class="card h-100"><div class="card-header">\r\n    \t\t\tRTC設定\r\n    \t\t</div><div class="card-body"><h5 class="card-title">手動時刻設定</h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><div expr63="expr63" class> </div><div class="mb-3"><label for="dateInput1" class="form-label">日付</label><input expr64="expr64" type="date" class="form-control form-control-sm" id="dateInput1" name="rtcDateVal"/></div><div class="mb-3"><label for="timeInput1" class="form-label">時刻</label><input expr65="expr65" type="time" class="form-control form-control-sm" id="timeInput1" name="rtcTimeVal"/></div><div class><div class="btn-group" role="group" aria-label="Basic example"><button expr66="expr66" type="button" class="btn btn-outline-primary btn-sm">ブラウザの時間をセットする</button><button expr67="expr67" type="button" class="btn btn-outline-primary btn-sm">更新</button></div></div></div></p></div></div></div></div>',
+    '<h1>時刻設定</h1><div class="row"><div class="col-md-6"><div class="card h-100"><div class="card-header">\r\n\t\t\t\t\tSNTP設定\r\n\t\t\t\t</div><div class="card-body"><h5 class="card-title">SNTP 使用</h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><div expr11="expr11" class="form-check form-switch"><input expr12="expr12" class="form-check-input" type="checkbox" type="checkbox"/> </div></div></p><h5 expr13="expr13" class="card-title"> </h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><div><select expr14="expr14" class="form-select form-select-sm" aria-label="Time Zone Area" name="timeZoneDataArea" id="timeZoneDataArea"></select></div><div><select expr15="expr15" class="form-select form-select-sm" aria-label="Time Zone2" name="timeZoneData" id="timeZoneData"></select></div></div></p><h5 class="card-title">SNTP auto update time</h5><p class="card-text"><div expr16="expr16" class="col-sm-11 offset-sm-1"> <form expr17="expr17"><div class="mb-3"><input expr18="expr18" type="time" class="form-control form-control-sm" id="ntpUpTime" name="ntpUpTime"/></div><div class="form-group row"><div><button expr19="expr19" class="btn btn-outline-primary btn-sm" value="Setting">Setting</button></div></div></form></div></p><h5 class="card-title">SNTP manual connection</h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><div><button expr20="expr20" type="submit" id="ntpConnectButton" class="btn btn-outline-primary btn-sm"><span class="spinner-border spinner-border-sm visually-hidden" role="status" aria-hidden="true"></span>\r\n\t\t\t\t\t\t\t\tConnection\r\n\t\t\t\t\t\t\t\t</button></div></div></p><h5 class="card-title">SNTP Log message</h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><div id="logNtpSetting" style="overflow-y: scroll; height: 100px; border: 1px solid #ccc;padding: 10px;"></div></div></p></div></div></div><div class="col-md-6"><div class="card h-100"><div class="card-header">\r\n    \t\t\tRTC設定\r\n    \t\t</div><div class="card-body"><h5 class="card-title">手動時刻設定</h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><div expr21="expr21" class> </div><div class="mb-3"><label for="dateInput1" class="form-label">日付</label><input expr22="expr22" type="date" class="form-control form-control-sm" id="dateInput1" name="rtcDateVal"/></div><div class="mb-3"><label for="timeInput1" class="form-label">時刻</label><input expr23="expr23" type="time" class="form-control form-control-sm" id="timeInput1" name="rtcTimeVal"/></div><div class><div class="btn-group" role="group" aria-label="Basic example"><button expr24="expr24" type="button" class="btn btn-outline-primary btn-sm">ブラウザの時間をセットする</button><button expr25="expr25" type="button" class="btn btn-outline-primary btn-sm">更新</button></div></div></div></p></div></div></div></div>',
     [
       {
-        redundantAttribute: 'expr53',
-        selector: '[expr53]',
+        redundantAttribute: 'expr11',
+        selector: '[expr11]',
 
         expressions: [
           {
@@ -6521,8 +6512,8 @@ return rtn;
         ]
       },
       {
-        redundantAttribute: 'expr54',
-        selector: '[expr54]',
+        redundantAttribute: 'expr12',
+        selector: '[expr12]',
 
         expressions: [
           {
@@ -6538,8 +6529,8 @@ return rtn;
         ]
       },
       {
-        redundantAttribute: 'expr55',
-        selector: '[expr55]',
+        redundantAttribute: 'expr13',
+        selector: '[expr13]',
 
         expressions: [
           {
@@ -6550,8 +6541,8 @@ return rtn;
         ]
       },
       {
-        redundantAttribute: 'expr56',
-        selector: '[expr56]',
+        redundantAttribute: 'expr14',
+        selector: '[expr14]',
 
         expressions: [
           {
@@ -6567,8 +6558,8 @@ return rtn;
         ]
       },
       {
-        redundantAttribute: 'expr57',
-        selector: '[expr57]',
+        redundantAttribute: 'expr15',
+        selector: '[expr15]',
 
         expressions: [
           {
@@ -6584,8 +6575,8 @@ return rtn;
         ]
       },
       {
-        redundantAttribute: 'expr58',
-        selector: '[expr58]',
+        redundantAttribute: 'expr16',
+        selector: '[expr16]',
 
         expressions: [
           {
@@ -6601,8 +6592,8 @@ return rtn;
         ]
       },
       {
-        redundantAttribute: 'expr59',
-        selector: '[expr59]',
+        redundantAttribute: 'expr17',
+        selector: '[expr17]',
 
         expressions: [
           {
@@ -6613,8 +6604,8 @@ return rtn;
         ]
       },
       {
-        redundantAttribute: 'expr60',
-        selector: '[expr60]',
+        redundantAttribute: 'expr18',
+        selector: '[expr18]',
 
         expressions: [
           {
@@ -6629,8 +6620,8 @@ return rtn;
         ]
       },
       {
-        redundantAttribute: 'expr61',
-        selector: '[expr61]',
+        redundantAttribute: 'expr19',
+        selector: '[expr19]',
 
         expressions: [
           {
@@ -6646,8 +6637,8 @@ return rtn;
         ]
       },
       {
-        redundantAttribute: 'expr62',
-        selector: '[expr62]',
+        redundantAttribute: 'expr20',
+        selector: '[expr20]',
 
         expressions: [
           {
@@ -6663,8 +6654,8 @@ return rtn;
         ]
       },
       {
-        redundantAttribute: 'expr63',
-        selector: '[expr63]',
+        redundantAttribute: 'expr21',
+        selector: '[expr21]',
 
         expressions: [
           {
@@ -6680,8 +6671,8 @@ return rtn;
         ]
       },
       {
-        redundantAttribute: 'expr64',
-        selector: '[expr64]',
+        redundantAttribute: 'expr22',
+        selector: '[expr22]',
 
         expressions: [
           {
@@ -6692,8 +6683,8 @@ return rtn;
         ]
       },
       {
-        redundantAttribute: 'expr65',
-        selector: '[expr65]',
+        redundantAttribute: 'expr23',
+        selector: '[expr23]',
 
         expressions: [
           {
@@ -6704,8 +6695,8 @@ return rtn;
         ]
       },
       {
-        redundantAttribute: 'expr66',
-        selector: '[expr66]',
+        redundantAttribute: 'expr24',
+        selector: '[expr24]',
 
         expressions: [
           {
@@ -6721,8 +6712,8 @@ return rtn;
         ]
       },
       {
-        redundantAttribute: 'expr67',
-        selector: '[expr67]',
+        redundantAttribute: 'expr25',
+        selector: '[expr25]',
 
         expressions: [
           {
@@ -7047,11 +7038,11 @@ __webpack_require__.r(__webpack_exports__);
     bindingTypes,
     getComponent
   ) => template(
-    '<h1>Wifi設定</h1><div class="row"><div class="col-md-6"><div class="card h-100"><div class="card-header">\r\n\t\t\t\tネットワーク接続設定\r\n\t\t\t</div><div class="card-body"><h5 class="card-title">Current Settings</h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><table class="table"><tr><td>STAモード SSID</td><td expr68="expr68"> </td></tr><tr><td>STAモード IP Adress</td><td expr69="expr69"> </td></tr><tr><td>APモード SSID</td><td expr70="expr70"> </td></tr><tr><td>APモード IP Adress</td><td expr71="expr71"> </td></tr></table></div></p></div></div></div><div class="col-md-6"><div class="card h-100"><div class="card-header">\r\n\t\t\t\tWiFi Station 設定\r\n\t\t\t</div><div class="card-body"><h5 class="card-title">WiFi Station Setting</h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><table class="table"><tr><td class="itemname-width"><div class="col-sm-4">\r\n                WiFi SSID 検索\r\n                </div><div class="col-sm-8" offset-sm-1><button expr72="expr72" type="submit" id="getWiFiListButton" class="btn btn-outline-primary btn-sm" style="margin-top: 5px;"><span class="spinner-border spinner-border-sm visually-hidden" role="status" aria-hidden="true"></span>\r\n                  Scan SSID\r\n                  </button></div></td></tr><tr><td class="itemname-width"><label for="selectSSID" class="form-label">SSID 選択</label><select expr73="expr73" class="form-select form-select-sm" aria-label="WiFiStationList" name="WiFiStationList" id="WiFiStationList"></select><label for="inputSSIDPassword" class="form-label">Password</label><input expr74="expr74" type="password" class="form-control" id="inputSSIDPassword"/><div expr75="expr75" class="form-check form-switch"><input expr76="expr76" class="form-check-input" type="checkbox"/> </div><button expr77="expr77" type="submit" id="ssidSubmit" class="btn btn-outline-primary btn-sm" style="margin-top: 5px;"><span class="spinner-border spinner-border-sm visually-hidden" role="status" aria-hidden="true"></span>\r\n                  Connection\r\n                </button></td></tr></table></div><h5 class="card-title">STA 自動接続</h5><p class="card-text"><div expr78="expr78" class="col-sm-11 offset-sm-1 form-check form-switch"><input expr79="expr79" class="form-check-input" type="checkbox" type="checkbox"/> </div></p></p></div></div></div><div class="col-md-12"><div class="card h-100"><div class="card-header">\r\n      WiFi Log message\r\n    </div><div class="card-body"><div id="logWiFi" style="overflow-y: scroll; height: 200px; border: 1px solid #ccc;padding: 10px;"></div></div></div></div></div>',
+    '<h1>Wifi設定</h1><div class="row"><div class="col-md-6"><div class="card h-100"><div class="card-header">\r\n\t\t\t\tネットワーク接続設定\r\n\t\t\t</div><div class="card-body"><h5 class="card-title">Current Settings</h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><table class="table"><tr><td>STAモード SSID</td><td expr26="expr26"> </td></tr><tr><td>STAモード IP Adress</td><td expr27="expr27"> </td></tr><tr><td>APモード SSID</td><td expr28="expr28"> </td></tr><tr><td>APモード IP Adress</td><td expr29="expr29"> </td></tr></table></div></p></div></div></div><div class="col-md-6"><div class="card h-100"><div class="card-header">\r\n\t\t\t\tWiFi Station 設定\r\n\t\t\t</div><div class="card-body"><h5 class="card-title">WiFi Station Setting</h5><p class="card-text"><div class="col-sm-11 offset-sm-1"><table class="table"><tr><td class="itemname-width"><div class="col-sm-4">\r\n                WiFi SSID 検索\r\n                </div><div class="col-sm-8" offset-sm-1><button expr30="expr30" type="submit" id="getWiFiListButton" class="btn btn-outline-primary btn-sm" style="margin-top: 5px;"><span class="spinner-border spinner-border-sm visually-hidden" role="status" aria-hidden="true"></span>\r\n                  Scan SSID\r\n                  </button></div></td></tr><tr><td class="itemname-width"><label for="selectSSID" class="form-label">SSID 選択</label><select expr31="expr31" class="form-select form-select-sm" aria-label="WiFiStationList" name="WiFiStationList" id="WiFiStationList"></select><label for="inputSSIDPassword" class="form-label">Password</label><input expr32="expr32" type="password" class="form-control" id="inputSSIDPassword"/><div expr33="expr33" class="form-check form-switch"><input expr34="expr34" class="form-check-input" type="checkbox"/> </div><button expr35="expr35" type="submit" id="ssidSubmit" class="btn btn-outline-primary btn-sm" style="margin-top: 5px;"><span class="spinner-border spinner-border-sm visually-hidden" role="status" aria-hidden="true"></span>\r\n                  Connection\r\n                </button></td></tr></table></div><h5 class="card-title">STA 自動接続</h5><p class="card-text"><div expr36="expr36" class="col-sm-11 offset-sm-1 form-check form-switch"><input expr37="expr37" class="form-check-input" type="checkbox" type="checkbox"/> </div></p></p></div></div></div><div class="col-md-12"><div class="card h-100"><div class="card-header">\r\n      WiFi Log message\r\n    </div><div class="card-body"><div id="logWiFi" style="overflow-y: scroll; height: 200px; border: 1px solid #ccc;padding: 10px;"></div></div></div></div></div>',
     [
       {
-        redundantAttribute: 'expr68',
-        selector: '[expr68]',
+        redundantAttribute: 'expr26',
+        selector: '[expr26]',
 
         expressions: [
           {
@@ -7062,8 +7053,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr69',
-        selector: '[expr69]',
+        redundantAttribute: 'expr27',
+        selector: '[expr27]',
 
         expressions: [
           {
@@ -7074,8 +7065,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr70',
-        selector: '[expr70]',
+        redundantAttribute: 'expr28',
+        selector: '[expr28]',
 
         expressions: [
           {
@@ -7086,8 +7077,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr71',
-        selector: '[expr71]',
+        redundantAttribute: 'expr29',
+        selector: '[expr29]',
 
         expressions: [
           {
@@ -7098,8 +7089,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr72',
-        selector: '[expr72]',
+        redundantAttribute: 'expr30',
+        selector: '[expr30]',
 
         expressions: [
           {
@@ -7110,8 +7101,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr73',
-        selector: '[expr73]',
+        redundantAttribute: 'expr31',
+        selector: '[expr31]',
 
         expressions: [
           {
@@ -7122,8 +7113,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr74',
-        selector: '[expr74]',
+        redundantAttribute: 'expr32',
+        selector: '[expr32]',
 
         expressions: [
           {
@@ -7134,8 +7125,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr75',
-        selector: '[expr75]',
+        redundantAttribute: 'expr33',
+        selector: '[expr33]',
 
         expressions: [
           {
@@ -7151,8 +7142,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr76',
-        selector: '[expr76]',
+        redundantAttribute: 'expr34',
+        selector: '[expr34]',
 
         expressions: [
           {
@@ -7163,8 +7154,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr77',
-        selector: '[expr77]',
+        redundantAttribute: 'expr35',
+        selector: '[expr35]',
 
         expressions: [
           {
@@ -7180,8 +7171,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr78',
-        selector: '[expr78]',
+        redundantAttribute: 'expr36',
+        selector: '[expr36]',
 
         expressions: [
           {
@@ -7197,8 +7188,8 @@ __webpack_require__.r(__webpack_exports__);
         ]
       },
       {
-        redundantAttribute: 'expr79',
-        selector: '[expr79]',
+        redundantAttribute: 'expr37',
+        selector: '[expr37]',
 
         expressions: [
           {
@@ -12678,19 +12669,6 @@ defineJQueryPlugin(Toast);
 
 
 //# sourceMappingURL=bootstrap.esm.js.map
-
-
-/***/ }),
-
-/***/ "./node_modules/bootstrap/scss/bootstrap.scss":
-/*!****************************************************!*\
-  !*** ./node_modules/bootstrap/scss/bootstrap.scss ***!
-  \****************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-// extracted by mini-css-extract-plugin
 
 
 /***/ }),
@@ -34466,17 +34444,11 @@ var __webpack_exports__ = {};
   !*** ./src/index.js ***!
   \**********************/
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var bootstrap_scss_bootstrap_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! bootstrap/scss/bootstrap.scss */ "./node_modules/bootstrap/scss/bootstrap.scss");
-/* harmony import */ var bootstrap__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.esm.js");
-/* harmony import */ var _index_scss__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./index.scss */ "./src/index.scss");
-/* harmony import */ var _riotjs_hot_reload__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @riotjs/hot-reload */ "./node_modules/@riotjs/hot-reload/index.js");
-/* harmony import */ var _riotjs_hot_reload__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_riotjs_hot_reload__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var _view_appmain__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./view/appmain */ "./src/view/appmain.js");
-// BootstrapのJavaScript側の機能を読み込む
-//import "bootstrap";
-//import * as bootstrap from 'bootstrap';
-
-
+/* harmony import */ var bootstrap__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.esm.js");
+/* harmony import */ var _index_scss__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./index.scss */ "./src/index.scss");
+/* harmony import */ var _riotjs_hot_reload__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @riotjs/hot-reload */ "./node_modules/@riotjs/hot-reload/index.js");
+/* harmony import */ var _riotjs_hot_reload__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_riotjs_hot_reload__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _view_appmain__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./view/appmain */ "./src/view/appmain.js");
 // BootstrapのJavaScript側の機能を読み込む
 
 
@@ -34484,7 +34456,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-(0,_view_appmain__WEBPACK_IMPORTED_MODULE_4__.StartModelSelection)();
+(0,_view_appmain__WEBPACK_IMPORTED_MODULE_3__.StartModelSelection)();
 })();
 
 /******/ })()
