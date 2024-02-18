@@ -117,6 +117,7 @@ void modeCtrl::oledModeIni(void)
 {
   // 設定項目　遷移テーブル
   dispModeOledTbl.push_back(OLED_DISP_SENSOR_DATA);     // 環境センサデータ表示
+  dispModeOledTbl.push_back(OLED_DISP_ANALOG_DATA);     // アナログ入力センサデータ表示
   dispModeOledTbl.push_back(OLED_DISP_EVENTLOG_CTRL);   // EventLog操作情報
   return;
 }

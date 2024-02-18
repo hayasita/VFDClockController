@@ -66,7 +66,8 @@
 
 // OLED表示モード
 #define OLED_DISP_SENSOR_DATA           1     // 環境センサデータ表示
-#define OLED_DISP_EVENTLOG_CTRL         2     // EventLog操作情報
+#define OLED_DISP_ANALOG_DATA           2     // アナログ入力センサデータ表示
+#define OLED_DISP_EVENTLOG_CTRL         3     // EventLog操作情報
 
 // M5OLED表示モード
 #define M5OLED_DISP_SENSOR_DATA         1     // 環境センサデータ表示

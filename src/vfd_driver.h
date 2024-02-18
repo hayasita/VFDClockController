@@ -323,9 +323,10 @@ class OLEDDISP{
   public:
     void init(void);
     void clear(void);
-    void printEnvSensorData(DisplayData);   // OLED センサデータ表示
-    void printEventLog(DisplayData);        // OLED イベントログ記録デバッグ情報表示
-    void printDeviceData(DevicePresence);   // OLED Device情報表示
+    void printEnvSensorData(DisplayData,dispMode);    // OLED センサデータ表示
+    void printEventLog(DisplayData,dispMode);         // OLED イベントログ記録デバッグ情報表示
+    void printDeviceData(DevicePresence,dispMode);    // OLED Device情報表示
+    void printAnalogData(DisplayData,dispMode);       // OLED アナログデータ表示
   private:
 };
 

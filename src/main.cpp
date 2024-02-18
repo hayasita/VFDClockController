@@ -460,9 +460,18 @@ void taskDeviceCtrl(void *Parameters){
 
       //OLED 画面表示
       if(deviceChk.ssd1306()){
-//        oledDisp.printEnvSensorData(dispDat);
-//        oledDisp.printEventLog(dispDat);
-        oledDisp.printDeviceData(i2cDeviceDat);
+//        oledDisp.printEnvSensorData(dispDat,i2cDeviceDat.displayMode);
+        uint8_t dispCtrlMode = i2cDeviceDat.displayMode.ctrlMode;
+        if(i2cDeviceDat.displayMode.dispModeOLED == OLED_DISP_ANALOG_DATA){
+          oledDisp.printAnalogData(dispDat,i2cDeviceDat.displayMode);         // OLED アナログデータ表示
+        }
+        else if(i2cDeviceDat.displayMode.dispModeOLED == OLED_DISP_EVENTLOG_CTRL){
+          oledDisp.printEventLog(dispDat,i2cDeviceDat.displayMode);           // OLED EventLog操作情報
+        }
+        else{
+          oledDisp.printDeviceData(i2cDeviceDat,i2cDeviceDat.displayMode);    // OLED Device情報表示
+        }
+
       }
 
       // M5OLED 画面表示 

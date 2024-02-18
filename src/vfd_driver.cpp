@@ -149,8 +149,9 @@ void  OLEDDISP::clear(void)
  * @brief OLED センサデータ表示
  * 
  * @param dispDat 表示データ
+ * @param displayMode 表示モード
  */
-void OLEDDISP::printEnvSensorData(DisplayData dispDat)
+void OLEDDISP::printEnvSensorData(DisplayData dispDat,dispMode displayMode)
 {
   char buffer[100];
 
@@ -187,37 +188,52 @@ void OLEDDISP::printEnvSensorData(DisplayData dispDat)
  * @brief OLED イベントログ記録デバッグ情報表示
  * 
  * @param dispDat 表示データ
+ * @param displayMode 表示モード
  */
-void OLEDDISP::printEventLog(DisplayData dispDat)
+void OLEDDISP::printEventLog(DisplayData dispDat,dispMode displayMode)
 {
   char buffer[100];
 
   display.clear();
   display.setFont(ArialMT_Plain_10);
 
+  snprintf(buffer, sizeof(buffer),"%d:%d:",displayMode.ctrlMode ,displayMode.dispModeOLED);
+  display.drawString(0, 0, buffer);
+  display.drawString(20, 0, "--Event Log");
+
   // システム時刻
   dispDateTime(buffer,dispDat.timeInfo,"SYS:");
-  display.drawString(0, 0, buffer);
+  display.drawString(0, 10, buffer);
 
   // イベントLog前回書き込み時刻
   dispDateTime(buffer,vfdevent.getLastWriteTimeEp(),"BWr:");
-  display.drawString(0, 10, buffer);
+  display.drawString(0, 20, buffer);
 
   // イベントLogバッファサイズ表示
   snprintf(buffer, sizeof(buffer),"LogBuf:%3d MAX:%3d",vfdevent.getEepromLogBufferSize(),vfdevent.getEepromLogBufferMaxSize());
-  display.drawString(0, 20, buffer);
+  display.drawString(0, 30, buffer);
 
   display.display();
 
   return;
 }
 
-void OLEDDISP::printDeviceData(DevicePresence deviceDat)
+/**
+ * @brief OLED Device情報表示
+ * 
+ * @param deviceDat 表示データ
+ * @param displayMode 表示モード
+ */
+void OLEDDISP::printDeviceData(DevicePresence deviceDat,dispMode displayMode)
 {
   char buffer[100];
 
   display.clear();
   display.setFont(ArialMT_Plain_10);
+
+  snprintf(buffer, sizeof(buffer),"%d:%d:",displayMode.ctrlMode ,displayMode.dispModeOLED);
+  display.drawString(0, 0, buffer);
+  display.drawString(20, 0, "--Mode Ctrl Data");
 
   // システム時刻
 //  dispDateTime(buffer,dispDat.timeInfo,"SYS:");
@@ -229,15 +245,13 @@ void OLEDDISP::printDeviceData(DevicePresence deviceDat)
 
   // OLED有無表示
   snprintf(buffer, sizeof(buffer),"ssd1306:%d m5oled:%d",deviceDat.i2c.datSSD1306,deviceDat.i2c.datM5OLED);
-  display.drawString(0, 0, buffer);
-
-//  snprintf(buffer, sizeof(buffer),"ctrlModeSelect:%d ctrlMode:%d",deviceDat.displayMode.ctrlModeSelect,deviceDat.displayMode.ctrlMode);
-  snprintf(buffer, sizeof(buffer),"ctrlMode:%d",deviceDat.displayMode.ctrlMode);
   display.drawString(0, 10, buffer);
-  snprintf(buffer, sizeof(buffer),"dispModeVfd:%d",deviceDat.displayMode.dispModeVfd);
-  display.drawString(0, 20, buffer);
 
-//  display.drawString(0, 30, buffer);
+  snprintf(buffer, sizeof(buffer),"ctrlMode:%d",deviceDat.displayMode.ctrlMode);
+  display.drawString(0, 20, buffer);
+  snprintf(buffer, sizeof(buffer),"dispModeVfd:%d",deviceDat.displayMode.dispModeVfd);
+  display.drawString(0, 30, buffer);
+
   snprintf(buffer, sizeof(buffer),"dispModeOLED:%d",deviceDat.displayMode.dispModeOLED);
   display.drawString(0, 40, buffer);
   snprintf(buffer, sizeof(buffer),"dispModeM5OLED:%d",deviceDat.displayMode.dispModeM5OLED);
@@ -247,6 +261,39 @@ void OLEDDISP::printDeviceData(DevicePresence deviceDat)
 
   return;
 }
+
+/**
+ * @brief OLED アナログデータ表示
+ * 
+ * @param dispDat 表示データ
+ * @param displayMode 表示モード
+ */
+void OLEDDISP::printAnalogData(DisplayData dispDat,dispMode displayMode)      // OLED アナログデータ表示
+{
+  char buffer[100];
+
+  display.clear();
+  display.setFont(ArialMT_Plain_10);
+
+  snprintf(buffer, sizeof(buffer),"%d:%d:",displayMode.ctrlMode,displayMode.dispModeOLED);
+  display.drawString(0, 0, buffer);
+  display.drawString(20, 0, "--Analog Sensor Data");
+
+  // 照度表示
+  snprintf(buffer, sizeof(buffer),"illumi:%d",dispDat.deviceDat.illumiData);
+  display.drawString(0, 10, buffer);
+
+  // DCDC表示
+  snprintf(buffer, sizeof(buffer),"DCDC Trg:%d",dispDat.deviceDat.dcdcTrg);
+  display.drawString(0, 20, buffer);
+  snprintf(buffer, sizeof(buffer),"DCDC Fdb:%d",dispDat.deviceDat.dcdcFdb);
+  display.drawString(0, 30, buffer);
+
+  display.display();
+
+  return;
+}
+
 #ifdef DELETE
 void oledDispInit(void)
 {
