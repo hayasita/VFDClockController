@@ -22,7 +22,6 @@
 #include "vfd_wificnt.h"
 
 #include "vfd_eerom.h"
-#include "mode_ctrl.h"
 
 
 // an IR detector/demodulator is connected to GPIO pin 2
@@ -52,20 +51,6 @@ struct mailboxData{
   uint16_t dcdcFdb;
   uint16_t Data0;
   uint16_t Data1;
-
-  // Display Mode Ctrl
-  uint8_t ctrlMode;           // 操作モード
-  uint8_t dispModeVfd;        // VFD表示モード
-  uint8_t dispModeM5OLED;     // M5OLED表示モード
-  uint8_t dispModeOLED;       // OLED表示モード
-
-};
-
-struct i2cStartData{
-  // Display Mode Ctrl
-  bool ssd1306Valid;          // OLED有無
-  bool m5oledValid;           // M5OLED有無
-  struct tm rtcTimeInfo;      // RTC時刻
 };
 
 // イベント送信キュー(Mailboxとは別) taskDeviceCtrl() -> loop()
@@ -133,8 +118,7 @@ TaskHandle_t taskDisplayHandle;
 void taskDisplayCtrl(void *pvParameters) {
   BaseType_t ret;
 
-  i2cStartData i2cStartDat;       // 起動時RTC,i2c情報
-//  struct tm rtcTimeInfo;
+  struct tm rtcTimeInfo;
   static uint8_t lastSecw;        //  前回秒
   unsigned long timetmp;          // millis()tmp
   unsigned long illumiLasttime;   // 照度読み込み前回時間(millis)
@@ -193,26 +177,18 @@ void taskDisplayCtrl(void *pvParameters) {
 
   // taskDeviceCtrl()から時刻受信
   do{
-//    ret = xQueueReceive(xQueueRtcData, &rtcTimeInfo, 0);
-    ret = xQueueReceive(xQueueRtcData, &i2cStartDat, 0);
+    ret = xQueueReceive(xQueueRtcData, &rtcTimeInfo, 0);
   }while(!ret);
   Serial.print("xQueueRtcData:");
-//  Serial.print(rtcTimeInfo.tm_hour);
-//  Serial.print(rtcTimeInfo.tm_min);
-//  Serial.println(rtcTimeInfo.tm_sec);
-  Serial.print(i2cStartDat.rtcTimeInfo.tm_hour);
-  Serial.print(i2cStartDat.rtcTimeInfo.tm_min);
-  Serial.println(i2cStartDat.rtcTimeInfo.tm_sec);
-  Serial.print("deviceChk.ssd1306():");
-  Serial.println(i2cStartDat.ssd1306Valid);
-  Serial.print("deviceChk.m5oled():");
-  Serial.println(i2cStartDat.m5oledValid);
+  Serial.print(rtcTimeInfo.tm_hour);
+  Serial.print(rtcTimeInfo.tm_min);
+  Serial.println(rtcTimeInfo.tm_sec);
 
   // システム時刻初期化
   SystemTimeCont sysTimCnt;           // システム時刻管理
-  sysTimCnt.init(&i2cStartDat.rtcTimeInfo);       // システム時刻初期化
+  sysTimCnt.init(&rtcTimeInfo);       // システム時刻初期化
   sysTimCnt.read();                   // システム時刻読み出し
-  lastSecw = i2cStartDat.rtcTimeInfo.tm_sec;
+  lastSecw = rtcTimeInfo.tm_sec;
 
   mailboxDat2Loop.Data0 = 0;
   mailboxDat2Loop.Data1 = 0;
@@ -222,24 +198,21 @@ void taskDisplayCtrl(void *pvParameters) {
   mailboxDat2Loop.illumiData = 0;
   mailboxDat2Loop.pressure = 0;
   mailboxDat2Loop.temp = 0;
-  mailboxDat2Loop.timeInfo = i2cStartDat.rtcTimeInfo;
+  mailboxDat2Loop.timeInfo = rtcTimeInfo;
 
   // 内部タイマ初期化
   dcdcLasttime = millis();
   illumiLasttime = dcdcLasttime;
 
-  modeCtrl vfdModeCtrl(i2cStartDat.ssd1306Valid,i2cStartDat.m5oledValid);
-
   while (1) {
     struct tm *sysTimeInfo;
-//    struct tm rtcTimeInfo;
 
     timetmp = millis();
 
     // RTC時刻受信
-    ret = xQueueReceive(xQueueRtcData, &i2cStartDat, 0);
+    ret = xQueueReceive(xQueueRtcData, &rtcTimeInfo, 0);
     if(ret){
-      sysTimCnt.write(i2cStartDat.rtcTimeInfo);       // システム時刻設定
+      sysTimCnt.write(rtcTimeInfo);       // システム時刻設定
     }
 
     // RTCパルス割り込みで計時
@@ -288,13 +261,6 @@ void taskDisplayCtrl(void *pvParameters) {
     // 端子入力
     keydata = itmMan();
 
-    // 操作モード更新
-    vfdModeCtrl.modeSet(keydata);
-//    mailboxDat2Loop.ctrlMode = vfdModeCtrl.getCtrlMode();
-//    mailboxDat2Loop.dispModeVfd = vfdModeCtrl.getDispModeVfd();
-//    mailboxDat2Loop.dispModeOLED = vfdModeCtrl.getDispModeOLED();
-//    mailboxDat2Loop.dispModeM5OLED = vfdModeCtrl.getDispModeM5OLED();
-
     // センサ情報受信
     ret = xQueueReceive(xQueueSensData1, &mailboxDispDat, 0);
     if(ret){
@@ -333,10 +299,9 @@ void taskDeviceCtrl(void *Parameters){
   unsigned long illumiLasttime;   // 照度読み込み前回時間(millis)
   unsigned long sensor2Lasttime;  // センサスキャン処理前回時間(millis)
 
-  DeviceData i2cDeviceData;       // i2c接続デバイス情報 /***** i2cではなく、センサデータでは？
+  DeviceData i2cDeviceData;       // i2c接続デバイス情報
 
-  i2cStartData i2cStartDat;       // 起動時RTC,i2c情報
-//  struct tm rtcTimeInfo;
+  struct tm rtcTimeInfo;
   struct tm *sysTimeInfo;
 
   BaseType_t ret;
@@ -347,8 +312,6 @@ void taskDeviceCtrl(void *Parameters){
   // I2C Device Check
   deviceChk.i2cScan();
 
-  i2cStartDat.ssd1306Valid = deviceChk.ssd1306();
-  i2cStartDat.m5oledValid = deviceChk.m5oled();
   // RTC control instance
   RtcCont RtcContrl;
 
@@ -377,17 +340,13 @@ void taskDeviceCtrl(void *Parameters){
   }
 
   // == システム時刻初期化 ==
-//  RtcContrl.timeRead(&rtcTimeInfo);   // RTC 時刻読み込み
-//  lastSecw = rtcTimeInfo.tm_sec;      // 前回秒 設定
-//  sysTimeInfo = &rtcTimeInfo;         // 仮初期化
-  RtcContrl.timeRead(&i2cStartDat.rtcTimeInfo);   // RTC 時刻読み込み
-  lastSecw = i2cStartDat.rtcTimeInfo.tm_sec;      // 前回秒 設定
-  sysTimeInfo = &i2cStartDat.rtcTimeInfo;         // 仮初期化
+  RtcContrl.timeRead(&rtcTimeInfo);   // RTC 時刻読み込み
+  lastSecw = rtcTimeInfo.tm_sec;      // 前回秒 設定
+  sysTimeInfo = &rtcTimeInfo;         // 仮初期化
 
   // RTC時刻をtaskDisplayCtrlへ通知
   // この通知でtaskDisplayCtrl処理開始するので、タイミング注意
-//  xQueueOverwrite(xQueueRtcData, &rtcTimeInfo);
-  xQueueOverwrite(xQueueRtcData, &i2cStartDat);
+  xQueueOverwrite(xQueueRtcData, &rtcTimeInfo);
 
   vfdevent.setEventlogDeviceCtrl(EVENT_BOOT_TASKDEVICECTRL);   // 起動
 
@@ -471,18 +430,14 @@ void taskDeviceCtrl(void *Parameters){
       mailboxDat.illumiData = 0;   // Debug
 
       // OLED表示データ作成
-      RtcContrl.timeRead(&i2cStartDat.rtcTimeInfo);   // RTC 時刻読み込み
-      debugData.rtcTimeInfo = i2cStartDat.rtcTimeInfo;
+      RtcContrl.timeRead(&rtcTimeInfo);   // RTC 時刻読み込み
+      debugData.rtcTimeInfo = rtcTimeInfo;
       debugData.deviceDat.bme680Data = i2cDeviceData.bme680Data;
 
       //OLED 画面表示
       if(deviceChk.ssd1306()){
 //        oledDisp.printEnvSensorData(debugData);
-//        oledDisp.printEventLog(debugData);
-//        i2cDevice i2cDeviceDat;
-        i2cDeviceDat.datSSD1306 = deviceChk.ssd1306();
-        i2cDeviceDat.datM5OLED = deviceChk.m5oled();
-        oledDisp.printDeviceData(i2cDeviceDat);
+        oledDisp.printEventLog(debugData);
       }
 
       // M5OLED 画面表示 
@@ -540,16 +495,15 @@ void taskDeviceCtrl(void *Parameters){
       RtcContrl.timeSync(timeInfo);       // RTCへ時刻設定
 //      sysTimCnt.write(timeInfo);          // システム時刻情報設定
 
-//      struct tm TimeInfoTest;
-//      RtcContrl.timeRead(&TimeInfoTest);  // 時刻読み込み
-      RtcContrl.timeRead(&i2cStartDat.rtcTimeInfo);  // 時刻読み込み
+      struct tm TimeInfoTest;
+      RtcContrl.timeRead(&TimeInfoTest);  // 時刻読み込み
       uint16_t data[4];
-      data[0] = (uint16_t)i2cStartDat.rtcTimeInfo.tm_min;
-      data[1] = (uint16_t)i2cStartDat.rtcTimeInfo.tm_sec;
-      data[2] = (uint16_t)i2cStartDat.rtcTimeInfo.tm_min;
-      data[3] = (uint16_t)i2cStartDat.rtcTimeInfo.tm_sec;
+      data[0] = (uint16_t)timeInfo.tm_min;
+      data[1] = (uint16_t)timeInfo.tm_sec;
+      data[2] = (uint16_t)TimeInfoTest.tm_min;
+      data[3] = (uint16_t)TimeInfoTest.tm_sec;
 
-      xQueueOverwrite(xQueueRtcData, &i2cStartDat);          // 設定時刻をシステム時刻へ通信
+      xQueueOverwrite(xQueueRtcData, &TimeInfoTest);          // 設定時刻をシステム時刻へ通信
 //      confDat.eeromConfWrite();         // E2ROM設定
       vfdevent.setEventlogDeviceCtrl(EVENT_RTCSET,data);
     }
