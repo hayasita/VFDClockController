@@ -38,7 +38,6 @@ void IRAM_ATTR rtcPlusCount(void){
 //  }
 }
 
-#ifdef RTCUNIT_DS1307
 /**
  * @brief Construct a new Rtc Cont:: Rtc Cont object
  * 
@@ -51,12 +50,11 @@ RtcCont::RtcCont(void)
     return;
   }
 
-//  Wire.setPins(SDA_PIN,SCL_PIN);
-
   if (! rtc.begin()) {
     Serial.println("Couldn't find RTC. Wire Begin");
   }
 
+#ifdef RTCUNIT_DS1307
   if (! rtc.isrunning()) {
     Serial.println("RTC is NOT running, let's set the time!");
     rtc.adjust(DateTime(2022, 1, 1, 8, 0, 0));  // 仮設定
@@ -69,99 +67,7 @@ RtcCont::RtcCont(void)
 //  rtc.writeSqwPinMode(DS1307_SquareWave32kHz);  // 32kHz square wave
   rtc.writeSqwPinMode(DS1307_SquareWave1HZ);  // 1Hz square wave
 
-  // パルスカウント処理初期化
-  hzCount = 0;                                            // パルスカウンタ初期化
-  pinMode(RTC_PLS_GPIO, INPUT);                           // パルス入力ポート初期化
-  attachInterrupt(RTC_PLS_GPIO, rtcPlusCount, FALLING);   // パルス入力割り込み設定
-
-  ntpSetup = false;     // RTC設定要求初期化
-
-  return;
-}
-
-/**
- * @brief Destroy the Rtc Cont:: Rtc Cont object
- * 
- */
-RtcCont::~RtcCont(void)
-{
-  Serial.println("-- RtcCont::デストラクタ --");
-
-  return;
-}
-
-/**
- * @brief RTC 時刻読み出し　返値をboolに変更すべき
- * 
- * @param timeInfo 時刻読み出し結果
- * @return uint8_t 読み出し成功・失敗。
- */
-bool RtcCont::timeRead(struct tm *timeInfo)
-{
-  uint8_t ret = true;
-
-  if(deviceChk.rtc() != true){
-//    Serial.println("Couldn't find RTC");
-    time_t now;
-    time(&now);
-    localtime_r(&now, timeInfo);
-
-    return false;
-  }
-
-  DateTime now = rtc.now();
-  if(now.year() == 2000U){
-    ret = false;
-  }
-  // RTC読出し情報設定
-  timeInfo->tm_year = now.year() - 1900;
-  timeInfo->tm_mon = now.month() - 1;
-  timeInfo->tm_mday = now.day();
-  timeInfo->tm_hour = now.hour();
-  timeInfo->tm_min = now.minute();
-  timeInfo->tm_sec = now.second();
-
-  return ret;
-}
-
-/**
- * @brief RTCに時刻を設定する
- * 
- * @param timeInfo 設定時刻
- */
-void RtcCont::timeSync(struct tm timeInfo)
-{
-
-  Serial.println("-- RtcCont::timeSync --");
-  if(deviceChk.rtc() != true){
-    Serial.println("Couldn't find RTC");
-    return;
-  }
-
-  Serial.println(&timeInfo, "%A, %B %d %Y %H:%M:%S");
-
-  rtc.adjust(DateTime(timeInfo.tm_year % 100, timeInfo.tm_mon+1, timeInfo.tm_mday, timeInfo.tm_hour, timeInfo.tm_min, timeInfo.tm_sec));
-
-  Serial.println("RtcCont::timeSync : Conplete");
-  return;
-}
 #elif defined RTCUNIT_DS3231
-/**
- * @brief Construct a new Rtc Cont:: Rtc Cont object
- * 
- */
-RtcCont::RtcCont(void)
-{
-  // RTC有無判別
-  if(deviceChk.rtc() != true){
-    Serial.println("Couldn't find RTC. I2C Device");
-    return;
-  }
-
-  if (! rtc.begin()) {
-    Serial.println("Couldn't find RTC. Wire Begin");
-  }
-
   if (rtc.lostPower()) {
     Serial.println("RTC is NOT running, let's set the time!");
     rtc.adjust(DateTime(2022, 1, 1, 8, 0, 0));  // 仮設定
@@ -171,10 +77,10 @@ RtcCont::RtcCont(void)
   }
 
   // RTCパルス出力設定
-//  rtc.writeSqwPinMode(DS1307_SquareWave32kHz);  // 32kHz square wave
-//  rtc.writeSqwPinMode(DS1307_SquareWave1HZ);  // 1Hz square wave
   rtc.enable32K();    // Enable 32KHz Output
   rtc.writeSqwPinMode(DS3231_SquareWave1Hz);    // DS3231 SQW pin mode settings
+
+#endif
 
   // パルスカウント処理初期化
   hzCount = 0;                                            // パルスカウンタ初期化
@@ -252,7 +158,7 @@ void RtcCont::timeSync(struct tm timeInfo)
   Serial.println("RtcCont::timeSync : Conplete");
   return;
 }
-#endif
+
 // -----
 
 void LocalTimeCont::init(void)
