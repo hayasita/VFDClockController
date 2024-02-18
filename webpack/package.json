@@ -13,7 +13,7 @@
     "start": "webpack serve --mode=development --port 3000",
     "dev": "webpack --mode development",
     "build": "webpack --mode production",
-    "cp": "cpx dist/**.*s ../data/dist",
+    "cp": "cpx dist/dist/**.*s ../data/dist",
     "test": "jest"
   },
   "keywords": [
