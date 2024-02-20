@@ -680,6 +680,7 @@ void setup(void){
 void loop(void){
   struct mailboxData mailboxDat;
   struct mailboxData mailboxDisplayCtrl;
+  static DeviceData device;         // Devaice Data
 
   static bool mailboxStart = 0;
   static  uint8_t wifiStatus;       // WiFi接続状態(WiFiClass)
@@ -689,7 +690,6 @@ void loop(void){
   struct tm tmpTimeInfo;            // 時刻処理用Tmo
   struct tm sysTimeInfo;
   BaseType_t retSysTime;
-
 
   loopTimeLast = micros();
 
@@ -771,8 +771,7 @@ void loop(void){
     retSysTime = xQueueReceive(xQueueSysTimeData2, &mailboxDisplayCtrl, 0);   // taskDisplayCtrl()からシステム時刻情報を受信
     if(retSysTime){
       sysTimeInfo = mailboxDisplayCtrl.timeInfo;       // システム時刻設定
-//      Serial.print("Loop syst:");
-//      Serial.println(sysTimeInfo.tm_sec);
+      device = mailboxDisplayCtrl.device;               // Devaice Data
       websocketDataSend.timeInfo = sysTimeInfo;
       websocketDataSend.basicDataSend = ON;   // 基本データ送信フラグON
 
@@ -822,9 +821,9 @@ void loop(void){
         websocketDataSend.sensorData[0] = (uint16_t)(mailboxDat.device.enviiiData.env3Temperature * 10);
         websocketDataSend.sensorData[1] = (uint16_t)(mailboxDat.device.enviiiData.env3Humidity * 10);
         websocketDataSend.sensorData[2] = (uint16_t)(mailboxDat.device.enviiiData.env3Pressure);
-        websocketDataSend.sensorData[3] = mailboxDisplayCtrl.device.illumiData;
-        websocketDataSend.sensorData[4] = mailboxDisplayCtrl.device.dcdcFdb;
-        websocketDataSend.sensorData[5] = mailboxDisplayCtrl.device.dcdcTrg;
+        websocketDataSend.sensorData[3] = device.illumiData;
+        websocketDataSend.sensorData[4] = device.dcdcFdb;
+        websocketDataSend.sensorData[5] = device.dcdcTrg;
         websocketDataSend.sensorData[6] = mailboxDat.Data0;
         websocketDataSend.sensorData[7] = mailboxDat.Data1;
 //        websocketDataSend.sensorData[7] = mailboxDat.timeInfo.tm_sec;
