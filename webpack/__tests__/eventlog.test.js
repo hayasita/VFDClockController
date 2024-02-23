@@ -1,10 +1,10 @@
 
-import { _initial_setting_ } from'../setting.js'; // パスは実際の設定に合わせる
+import { _initial_setting_ } from'../src_test/setting.js'; // パスは実際の設定に合わせる
 import { vfdControllerDomain } from '../src/model/vfdControllerDomain';
 import {ModelselectionSetting} from '../src/viewmodel/setting'
 
-console.log(this);
-console.log(_initial_setting_);
+//console.log(this);
+//console.log(_initial_setting_);
 describe('vfdControllerDomain', () => {
 
   test('model eventString', () => {

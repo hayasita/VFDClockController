@@ -3,16 +3,12 @@
 export class vfdControllerDomain{
     constructor(initialSetting){
         console.log("-- vfdControllerDomain : initialSetting --");
-        console.log(this);
-        console.log(initialSetting);
+//        console.log(this);
+//        console.log(initialSetting);
         this.jsonObj = JSON.parse(initialSetting);
-        this.jsonObj.brDigtmp = Array.from(this.jsonObj.brDig);             // brDigtmp作成
-//        this.jsonObj.fadeTimetmp = this.jsonObj.fadeTime;
-//        this.jsonObj.formatHourtmp = this.jsonObj.formatHour;
-        this.jsonObj.glowInTheBrighttmp = this.jsonObj.glowInTheBright;     // 表示輝度設定画面表示用初期値
-        this.jsonObj.glowInTheDarktmp = this.jsonObj.glowInTheDark;         // 表示輝度設定画面表示用初期値
-        console.log(this.jsonObj);
-        console.log("initialSetting");
+        this.resetJsonTmpData();
+//        console.log(this.jsonObj);
+//        console.log("initialSetting");
     }
     // -- センサ情報コールバック設定 --
     setSensorDataCallback(callbackFunc){
@@ -88,18 +84,33 @@ export class vfdControllerDomain{
     }
     // --  WebSocket データ送信 --
     websocketSend(sendData){
-        console.log("--websocketSend");
-        console.log(sendData);
-        console.log("WebSocket.readyState:"+this.ws.readyState);
-        if(this.ws.readyState == "1"){
-            this.ws.send(sendData);
-        }
-        else{
-            console.log("Cannot Send data.");
-        }
-        return;
+      console.log("--websocketSend");
+      console.log(sendData);
+      console.log("WebSocket.readyState:"+this.ws.readyState);
+      let ret = this.ws.readyState;
+      if(ret == "1"){
+        this.ws.send(sendData);
+      }
+      else{
+        console.log("Cannot Send data.");
+      }
+        return ret;
     }
-    
+    resetJsonTmpData(){
+      if(this.jsonObj.hasOwnProperty('brDig')){
+        this.jsonObj.brDigtmp = Array.from(this.jsonObj.brDig);             // brDigtmp作成
+      }
+      else{
+        this.jsonObj.brDig = Array.from([1,2,3,4,5,6,7,8,9]);
+        this.jsonObj.brDigtmp = Array.from(this.jsonObj.brDig);
+      }
+      if(this.jsonObj.hasOwnProperty('glowInTheBright')){
+        this.jsonObj.glowInTheBrighttmp = this.jsonObj.glowInTheBright;     // 表示輝度設定画面表示用初期値
+      }
+      if(this.jsonObj.hasOwnProperty('glowInTheDark')){
+        this.jsonObj.glowInTheDarktmp = this.jsonObj.glowInTheDark;         // 表示輝度設定画面表示用初期値
+      }
+    }
     resetBrSetting(){
         console.log("resetBrSetting");
         this.jsonObj.brDigtmp = Array.from(this.jsonObj.brDig);
@@ -134,16 +145,20 @@ export class vfdControllerDomain{
     }
     // setting.js JSON情報設定
     setSettingJsonItem(data, item, ...[num]){
-        console.log("- setSettingJsonItem -");
-        if(typeof num === "number"){
-            this.jsonObj[item][num-1] = data;
-//            console.log(this.jsonObj[item]);
-        }
-        else{
-            this.jsonObj[item] = data;
-        }
-        console.log(this.jsonObj[item]);
+      console.log("- setSettingJsonItem -");
+      let ret;
+      if(typeof num === "number"){
+        this.jsonObj[item][num-1] = data;
+//        console.log(this.jsonObj[item]);
+        ret = this.jsonObj[item][num-1];
+      }
+      else{
+        this.jsonObj[item] = data;
+        ret = this.jsonObj[item];
+      }
+      console.log(this.jsonObj[item]);
 //        console.log(this.jsonObj);
+      return ret;
     }
 
     // -- JSONデータ POST送信 --

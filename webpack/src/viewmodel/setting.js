@@ -37,10 +37,10 @@ export class ModelselectionSetting {
 
     // TimeZone 設定
     this.model.timezone = ModelSelectionTimeZone;
-    console.log(this.model.timezone);
+//    console.log(this.model.timezone);
 
     this.model.timezoneArea = ModelSelectionTimeZoneArea;
-    console.log(this.model.timezoneArea);
+//    console.log(this.model.timezoneArea);
 
 //    model.setLanguage(this.localeID);
 //    langData.lng = this.localeID;

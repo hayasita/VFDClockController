@@ -181,7 +181,7 @@ export class vfdControllerUI{
     //  --CallbackWebsocket送信
     submitWebsocket(data){
       console.log("submitWebsocket:"+data);
-      this.model.websocketSend(data);
+      return this.model.websocketSend(data);
     }
 
     // -- タイトル取得 --
@@ -297,10 +297,15 @@ export class vfdControllerUI{
     }
 
     dispBrDigSubmit(num,data){
-        console.log("dispBrDigSubmit");
-    //    this.model.setBrdighitDigtmp(num,data);
-        this.model.setSettingJsonItem(data,"brDigtmp",num)
-        this.model.websocketSend(this.makeBrightData(num,data));
+      console.log("dispBrDigSubmit");
+      var ret1,ret2;
+  //    this.model.setBrdighitDigtmp(num,data);
+      ret1 = this.model.setSettingJsonItem(data,"brDigtmp",num)
+      ret2 = this.model.websocketSend(this.makeBrightData(num,data));
+      if(ret2 != 1){  // websocket not send
+        ret1 = "";
+      }
+      return ret1;
     }
     makeBrightData(item, data){
         let sendData
