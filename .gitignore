@@ -36,9 +36,9 @@
 .vscode/c_cpp_properties.json
 .vscode/launch.json
 .vscode/ipch
-data/dist/bundle.js
-webpack/dist/bundle.js
-webpack/dist/bundle.js.map
 .VSCodeCounter/*/*
 doxygen/*
 build/*
+webpack/dist/*
+data/*
+
