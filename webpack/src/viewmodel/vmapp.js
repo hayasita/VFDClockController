@@ -181,7 +181,7 @@ export class vfdControllerUI{
     //  --CallbackWebsocket送信
     submitWebsocket(data){
       console.log("submitWebsocket:"+data);
-      this.model.websocketSend(data);
+      return this.model.websocketSend(data);
     }
 
     // -- タイトル取得 --
@@ -198,9 +198,8 @@ export class vfdControllerUI{
     getDisplaySetting(item, ...[num]){
         return this.model.getSettingJsonItem(item,num);
     }
-    setDisplaySetting(data, item, ...[num]){
-        this.model.setSettingJsonItem(data, item, num);
-        return;
+    setDisplaySetting(item, data, ...[num]){
+        return this.model.setSettingJsonItem(item, data, num);
     }
 
 /*    getDisplaySetting(item){
@@ -270,15 +269,16 @@ export class vfdControllerUI{
     }
 
     // 表示設定データ値設定
-    submitDisplaySetting(data, item, ...[num]){
-        console.log("submitDisplaySetting:"+data+":"+item+":"+num);
-        if(typeof num === "number"){
-
-        }else{
-            this.model.setSettingJsonItem(data, item);
-            this.model.websocketSend(this.makeWebsocketData(item,data));
-        }
-        return;
+    submitDisplaySetting(item, data, ...[num]){
+      let ret;
+      console.log("submitDisplaySetting:"+data+":"+item+":"+num);
+      if(typeof num === "number"){
+        ret = 0;
+      }else{
+        ret = this.model.setSettingJsonItem(item, data);
+        this.model.websocketSend(this.makeWebsocketData(item,data));
+      }
+      return ret;
     }
 
     // tab切替情報送信
@@ -297,10 +297,15 @@ export class vfdControllerUI{
     }
 
     dispBrDigSubmit(num,data){
-        console.log("dispBrDigSubmit");
-    //    this.model.setBrdighitDigtmp(num,data);
-        this.model.setSettingJsonItem(data,"brDigtmp",num)
-        this.model.websocketSend(this.makeBrightData(num,data));
+      console.log("dispBrDigSubmit");
+      var ret1,ret2;
+  //    this.model.setBrdighitDigtmp(num,data);
+      ret1 = this.model.setSettingJsonItem("brDigtmp", data, num)
+      ret2 = this.model.websocketSend(this.makeBrightData(num,data));
+      if(ret2 != 1){  // websocket not send
+ //       ret1 = "";
+      }
+      return ret1;
     }
     makeBrightData(item, data){
         let sendData

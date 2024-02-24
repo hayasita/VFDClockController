@@ -253,7 +253,7 @@
         this.dispFormatSet = (item,e) =>{
           this.buttonSet(item);
           obs.trigger('dispFormat',this.dispFormat);
-          vmUI.submitDisplaySetting(this.dispFormat,"dispFormat")
+          vmUI.submitDisplaySetting("dispFormat" ,this.dispFormat)
         }
 
         // 時刻表示12h/24h設定初期値取得
@@ -267,13 +267,13 @@
         this.changeTimeDisplayFormat = (e) =>{
           let dat = document.getElementById("timeDisplayFormat").value;
           obs.trigger('timeDisplayFormat',dat);
-          vmUI.submitDisplaySetting(dat,"timeDisplayFormat");  // 設定値送信
+          vmUI.submitDisplaySetting("timeDisplayFormat", dat,);  // 設定値送信
         }
         // --- DateDisplay Format 設定処理 ---
         this.changeDateDisplayFormat = (e) =>{
           let dat = document.getElementById("dateDisplayFormat").value;
           obs.trigger('dateDisplayFormat',dat);
-          vmUI.submitDisplaySetting(dat,"dateDisplayFormat");  // 設定値送信
+          vmUI.submitDisplaySetting("dateDisplayFormat", dat);  // 設定値送信
         }
         // 時刻表示12/24hラジオボタン設定処理
         this.timeFormatradio = (item,e) =>{
@@ -289,13 +289,13 @@
           }
           console.log(dat);
           obs.trigger('formatHour',dat);
-          vmUI.submitDisplaySetting(dat,"formatHour")
+          vmUI.submitDisplaySetting("formatHour", dat,)
         }
 
         // 表示効果設定処理
         this.changeDisplayEffect = (e) =>{
           let dat = document.getElementById("displayEffect").value;
-          vmUI.submitDisplaySetting(dat,"displayEffect");  // 設定値送信
+          vmUI.submitDisplaySetting("displayEffect", dat);  // 設定値送信
         }
 
         // クロスフェード時間初期値取得
@@ -303,7 +303,7 @@
         // クロスフェード時間数値設定処理
         this.setFadeTime = (item, e) =>{
           this.buttonSet(item);
-          vmUI.submitDisplaySetting(this.fadeTime,"fadeTime");
+          vmUI.submitDisplaySetting("fadeTime", this.fadeTime);
         }
 
         // 表示輝度設定スライダー値設定初期値取得
@@ -311,8 +311,8 @@
         this.glowDark = vmUI.getDisplaySetting("glowInTheDark");
         // 表示輝度設定スライダー値設定処理
         this.glowChange = (item,e) =>{   // このタイミングでeerom書き込み
-          vmUI.setDisplaySetting(1, item);
-          vmUI.submitDisplaySetting(1,item);
+          vmUI.setDisplaySetting(item, 1);
+          vmUI.submitDisplaySetting(item, 1);
         }
 
         // 各桁表示輝度初期値取得
@@ -389,8 +389,8 @@
             console.log(target.id);
             console.log(elem.value);
             console.log(elem.id);
-            vmUI.setDisplaySetting(elem.value,elem.id);     // 設定値記憶
-            vmUI.submitDisplaySetting(elem.value,elem.id);  // 設定値送信
+            vmUI.setDisplaySetting(elem.id, elem.value);      // 設定値記憶
+            vmUI.submitDisplaySetting(elem.id, elem.value);   // 設定値送信
           }
         }
         // --- 表示輝度設定スライダーイベント設定 ---

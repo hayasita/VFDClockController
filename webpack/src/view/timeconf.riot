@@ -324,15 +324,15 @@
           console.log("TimeZone設定");
           let dat = document.getElementById("timeZoneData").value;
           if(dat != 0){
-            vmUI.submitDisplaySetting(this.tzAreaId,"timeZoneAreaId");  									// タイムゾーンの地域設定値送信
+            vmUI.submitDisplaySetting("timeZoneAreaId", this.tzAreaId,);									// タイムゾーンの地域設定値送信
 
 						let tzID = dat;
 						this.tzId = this.tzList.findIndex((tzList) => tzList.ID == tzID);							// タイムゾーンの都市名のインデックスを求める
-						vmUI.submitDisplaySetting(this.tzId,"timeZoneId");														// タイムゾーンの都市名設定値送信
+						vmUI.submitDisplaySetting("timeZoneId", this.tzId);														// タイムゾーンの都市名設定値送信
 
 						let tzTz = this.tzList[this.tzId].TZ;
 						let tzIndex = this.tzGmtList.findIndex((tzGmtList) => tzGmtList.TZ == tzTz);	// タイムゾーンのインデックスを求める
-            vmUI.submitDisplaySetting(tzIndex,"timeZone");																// タイムゾーン設定値送信
+            vmUI.submitDisplaySetting("timeZone", tzIndex);																// タイムゾーン設定値送信
           }
         }
         // TimeZoneArea設定

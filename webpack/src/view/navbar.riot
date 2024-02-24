@@ -79,8 +79,7 @@
         vmUI.setting.setLanguage(this.localesId);     // 言語設定
 //        i18next.changeLanguage(this.localesId);     // setting.jsを呼べないか
         obs.trigger('changeLanguage',this.localesId);
-//        vmUI.submitDisplaySetting(this.localesId,"localesId");  // LocaleId設定値送信
-        vmUI.submitDisplaySetting(this.localesIdDat,"localesId");  // LocaleId設定値送信
+        vmUI.submitDisplaySetting("localesId", this.localesIdDat,);  // LocaleId設定値送信
         console.log(this.localesId);
       })
 
