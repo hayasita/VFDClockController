@@ -160,11 +160,11 @@
           this.wifiStaAutoUseCheck = !this.wifiStaAutoUseCheck;
           if(this.wifiStaAutoUseCheck){
             this.tWifiStaAutoUseCheck = "自動接続有効";
-            vmUI.submitDisplaySetting(1,"staAutoConnect")
+            vmUI.submitDisplaySetting("staAutoConnect", 1);
           }
           else{
             this.tWifiStaAutoUseCheck = "自動接続無効";
-            vmUI.submitDisplaySetting(0,"staAutoConnect")
+            vmUI.submitDisplaySetting("staAutoConnect", 0)
           }
           obs.trigger('wifiStaAutoConnect',this.wifiStaAutoUseCheck); //イベント送信
           this.update();

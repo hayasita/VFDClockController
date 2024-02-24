@@ -21,9 +21,17 @@ describe('vfdControllerUI', () => {
     expect(vmUI.submitWebsocket()).toEqual('Mocked websocketSend');
     expect(vmUI.getTitle()).toEqual('Mocked method 1');
 
-    expect(vmUI.model.setSettingJsonItem("Takahiro","name")).toMatch("Takahiro");
-    expect(vmUI.model.setSettingJsonItem(98,"brDig",2)).toBe(98);
-//    expect(vmUI.dispBrDigSubmit(2,98)).toBe(98);
+    expect(vmUI.model.setSettingJsonItem("name","Takahiro")).toMatch("Takahiro");
+    expect(vmUI.model.setSettingJsonItem("brDig",98,2)).toBe(98);
+
+    // setSettingJsonItem refactoring Test
+    expect(vmUI.setDisplaySetting("test",15)).toBe(15);
+    expect(vmUI.setDisplaySetting("brDig",12,1)).toBe(12);
+
+    expect(vmUI.submitDisplaySetting("test2", 12)).toBe(12);
+
+    expect(vmUI.dispBrDigSubmit(1,67)).toBe(67);
+
  
   });
 });

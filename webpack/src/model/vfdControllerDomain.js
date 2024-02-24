@@ -144,7 +144,7 @@ export class vfdControllerDomain{
         return data;
     }
     // setting.js JSON情報設定
-    setSettingJsonItem(data, item, ...[num]){
+    setSettingJsonItem(item, data, ...[num]){
       console.log("- setSettingJsonItem -");
       let ret;
       if(typeof num === "number"){
