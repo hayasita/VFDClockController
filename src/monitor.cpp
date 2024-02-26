@@ -1,6 +1,7 @@
 
 #include "monitor.h"
 
+SerialMonitorIO::~SerialMonitorIO() {}
 
 std::string SerialMonitor::command()
 {

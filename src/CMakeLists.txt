@@ -16,5 +16,4 @@ add_library(
     monitor
 
     monitor.cpp
-    monitor_serial.cpp
 )

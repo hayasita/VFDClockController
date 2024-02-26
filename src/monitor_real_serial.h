@@ -1,7 +1,7 @@
 #ifndef monitor_real_serial_h
 #define monitor_real_serial_h
 
-#include "monitor_serial.h"
+#include "monitor.h"
 
 #ifdef GLOBAL_VAL_DEF
 #define GLOBAL
