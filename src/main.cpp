@@ -24,6 +24,8 @@
 #include "vfd_eerom.h"
 #include "mode_ctrl.h"
 
+#include "monitor_real_serial.h"
+#include "monitor.h"
 
 // an IR detector/demodulator is connected to GPIO pin 2
 #ifdef USE_IR
@@ -362,6 +364,10 @@ void taskDeviceCtrl(void *Parameters){
   if(deviceChk.m5oled()){
     m5Oled.init();
   }
+
+// serialMonitor init
+  RealSerialMonitorIO real;
+  SerialMonitor serialMonitor(&real);
 
   // == システム時刻初期化 ==
   RtcContrl.timeRead(&i2cStartDat.rtcTimeInfo);   // RTC 時刻読み込み
