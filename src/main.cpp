@@ -579,6 +579,9 @@ void taskDeviceCtrl(void *Parameters){
     taskDeviceTime = micros() - taskDeviceTimeLast;
     taskDeviceTimeMax = (taskDeviceTimeMax > taskDeviceTime) ? taskDeviceTimeMax : taskDeviceTime;
 
+    // シリアルモニタ処理
+    serialMonitor.exec();
+
     delay(1);
   }
 

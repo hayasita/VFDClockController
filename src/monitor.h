@@ -1,3 +1,13 @@
+/**
+ * @file monitor.h
+ * @author hayasita04@gmail.com
+ * @brief シリアルモニタ処理ヘッダ
+ * @version 0.1
+ * @date 2024-02-28
+ * 
+ * @copyright Copyright (c) 2024
+ * 
+ */
 #ifndef monitor_h
 #define monitor_h
 
@@ -13,9 +23,9 @@
 
 class SerialMonitorIO{
   public:
-    virtual ~SerialMonitorIO(void) = 0;       // 純粋仮想デストラクタ
-    virtual std::string rsv(void) = 0;        // 純粋仮想関数
-    virtual int send(std::string data) = 0;   // 純粋仮想関数
+    virtual ~SerialMonitorIO(void) = 0;         // 純粋仮想デストラクタ
+    virtual std::string rsv(void) = 0;          // 純粋仮想関数
+    virtual uint8_t send(std::string data) = 0; // 純粋仮想関数
 };
 
 class SerialMonitor{
@@ -34,9 +44,8 @@ class SerialMonitor{
       monitorIo_ = pSerialMonitorIo;
     }
 
+    bool exec(void);                      // シリアルモニタ実行
 //    std::vector<std::string> command;
-
-    std::string command();
 
     
 };
