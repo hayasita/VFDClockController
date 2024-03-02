@@ -14,11 +14,28 @@ namespace
       MockSerialMonitorIO mock;
       SerialMonitor serialMonitor = SerialMonitor(&mock);
   };
+  std::vector<std::string> result = {"command","parameta1","parameta2"};
+  std::vector<std::string> result2 = {"command"};
+  std::string command = "command parameta1 parameta2";
+  std::string command2 = "command";
+  std::string dummyExec = "dummyExec";
 
-  TEST_F(SerialMonitorTest, callback)
+  TEST_F(SerialMonitorTest, API)
   {
-    EXPECT_CALL(mock, rsv()).Times(AtLeast(1)).WillOnce(Return("test")); // 水位 9
-    EXPECT_EQ("test", serialMonitor.command()); // 期待値：false
+    EXPECT_EQ(result, serialMonitor.spritCommand(command));   // コマンド分割
+    EXPECT_EQ(result2, serialMonitor.spritCommand(command2));   // コマンド分割
+  }
+  
+
+  TEST_F(SerialMonitorTest, command)
+  {
+//    EXPECT_CALL(mock, rsv()).Times(AtLeast(1)).WillOnce(Return(command));           // テスト入力
+//    EXPECT_CALL(mock, send(dummyExec + "\n")).Times(AtLeast(1)).WillOnce(Return(1));  // テスト出力
+//    EXPECT_EQ(true, serialMonitor.exec()); // 期待値：true
+
+    EXPECT_CALL(mock, rsv()).Times(AtLeast(1)).WillOnce(Return("command"));           // テスト入力
+    EXPECT_CALL(mock, send(dummyExec + "\n")).Times(AtLeast(1)).WillOnce(Return(1));  // テスト出力
+    EXPECT_EQ(true, serialMonitor.exec()); // 期待値：true
   }
 
   int main(int argc, char **argv)

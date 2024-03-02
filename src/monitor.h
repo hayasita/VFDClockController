@@ -20,6 +20,8 @@
 #include <cstdint>
 #include <vector>
 #include <string>
+#include <functional>
+#include <sstream>
 
 class SerialMonitorIO{
   public:
@@ -28,10 +30,14 @@ class SerialMonitorIO{
     virtual uint8_t send(std::string data) = 0; // 純粋仮想関数
 };
 
-class SerialMonitor{
-  private:
-    SerialMonitorIO *monitorIo_ = nullptr;
+class codeTbl{
+  public:
+    std::string code;                   // コード
+    std::function<bool()> execCode;     // コード実行処理
+    std::string help;                   // help表示データ
+};
 
+class SerialMonitor{
   public:
     /**
      * @brief Construct a new Serial Monitor object
@@ -40,13 +46,17 @@ class SerialMonitor{
      * テストのときはmockを渡す。
      * 実処理の場合は、実処理の派生classのポインタを渡す。
      */
-    SerialMonitor(SerialMonitorIO* pSerialMonitorIo){
-      monitorIo_ = pSerialMonitorIo;
-    }
+    SerialMonitor(SerialMonitorIO* pSerialMonitorIo);   // コンストラクタ
+    bool exec(void);                                    // シリアルモニタ実行
+    std::vector<std::string> spritCommand(std::string &commandBuf);  // コマンド分割
 
-    bool exec(void);                      // シリアルモニタ実行
-//    std::vector<std::string> command;
+  private:
+    void init(void);                          // 初期化
+    bool dummyExec(std::vector<std::string> command);     // コマンド実行ダミー
 
+    SerialMonitorIO *monitorIo_ = nullptr;    // シリアル入出力処理ポインタ
+    std::vector<std::string> command;         // シリアルモニタコマンド
+    std::vector<codeTbl> codeArray;           // コードテーブル
     
 };
 
