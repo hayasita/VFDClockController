@@ -30,9 +30,9 @@ SerialMonitor::SerialMonitor(SerialMonitorIO* pSerialMonitorIo){
 
 void SerialMonitor::init(void)
 {
-  std::cout << "SerialMonitor::init";
+//  std::cout << "SerialMonitor::init";
 
-  codeArray.push_back({"command"    ,[&](){return dummyExec(command);}  ,"command Help."});
+  codeArray.push_back({"help"       ,[&](){return opecodeHelp(command);}    ,"Help\tDisplays help information for the command."});
   codeArray.push_back({"command1"   ,[&](){return dummyExec(command);}  ,"command Help."});
   codeArray.push_back({"command2"   ,[&](){return dummyExec(command);}  ,"command Help."});
   return;
@@ -55,28 +55,33 @@ bool SerialMonitor::exec(void)
   if(commandBuf.size() > 0){
     commandBuf.erase(std::remove(commandBuf.begin(), commandBuf.end(), '\r'), commandBuf.end());    // CRを取り除く
     commandBuf.erase(std::remove(commandBuf.begin(), commandBuf.end(), '\n'), commandBuf.end());    // LFを取り除く
+  }
+  if(commandBuf.size() > 0){
     command = spritCommand(commandBuf);   // コマンドをトークンごとに分割
-    
+/*      
     for (const auto &str : command) {
       std::cout << str << std::endl;
     }
-
+*/
     std::vector<codeTbl>::iterator itr = std::find_if(codeArray.begin(),codeArray.end(),[&](codeTbl &c) {   // コマンド実行テーブル検索
       return(c.code == command[0]);
     });
     if(itr != codeArray.end()){
+/*
       std::cout << "テーブル検索成功\n";
       std::cout << (*itr).code << ":" << command[0] << ":\n";
       for (char c : command[0]) {
       // 1文字ごとのASCIIコードを出力
         std::cout << (int)c << "\n";
       }
+*/
       ret = (*itr).execCode();    // コマンド実行
     }
     else{
       // テーブル検索失敗
       std::cout << "テーブル検索失敗";
-      monitorIo_->send("command not found.");
+      monitorIo_->send(command[0]);
+      monitorIo_->send(": command not found.");
       ret = false;
     }
   }
@@ -115,5 +120,23 @@ bool SerialMonitor::dummyExec(std::vector<std::string> command)
 {
   std::cout << "SerialMonitor::dummyExec\n";
   monitorIo_->send("dummyExec\n");
+  return true;
+}
+
+/**
+ * @brief Helpコマンド処理
+ * 
+ * @param command 
+ * @return true 
+ * @return false 
+ */
+bool SerialMonitor::opecodeHelp(std::vector<std::string> command)   // help
+{
+//  monitorIo_->send("help\n");
+
+  for (auto it = codeArray.begin(); it != codeArray.end(); ++it) {
+    std::cout << it->help << "\n";
+  }
+
   return true;
 }

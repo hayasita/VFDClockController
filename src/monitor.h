@@ -53,6 +53,7 @@ class SerialMonitor{
   private:
     void init(void);                          // 初期化
     bool dummyExec(std::vector<std::string> command);     // コマンド実行ダミー
+    bool opecodeHelp(std::vector<std::string> command);   // help
 
     SerialMonitorIO *monitorIo_ = nullptr;    // シリアル入出力処理ポインタ
     std::vector<std::string> command;         // シリアルモニタコマンド
