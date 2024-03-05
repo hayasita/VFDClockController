@@ -67,6 +67,19 @@ target_link_libraries(
     gtest_main
 )
 
+# mock
+add_executable(
+    test_monitor
+    test_monitor.cpp
+)
+target_link_libraries(
+    test_monitor
+    monitor
+    gmock_main
+    gtest_main
+)
+
+
 add_subdirectory(./main)
 
 include(GoogleTest)

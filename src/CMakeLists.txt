@@ -11,3 +11,9 @@ add_library(func func.cpp)
 add_library(driver_sub driver_sub.cpp)
 
 add_library(mode_ctrl mode_ctrl.cpp)
+
+add_library(
+    monitor
+
+    monitor.cpp
+)

@@ -9,3 +9,6 @@
 #include "sound.h"
 #include "vfd_web.h"
 #include "vfd_wificnt.h"
+
+#include "monitor.h"
+#include "monitor_real_serial.h"

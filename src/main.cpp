@@ -24,6 +24,8 @@
 #include "vfd_eerom.h"
 #include "mode_ctrl.h"
 
+#include "monitor_real_serial.h"
+#include "monitor.h"
 
 // an IR detector/demodulator is connected to GPIO pin 2
 #ifdef USE_IR
@@ -363,6 +365,10 @@ void taskDeviceCtrl(void *Parameters){
     m5Oled.init();
   }
 
+// serialMonitor init
+  RealSerialMonitorIO real;
+  SerialMonitor serialMonitor(&real);
+
   // == システム時刻初期化 ==
   RtcContrl.timeRead(&i2cStartDat.rtcTimeInfo);   // RTC 時刻読み込み
   lastSecw = i2cStartDat.rtcTimeInfo.tm_sec;      // 前回秒 設定
@@ -572,6 +578,9 @@ void taskDeviceCtrl(void *Parameters){
 
     taskDeviceTime = micros() - taskDeviceTimeLast;
     taskDeviceTimeMax = (taskDeviceTimeMax > taskDeviceTime) ? taskDeviceTimeMax : taskDeviceTime;
+
+    // シリアルモニタ処理
+    serialMonitor.exec();
 
     delay(1);
   }
