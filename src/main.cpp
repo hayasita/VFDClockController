@@ -436,9 +436,6 @@ void taskDeviceCtrl(void *Parameters){
     struct tm tmpTimeInfo;            // 時刻処理用Tmp
     struct mailboxData mailboxDisplayCtrl;
 
-    static unsigned long endTime = millis();
-    static uint8_t bme680f = 0;
-
     taskDeviceTimeLast = micros();    // 実行時間測定用基本時刻
     timetmp = millis();               // 処理間隔確認用基本時刻
 
@@ -504,10 +501,7 @@ void taskDeviceCtrl(void *Parameters){
 
       // BME680 Data データ取得
       if(deviceChk.bme680()){
-//        bme680.read(&sensorDeviceData.bme680Data);
-//        mailboxDat.device.bme680Data = sensorDeviceData.bme680Data;
-        endTime = millis() + bme680.readAsyncBegin();
-        bme680f = 1;
+        bme680.readAsyncBegin();
       }
 
       ret = xQueueOverwrite(xQueueSensData1, &mailboxDat);      // taskDisplayCtrl()へセンサ情報を送信
@@ -515,12 +509,8 @@ void taskDeviceCtrl(void *Parameters){
     }
     // BME680 Data データ取得
     if(deviceChk.bme680()){
-      if((bme680f == 1) && (millis() > endTime)){
-        bme680.readAsyncEnd(&sensorDeviceData.bme680Data);
-        mailboxDat.device.bme680Data = sensorDeviceData.bme680Data;
-//        Serial.println(mailboxDat.device.bme680Data.humidity);
-        bme680f = 0;
-      }
+      bme680.readAsyncEnd(&sensorDeviceData.bme680Data);
+      mailboxDat.device.bme680Data = sensorDeviceData.bme680Data;
     }
 
     // Callbackイベント要求処理
