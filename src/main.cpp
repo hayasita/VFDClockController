@@ -501,8 +501,6 @@ void taskDeviceCtrl(void *Parameters){
 
       // BME680 Data データ取得
       if(deviceChk.bme680()){
-//        bme680.read(&sensorDeviceData.bme680Data);
-//        mailboxDat.device.bme680Data = sensorDeviceData.bme680Data;
         bme680.readAsyncBegin();
       }
 

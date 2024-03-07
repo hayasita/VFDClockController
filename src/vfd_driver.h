@@ -374,6 +374,7 @@ class SensorBme680{
   private:
     Adafruit_BME680 bme;
     unsigned long endTime;    // 非同期読み出し待ち時間格納
+    uint8_t asyncSqf;         // 非同期読出しシーケンス
 };
 
 #undef GLOBAL

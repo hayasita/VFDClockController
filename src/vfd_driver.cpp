@@ -1426,6 +1426,7 @@ bool SensorBme680::init(SensorBME680Data *bme680Data)
   bme.setGasHeater(320, 150); // 320*C for 150 ms
 
   endTime = 0;
+  asyncSqf = 0;
 
   return ret;
 }
@@ -1443,29 +1444,6 @@ bool SensorBme680::read(SensorBME680Data *bme680Data)
     Serial.println("Failed to perform reading :(");
     return false;
   }
-/*
-  Serial.print("Temperature = ");
-  Serial.print(bme.temperature);
-  Serial.println(" *C");
-
-  Serial.print("Pressure = ");
-  Serial.print(bme.pressure / 100.0);
-  Serial.println(" hPa");
-
-  Serial.print("Humidity = ");
-  Serial.print(bme.humidity);
-  Serial.println(" %");
-
-  Serial.print("Gas = ");
-  Serial.print(bme.gas_resistance / 1000.0);
-  Serial.println(" KOhms");
-
-  Serial.print("Approx. Altitude = ");
-  Serial.print(bme.readAltitude(SEALEVELPRESSURE_HPA));
-  Serial.println(" m");
-
-  Serial.println();
-*/
   bme680Data->temperature = bme.temperature;
   bme680Data->pressure = bme.pressure;
   bme680Data->humidity = bme.humidity;
@@ -1520,41 +1498,11 @@ bool SensorBme680::readAsync(SensorBME680Data *bme680Data)
       Serial.println(F("Failed to complete reading :("));
       return false;
     }
-/*
-    Serial.print(F("Reading completed at "));
-    Serial.println(millis());
-
-    Serial.print(F("Temperature = "));
-    Serial.print(bme.temperature);
-    Serial.println(F(" *C"));
-
-    Serial.print(F("Pressure = "));
-    Serial.print(bme.pressure / 100.0);
-    Serial.println(F(" hPa"));
-
-    Serial.print(F("Humidity = "));
-    Serial.print(bme.humidity);
-    Serial.println(F(" %"));
-
-    Serial.print(F("Gas = "));
-    Serial.print(bme.gas_resistance / 1000.0);
-    Serial.println(F(" KOhms"));
-
-    Serial.print(F("Approx. Altitude = "));
-    Serial.print(bme.readAltitude(SEALEVELPRESSURE_HPA));
-    Serial.println(F(" m"));
-
-    Serial.print(F("Reading completed at "));
-    Serial.println(millis());
-
-    Serial.println();
-*/
     bme680Data->temperature = bme.temperature;
     bme680Data->pressure = bme.pressure;
     bme680Data->humidity = bme.humidity;
     bme680Data->gasResistance = bme.gas_resistance;
     bme680Data->altitude = bme.readAltitude(SEALEVELPRESSURE_HPA);
-
   }
 
   if(bme680Data->pressure > 0){
@@ -1579,6 +1527,9 @@ bool SensorBme680::readAsyncBegin(void)
     if (endTime == 0) {
       Serial.println(F("Failed to begin reading :("));
       return false;
+    }
+    else{
+      asyncSqf = 1;
     }
 /*
     Serial.print(F("Reading started at "));
@@ -1607,41 +1558,15 @@ bool SensorBme680::readAsyncBegin(void)
 bool SensorBme680::readAsyncEnd(SensorBME680Data *bme680Data)
 {
 
-  if(millis() >= endTime){
+  if((millis() >= endTime) && (asyncSqf == 1)){
     endTime = 0;
+    asyncSqf = 0;
     if (!bme.endReading()) {
       Serial.println(F("Failed to complete reading :("));
       return false;
     }
-/*
-    Serial.print(F("Reading completed at "));
-    Serial.println(millis());
+//    Serial.println("readAsyncEnd");
 
-    Serial.print(F("Temperature = "));
-    Serial.print(bme.temperature);
-    Serial.println(F(" *C"));
-
-    Serial.print(F("Pressure = "));
-    Serial.print(bme.pressure / 100.0);
-    Serial.println(F(" hPa"));
-
-    Serial.print(F("Humidity = "));
-    Serial.print(bme.humidity);
-    Serial.println(F(" %"));
-
-    Serial.print(F("Gas = "));
-    Serial.print(bme.gas_resistance / 1000.0);
-    Serial.println(F(" KOhms"));
-
-    Serial.print(F("Approx. Altitude = "));
-    Serial.print(bme.readAltitude(SEALEVELPRESSURE_HPA));
-    Serial.println(F(" m"));
-
-    Serial.print(F("Reading completed at "));
-    Serial.println(millis());
-
-    Serial.println();
-*/
     bme680Data->temperature = bme.temperature;
     bme680Data->pressure = bme.pressure;
     bme680Data->humidity = bme.humidity;
