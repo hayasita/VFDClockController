@@ -33,7 +33,7 @@ namespace
 //    EXPECT_CALL(mock, send(dummyExec + "\n")).Times(AtLeast(1)).WillOnce(Return(1));  // テスト出力
 //    EXPECT_EQ(true, serialMonitor.exec()); // 期待値：true
 
-    EXPECT_CALL(mock, rsv()).Times(AtLeast(1)).WillOnce(Return("command"));           // テスト入力
+    EXPECT_CALL(mock, rsv()).Times(AtLeast(1)).WillOnce(Return("command1"));           // テスト入力
     EXPECT_CALL(mock, send(dummyExec + "\n")).Times(AtLeast(1)).WillOnce(Return(1));  // テスト出力
     EXPECT_EQ(true, serialMonitor.exec()); // 期待値：true
   }
