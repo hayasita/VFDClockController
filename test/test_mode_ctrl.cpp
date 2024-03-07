@@ -269,6 +269,9 @@ TEST(ModeCtrl_sw2sw3, dispModeSetOLED){
 
   // UP Key Lotate
   mode.modeSet(KEY_UP_S,0);                                   // 表示モードプラス確認
+  EXPECT_EQ(mode.getDispModeOLED(), OLED_DISP_ANALOG_DATA);   // アナログ入力センサデータ表示
+
+  mode.modeSet(KEY_UP_S,0);                                   // 表示モードプラス確認
   EXPECT_EQ(mode.getDispModeOLED(), OLED_DISP_EVENTLOG_CTRL); // EventLog操作情報
 
   mode.modeSet(KEY_UP_S,0);                                   // 表示モードプラス確認
