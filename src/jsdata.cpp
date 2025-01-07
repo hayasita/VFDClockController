@@ -2,8 +2,17 @@
 #include "vfd_conf.h"
 #include "vfd_rtc.h"
 #include "vfd_wificnt.h"
+
+#define USE_LittleFS
+
 #include <FS.h>
-#include "SPIFFS.h"
+#ifdef USE_LittleFS
+  #define SPIFFS LittleFS
+  #include <LittleFS.h> 
+#else
+  #include <SPIFFS.h>
+#endif 
+
 //#include <ArduinoJson.h>
 
 // ./setting.js　作成

@@ -12,7 +12,16 @@
 #endif
 
 #include <M5Unified.h>
-#include "SPIFFS.h"
+
+#define USE_LittleFS
+
+#include <FS.h>
+#ifdef USE_LittleFS
+  #define SPIFFS LittleFS
+  #include <LittleFS.h> 
+#else
+  #include <SPIFFS.h>
+#endif 
 
 class i2sS3Driver{
   public:

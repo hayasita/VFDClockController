@@ -17,11 +17,19 @@
 
 #include <M5Unified.h>
 
+#define USE_LittleFS
+
+#include <FS.h>
+#ifdef USE_LittleFS
+  #define SPIFFS LittleFS
+  #include <LittleFS.h> 
+#else
+  #include <SPIFFS.h>
+#endif 
+
 #include <WebServer.h>
 //#include <ESPAsyncWebServer.h>
 #include <WebSocketsServer.h> // arduinoWebSocketsライブラリ
-#include <FS.h>
-#include <SPIFFS.h>
 
 #define STA_DISCONNECTED  0     // 接続なし:使用しない
 #define STA_CONNECTED     1     // 接続完了
