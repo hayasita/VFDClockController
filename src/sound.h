@@ -5,6 +5,8 @@
 #ifndef sound_h
 #define sound_h
 
+#include "filesys.h"  
+
 #ifdef GLOBAL_VAL_DEF
 #define GLOBAL
 #else
@@ -12,16 +14,6 @@
 #endif
 
 #include <M5Unified.h>
-
-#define USE_LittleFS
-
-#include <FS.h>
-#ifdef USE_LittleFS
-  #define SPIFFS LittleFS
-  #include <LittleFS.h> 
-#else
-  #include <SPIFFS.h>
-#endif 
 
 class i2sS3Driver{
   public:

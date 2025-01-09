@@ -1,6 +1,8 @@
 #ifndef vfd_web_h
 #define vfd_web_h
 
+#include "filesys.h"
+
 #ifdef GLOBAL_VAL_DEF
 #define GLOBAL
 #else
@@ -16,16 +18,6 @@
 #endif
 
 #include <M5Unified.h>
-
-#define USE_LittleFS
-
-#include <FS.h>
-#ifdef USE_LittleFS
-  #define SPIFFS LittleFS
-  #include <LittleFS.h> 
-#else
-  #include <SPIFFS.h>
-#endif 
 
 #include <WebServer.h>
 //#include <ESPAsyncWebServer.h>

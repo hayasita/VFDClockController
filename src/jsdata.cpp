@@ -3,15 +3,7 @@
 #include "vfd_rtc.h"
 #include "vfd_wificnt.h"
 
-#define USE_LittleFS
-
-#include <FS.h>
-#ifdef USE_LittleFS
-  #define SPIFFS LittleFS
-  #include <LittleFS.h> 
-#else
-  #include <SPIFFS.h>
-#endif 
+#include "filesys.h"
 
 //#include <ArduinoJson.h>
 
