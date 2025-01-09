@@ -159,7 +159,7 @@ uint8_t SettingjsFile::getWriteReq(void)
   return fileWriteReq;
 }
 
-
+#ifdef DELETE
 void SettingjsFile::writeJsonFile(void){
   String configData = "";
   char temp[60];
@@ -170,6 +170,7 @@ void SettingjsFile::writeJsonFile(void){
 
   configData = String("{\n");
 
+//#ifdef DELETE
 // configHeader
     snprintf(temp, 60,"\"configHeader\" : %d,\n",confDat.getConfigHeader());
     configData = configData + String(temp);
@@ -259,19 +260,51 @@ void SettingjsFile::writeJsonFile(void){
 
     configData = configData + ("}");
 
+  Serial.println(configData);
+
   File fp = SPIFFS.open("/setting.json","w");
   if( fp ){
     fp.print(configData);
     fp.close();
-  }
+    Serial.println("Flash Write End.");  }
   else{
-    Serial.println("Flash Write Error");
+    Serial.println("Flash Write Error.");
   }
 
   Serial.println("[E]");
   return;
 }
+#endif
 
+//#ifdef DELETE
+void SettingjsFile::writeJsonFile(void){
+
+  // ファイルにデータを書き込む
+  File file = LittleFS.open("/setting.json","w");
+  if (!file) {
+    Serial.println("ファイルのオープンに失敗しました");
+    return;
+  }
+
+  file.println("Hello, LittleFS!");
+  file.println("ESP32でファイルシステムを使用中です。");
+  file.close();
+  Serial.println("ファイル書き込み完了");
+
+  // 書き込んだ内容を確認
+  File readFile = LittleFS.open("/setting.json", "r");
+  if (!readFile) {
+    Serial.println("ファイルの読み込みに失敗しました");
+    return;
+  }
+
+  Serial.println("ファイル内容:");
+  while (readFile.available()) {
+    Serial.write(readFile.read());
+  }
+  readFile.close();
+}
+//#endif
 
 #ifdef DELETE
 void SettingjsFile::writeJsonFile(void){
@@ -292,7 +325,7 @@ void SettingjsFile::writeJsonFile(void){
 
 //  version
     fp.println((String)"\"configVersion\" : \"" + String(confDat.getVersion()) + (String)"\",\n");
-
+/*
 //  StationMode IP Adress
     if(confDat.GetStaIp() != ""){
       fp.println((String)"\"stamodeIP\" : \"" + confDat.GetStaIp() + (String)"\",");
@@ -308,7 +341,7 @@ void SettingjsFile::writeJsonFile(void){
     if(confDat.GetApIp() != ""){
       fp.println((String)"\"atmodeIP\" : \"" + confDat.GetApIp() + (String)"\",\n");
     }
-
+*/
 // == navbar ==
 // 地域設定
     fp.println((String)"\"localesId\" : \"" + confDat.getLocalesId() + (String)"\",");
@@ -332,6 +365,7 @@ void SettingjsFile::writeJsonFile(void){
     fp.println((String)"\"autoUpdateHour\" : \"" + tmp1 + (String)"\",");
     fp.println((String)"\"autoUpdateMin\" : \"" + tmp2 + (String)"\",");
 
+/*
 // 最終更新時刻
     confDat.getLastUpdate(&tmp0,&tmp2,&tmp3,&tmp4,&tmp5,&tmp6);
     fp.println((String)"\"lastUpdateYear\" : \"" + tmp0 + (String)"\",");
@@ -340,7 +374,7 @@ void SettingjsFile::writeJsonFile(void){
     fp.println((String)"\"lastUpdateHour\" : \"" + tmp4 + (String)"\",");
     fp.println((String)"\"lastUpdateMin\" : \"" + tmp5 + (String)"\",");
     fp.println((String)"\"lastUpdateRetry\" : \"" + tmp6 + (String)"\",");
-
+*/
     Serial.println("[1]");
 
 // == Display Conf ==
@@ -436,6 +470,7 @@ void SettingjsFile::readJsonFile(configVFD *confDat){
   return;
 }
 
+extern int jsonWriteReqf; // JSONファイル書き込み要求
 void SettingjsFile::setJsonData(String jsonStr, configVFD *confDat,uint8_t fileWriteReq){
 //  bool dateUpdate = 0;
   StaticJsonDocument<256> doc;
@@ -627,6 +662,9 @@ void SettingjsFile::setJsonData(String jsonStr, configVFD *confDat,uint8_t fileW
       Serial.println(num);
       confDat->SetFadetimew(num);
 //      confDat->i2cEepromWriteReq(ADR_fadetime);
+      if(jsonWriteReqf == 0){
+        jsonWriteReqf = 1;  // JSONファイル書き込み要求
+      }
     }
 
     // 表示輝度初期値設定
