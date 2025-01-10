@@ -149,6 +149,9 @@ void configVFD::i2cEepromWrite(void){
     }
 
     Serial.println("configVFD::i2cEepromWrite-END");
+
+    Serial.println(F("-- writeJsonFile"));
+    settingjsFile.writeJsonFile();
   }
 
   return;

@@ -40,6 +40,12 @@ class SettingjsFile{
   private:
     uint8_t fileWriteReq;
 //    void setJsonData(DynamicJsonDocument doc,configVFD*);
+    String makeJsonPiece(String key, String value ,bool connma, bool includeBraces);    // jsonデータ作成:String
+    String makeJsonPiece(String key, uint8_t value ,bool connma, bool includeBraces);   // jsonデータ作成:uint8_t
+    String makeJsonPiece(String key, std::vector<uint8_t> value ,bool connma, bool includeBraces);  // jsonデータ作成:std::vector<uint8_t>
+    String makeJsonPiece(String key, uint16_t value ,bool connma, bool includeBraces);  // jsonデータ作成:uint16_t
+    String makeJsonPiece(String key, float value ,bool connma, bool includeBraces);     // jsonデータ作成:float
+
 };
 GLOBAL SettingjsFile settingjsFile;
 

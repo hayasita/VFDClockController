@@ -576,13 +576,14 @@ void taskDeviceCtrl(void *Parameters){
     //i2c EEROM WriteReq
     confDat.i2cEepromWrite();             // i2cEEPROM書込処理
 
+/*
     // FileSystem Setting.js WriteReq
     if(jsonWriteReqf == 1){   // JSONファイル書き込み要求あり
       jsonWriteReqf = 0;
       Serial.println(F("-- writeJsonFile"));
       settingjsFile.writeJsonFile();
     }
-
+*/
     taskDeviceTime = micros() - taskDeviceTimeLast;
     taskDeviceTimeMax = (taskDeviceTimeMax > taskDeviceTime) ? taskDeviceTimeMax : taskDeviceTime;
 

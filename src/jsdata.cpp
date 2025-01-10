@@ -1,3 +1,6 @@
+
+#include <vector>
+
 #include "jsdata.h"
 #include "vfd_conf.h"
 #include "vfd_rtc.h"
@@ -159,106 +162,70 @@ uint8_t SettingjsFile::getWriteReq(void)
   return fileWriteReq;
 }
 
-#ifdef DELETE
+//#ifdef DELETE
 void SettingjsFile::writeJsonFile(void){
+  Serial.println("== writeJsonFile ==");
+
   String configData = "";
-  char temp[60];
-  uint16_t tmp0;
-  uint8_t tmp1,tmp2,tmp3,tmp4,tmp5,tmp6;
-
-  Serial.println("-- settingjsFileWrite --");
-
   configData = String("{\n");
 
-//#ifdef DELETE
 // configHeader
-    snprintf(temp, 60,"\"configHeader\" : %d,\n",confDat.getConfigHeader());
-    configData = configData + String(temp);
-
-//  version
-    configData = configData + (String)"\"configVersion\" : \"" + String(confDat.getVersion()) + (String)"\",\n\n";
+  configData = configData + makeJsonPiece("configHeader", confDat.getConfigHeader(), true, false);      // configHeader
+  configData = configData + makeJsonPiece("configVersion", confDat.getVersion(), true, false);          // configVersion
 
 // == navbar ==
 // 地域設定
-    configData = configData + ((String)"\"localesId\" : \"" + confDat.getLocalesId() + (String)"\",\n");
+  configData = configData + makeJsonPiece("localesId", confDat.getLocalesId(), true, false);            // localesId
 
 // == Time Conf ==
 //  ntpSet
-    if(confDat.getNtpset() == 1){
-      configData = configData + ("\n\"ntpSet\":true,\n");
-    }
-    else{
-      configData = configData + ("\n\"ntpSet\":false,\n");
-    }
+  configData = configData + makeJsonPiece("ntpSet", confDat.getNtpset(), true, false);                  // ntpSet
 
 // タイムゾーン
-    configData = configData + ((String)"\"timeZone\" : \"" + confDat.getTimeZoneData() + (String)"\",\n");
-    configData = configData + ((String)"\"timeZoneAreaId\" : \"" + confDat.getTimeZoneAreaId() + (String)"\",\n");
-    configData = configData + ((String)"\"timeZoneId\" : \"" + confDat.getTimeZoneId() + (String)"\",\n");
+  configData = configData + makeJsonPiece("timeZone", confDat.getTimeZoneData(), true, false);          // timeZone
+  configData = configData + makeJsonPiece("timeZoneAreaId", confDat.getTimeZoneAreaId(), true, false);  // timeZoneAreaId
+  configData = configData + makeJsonPiece("timeZoneId", confDat.getTimeZoneId(), true, false);          // timeZoneId
 
 // 自動更新時刻
-    confDat.getAutoUpdatetime(&tmp1,&tmp2);
-    configData = configData + ((String)"\"autoUpdateHour\" : \"" + tmp1 + (String)"\",\n");
-    configData = configData + ((String)"\"autoUpdateMin\" : \"" + tmp2 + (String)"\",\n");
+  uint8_t tmp1,tmp2;
+  confDat.getAutoUpdatetime(&tmp1,&tmp2);
+  configData = configData + makeJsonPiece("autoUpdateHour", tmp1, true, false);                         // autoUpdateHour
+  configData = configData + makeJsonPiece("autoUpdateMin", tmp2, true, false);                          // autoUpdateMin
 
-// 最終更新時刻
 /*
-    confDat.getLastUpdate(&tmp0,&tmp2,&tmp3,&tmp4,&tmp5,&tmp6);
-    configData = configData + ((String)"\"lastUpdateYear\" : \"" + tmp0 + (String)"\",\n");
-    configData = configData + ((String)"\"lastUpdateMonth\" : \"" + tmp2 + (String)"\",\n");
-    configData = configData + ((String)"\"lastUpdateDay\" : \"" + tmp3 + (String)"\",\n");
-    configData = configData + ((String)"\"lastUpdateHour\" : \"" + tmp4 + (String)"\",\n");
-    configData = configData + ((String)"\"lastUpdateMin\" : \"" + tmp5 + (String)"\",\n");
-    configData = configData + ((String)"\"lastUpdateRetry\" : \"" + tmp6 + (String)"\",\n");
-
-    Serial.println("[1]");
+// 最終更新時刻
+  uint16_t tmp0;
+  uint8_t tmp3,tmp4,tmp5,tmp6;
+  confDat.getLastUpdate(&tmp0,&tmp2,&tmp3,&tmp4,&tmp5,&tmp6);
+  configData = configData + makeJsonPiece("lastUpdateYear", tmp0, true, false);                      // lastUpdateYear
+  configData = configData + makeJsonPiece("lastUpdateMonth", tmp2, true, false);                     // lastUpdateMonth
+  configData = configData + makeJsonPiece("lastUpdateDay", tmp3, true, false);                       // lastUpdateDay
+  configData = configData + makeJsonPiece("lastUpdateHour", tmp4, true, false);                      // lastUpdateHour
+  configData = configData + makeJsonPiece("lastUpdateMin", tmp5, true, false);                       // lastUpdateMin
+  configData = configData + makeJsonPiece("lastUpdateRetry", tmp6, true, false);                     // lastUpdateRetry
 */
+
 // == Display Conf ==
-// DisplayFormat
-    snprintf(temp, 60,"\n\"dispFormat\" : %d,",confDat.GetdispFormatw());
-    configData = configData + (temp) + String("\n");
-
-// TimeDisplayFormat
-    snprintf(temp, 60,"\"timeDisplayFormat\" : %d,",confDat.getTimeDisplayFormat());
-    configData = configData + (temp) + String("\n");
-
-// DateDisplayFormat
-    snprintf(temp, 60,"\"dateDisplayFormat\" : %d,",confDat.getDateDisplayFormat());
-    configData = configData + (temp) + String("\n");
-
-// formatHour
-    snprintf(temp, 60,"\"formatHour\": %d,",confDat.GetFormatHw());
-    configData = configData + (temp) + String("\n");
-
-// DisplayEffect
-    snprintf(temp, 60,"\"displayEffect\" : %d,",confDat.getDisplayEffect());
-    configData = configData + (temp) + String("\n");
-
-//  fadetime
-    snprintf(temp, 60,"\"fadeTime\" : %d,",confDat.GetFadetimew());
-    configData = configData + (temp) + String("\n");
-
-// glowBright
-    snprintf(temp, 60,"\"glowInTheBright\" : %d,",confDat.GetGlowInTheBright());
-    configData = configData + (temp) + String("\n");
-
-// glowDark
-    snprintf(temp, 60,"\"glowInTheDark\" : %d,",confDat.GetGlowInTheDark());
-    configData = configData + (temp) + String("\n");
+  configData = configData + makeJsonPiece("dispFormat", confDat.GetdispFormatw(), true, false);               // dispFormat
+  configData = configData + makeJsonPiece("timeDisplayFormat", confDat.getTimeDisplayFormat(), true, false);  // timeDisplayFormat
+  configData = configData + makeJsonPiece("dateDisplayFormat", confDat.getDateDisplayFormat(), true, false);  // dateDisplayFormat
+  configData = configData + makeJsonPiece("formatHour", confDat.GetFormatHw(), true, false);                  // formatHour
+  configData = configData + makeJsonPiece("displayEffect", confDat.getDisplayEffect(), true, false);      // displayEffect
+  configData = configData + makeJsonPiece("fadeTime", confDat.GetFadetimew(), true, false);               // fadetime
+  configData = configData + makeJsonPiece("glowInTheDark", confDat.GetGlowInTheBright(), true, false);    // glowBright
+  configData = configData + makeJsonPiece("glowInTheDark", confDat.GetGlowInTheDark(), true, false);      // glowDark
 
 //  brDig
-    snprintf(temp, 60,"\"brDig\" : [%d,%d,%d,%d,%d,%d,%d,%d,%d],"
-    ,confDat.GetBr_dig(0), confDat.GetBr_dig(1), confDat.GetBr_dig(2), confDat.GetBr_dig(3)
-    ,confDat.GetBr_dig(4), confDat.GetBr_dig(5), confDat.GetBr_dig(6), confDat.GetBr_dig(7)
-    ,confDat.GetBr_dig(8)
-    );
-//    fp.println(temp);
-    configData = configData + (temp) + String("\n");
+  std::vector<uint8_t> brDig;
+  for(uint8_t i=0; i<DISP_KETAMAX ; i++){
+    brDig.push_back(confDat.GetBr_dig(i));
+  }
+  configData = configData + makeJsonPiece("brDig", brDig, true, false);  // brDig
 
 // 
-    configData = configData + (String("\n\"title\":\"Hello World!\"\n"));
+  configData = configData + makeJsonPiece("title", (String)"VFD Clock for IV-21", false, false);   // タイトル
 
-    configData = configData + ("}");
+  configData = configData + ("}");
 
   Serial.println(configData);
 
@@ -266,7 +233,8 @@ void SettingjsFile::writeJsonFile(void){
   if( fp ){
     fp.print(configData);
     fp.close();
-    Serial.println("Flash Write End.");  }
+    Serial.println("Flash Write End.");
+  }
   else{
     Serial.println("Flash Write Error.");
   }
@@ -274,9 +242,138 @@ void SettingjsFile::writeJsonFile(void){
   Serial.println("[E]");
   return;
 }
-#endif
+//#endif
 
-//#ifdef DELETE
+/**
+ * @brief jsonデータ作成:String
+ * 
+ * @param key     jsonのキー
+ * @param value   jsonの値
+ * @param connma  true:データの最後に「.」を追加する
+ *                false:追加しない
+ * @param includeBraces true:データを{}で囲む
+ *                      false:囲まない
+ * @return String 
+ */
+String SettingjsFile::makeJsonPiece(String key, String value ,bool connma, bool includeBraces)
+{
+  String ret = "\"" + key + "\":\"" + value + "\"";
+  if (includeBraces) {
+    ret = "{" + ret + "}";
+  }
+  if(connma == true){
+    ret = ret + ",";
+  }
+  ret = ret + "\n";
+  return ret;
+}
+
+/**
+ * @brief jsonデータ作成:uint8_t
+ * 
+ * @param key     jsonのキー
+ * @param value   jsonの値
+ * @param connma  true:データの最後に「.」を追加する
+ *                false:追加しない
+ * @param includeBraces true:データを{}で囲む
+ *                      false:囲まない
+ * @return String 
+ */
+String SettingjsFile::makeJsonPiece(String key, uint8_t value ,bool connma, bool includeBraces)
+{
+  String ret = "\"" + key + "\":" + value;
+  if (includeBraces) {
+    ret = "{" + ret + "}";
+  }
+  if(connma == true){
+    ret = ret + ",";
+  }
+  ret = ret + "\n";
+  return ret;
+}
+
+/**
+ * @brief jsonデータ作成:uint8_t
+ * 
+ * @param key     jsonのキー
+ * @param value   jsonの値
+ * @param connma  true:データの最後に「.」を追加する
+ *                false:追加しない
+ * @param includeBraces true:データを{}で囲む
+ *                      false:囲まない
+ * @return String 
+ */
+String SettingjsFile::makeJsonPiece(String key, std::vector<uint8_t> value ,bool connma, bool includeBraces)
+{
+  String ret = "\"" + key + "\":";
+  ret = ret + "[";
+  for(uint8_t i=0; i<value.size(); i++){
+    ret = ret + value[i];
+    if(i != value.size()-1){
+      ret = ret + ",";
+    }
+  }
+  ret = ret + "]";
+
+  if (includeBraces) {
+    ret = "{" + ret + "}";
+  }
+  if(connma == true){
+    ret = ret + ",";
+  }
+  ret = ret + "\n";
+  return ret;
+}
+
+/**
+ * @brief jsonデータ作成:uint16_t
+ * 
+ * @param key     jsonのキー
+ * @param value   jsonの値
+ * @param connma  true:データの最後に「.」を追加する
+ *                false:追加しない
+ * @param includeBraces true:データを{}で囲む
+ *                      false:囲まない
+ * @return String 
+ */
+String SettingjsFile::makeJsonPiece(String key, uint16_t value ,bool connma, bool includeBraces)
+{
+  String ret = "\"" + key + "\":" + value;
+  if (includeBraces) {
+    ret = "{" + ret + "}";
+  }
+  if(connma == true){
+    ret = ret + ",";
+  }
+  ret = ret + "\n";
+  return ret;
+}
+
+/**
+ * @brief jsonデータ作成:float
+ * 
+ * @param key     jsonのキー
+ * @param value   jsonの値
+ * @param connma  true:データの最後に「.」を追加する
+ *                false:追加しない
+ * @param includeBraces true:データを{}で囲む
+ *                      false:囲まない
+ * @return String 
+ */
+String SettingjsFile::makeJsonPiece(String key, float value ,bool connma, bool includeBraces)
+{
+  String ret = "\"" + key + "\":" + value;
+  if (includeBraces) {
+    ret = "{" + ret + "}";
+  }
+  if(connma == true){
+    ret = ret + ",";
+  }
+  ret = ret + "\n";
+  return ret;
+}
+
+#ifdef DELETE
 void SettingjsFile::writeJsonFile(void){
 
   // ファイルにデータを書き込む
@@ -304,136 +401,7 @@ void SettingjsFile::writeJsonFile(void){
   }
   readFile.close();
 }
-//#endif
-
-#ifdef DELETE
-void SettingjsFile::writeJsonFile(void){
-  char temp[60];
-  uint16_t tmp0;
-  uint8_t tmp1,tmp2,tmp3,tmp4,tmp5,tmp6;
-
-  Serial.println("-- settingjsFileWrite --");
-
-  File fp = SPIFFS.open("/setting.json","w");
-  if( fp ){
-    fp.println("{");
-
-
-// configHeader
-    snprintf(temp, 60,"\"configHeader\" : %d,",confDat.getConfigHeader());
-    fp.println(temp);
-
-//  version
-    fp.println((String)"\"configVersion\" : \"" + String(confDat.getVersion()) + (String)"\",\n");
-/*
-//  StationMode IP Adress
-    if(confDat.GetStaIp() != ""){
-      fp.println((String)"\"stamodeIP\" : \"" + confDat.GetStaIp() + (String)"\",");
-    }
-
-
-// APMode SSID
-    if(confDat.GetApSsid() != ""){
-      fp.println((String)"\"atmodeSSID\" : \"" + confDat.GetApSsid() + (String)"\",");
-    }
-
-// APMode IP Adress
-    if(confDat.GetApIp() != ""){
-      fp.println((String)"\"atmodeIP\" : \"" + confDat.GetApIp() + (String)"\",\n");
-    }
-*/
-// == navbar ==
-// 地域設定
-    fp.println((String)"\"localesId\" : \"" + confDat.getLocalesId() + (String)"\",");
-
-// == Time Conf ==
-//  ntpSet
-    if(confDat.getNtpset() == 1){
-      fp.println("\n\"ntpSet\":true,");
-    }
-    else{
-      fp.println("\n\"ntpSet\":false,");
-    }
-
-// タイムゾーン
-    fp.println((String)"\"timeZone\" : \"" + confDat.getTimeZoneData() + (String)"\",");
-    fp.println((String)"\"timeZoneAreaId\" : \"" + confDat.getTimeZoneAreaId() + (String)"\",");
-    fp.println((String)"\"timeZoneId\" : \"" + confDat.getTimeZoneId() + (String)"\",");
-
-// 自動更新時刻
-    confDat.getAutoUpdatetime(&tmp1,&tmp2);
-    fp.println((String)"\"autoUpdateHour\" : \"" + tmp1 + (String)"\",");
-    fp.println((String)"\"autoUpdateMin\" : \"" + tmp2 + (String)"\",");
-
-/*
-// 最終更新時刻
-    confDat.getLastUpdate(&tmp0,&tmp2,&tmp3,&tmp4,&tmp5,&tmp6);
-    fp.println((String)"\"lastUpdateYear\" : \"" + tmp0 + (String)"\",");
-    fp.println((String)"\"lastUpdateMonth\" : \"" + tmp2 + (String)"\",");
-    fp.println((String)"\"lastUpdateDay\" : \"" + tmp3 + (String)"\",");
-    fp.println((String)"\"lastUpdateHour\" : \"" + tmp4 + (String)"\",");
-    fp.println((String)"\"lastUpdateMin\" : \"" + tmp5 + (String)"\",");
-    fp.println((String)"\"lastUpdateRetry\" : \"" + tmp6 + (String)"\",");
-*/
-    Serial.println("[1]");
-
-// == Display Conf ==
-// DisplayFormat
-    snprintf(temp, 60,"\n\"dispFormat\" : %d,",confDat.GetdispFormatw());
-    fp.println(temp);
-
-// TimeDisplayFormat
-    snprintf(temp, 60,"\"timeDisplayFormat\" : %d,",confDat.getTimeDisplayFormat());
-    fp.println(temp);
-
-// DateDisplayFormat
-    snprintf(temp, 60,"\"dateDisplayFormat\" : %d,",confDat.getDateDisplayFormat());
-    fp.println(temp);
-
-// formatHour
-    snprintf(temp, 60,"\"formatHour\": %d,",confDat.GetFormatHw());
-    fp.println(temp);
-
-// DisplayEffect
-    snprintf(temp, 60,"\"displayEffect\" : %d,",confDat.getDisplayEffect());
-    fp.println(temp);
-
-//  fadetime
-    snprintf(temp, 60,"\"fadeTime\" : %d,",confDat.GetFadetimew());
-    fp.println(temp);
-
-// glowBright
-    snprintf(temp, 60,"\"glowInTheBright\" : %d,",confDat.GetGlowInTheBright());
-    fp.println(temp);
-
-// glowDark
-    snprintf(temp, 60,"\"glowInTheDark\" : %d,",confDat.GetGlowInTheDark());
-    fp.println(temp);
-
-//  brDig
-    snprintf(temp, 60,"\"brDig\" : [%d,%d,%d,%d,%d,%d,%d,%d,%d],"
-    ,confDat.GetBr_dig(0), confDat.GetBr_dig(1), confDat.GetBr_dig(2), confDat.GetBr_dig(3)
-    ,confDat.GetBr_dig(4), confDat.GetBr_dig(5), confDat.GetBr_dig(6), confDat.GetBr_dig(7)
-    ,confDat.GetBr_dig(8)
-    );
-    fp.println(temp);
-
-// 
-    fp.println(String("\n\"title\":\"Hello!\""));
-
-    fp.print("}");
-
-    fp.close();
-  }
-  else{
-    Serial.println("Flash Write Error");
-  }
-
-  Serial.println("[E]");
-  return;
-}
 #endif
-
 
 void SettingjsFile::readJsonFile(configVFD *confDat){
 
