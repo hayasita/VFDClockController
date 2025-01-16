@@ -1,6 +1,8 @@
 #ifndef vfd_web_h
 #define vfd_web_h
 
+#include "filesys.h"
+
 #ifdef GLOBAL_VAL_DEF
 #define GLOBAL
 #else
@@ -20,8 +22,6 @@
 #include <WebServer.h>
 //#include <ESPAsyncWebServer.h>
 #include <WebSocketsServer.h> // arduinoWebSocketsライブラリ
-#include <FS.h>
-#include <SPIFFS.h>
 
 #define STA_DISCONNECTED  0     // 接続なし:使用しない
 #define STA_CONNECTED     1     // 接続完了

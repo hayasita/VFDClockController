@@ -101,6 +101,8 @@ unsigned long timerScanTime,timerScanTimeMax=0,timerScanTimeLast;
 #define ILLUMI_SCAN_TIME  500
 extern const struct I2CEEROM_DATA eeromList[];
 
+int jsonWriteReqf = 0;  // JSONファイル書き込み要求
+
 // テスト用タスク CPU0 
 // 最終的には削除する。
 TaskHandle_t taskHandle;
@@ -574,6 +576,14 @@ void taskDeviceCtrl(void *Parameters){
     //i2c EEROM WriteReq
     confDat.i2cEepromWrite();             // i2cEEPROM書込処理
 
+/*
+    // FileSystem Setting.js WriteReq
+    if(jsonWriteReqf == 1){   // JSONファイル書き込み要求あり
+      jsonWriteReqf = 0;
+      Serial.println(F("-- writeJsonFile"));
+      settingjsFile.writeJsonFile();
+    }
+*/
     taskDeviceTime = micros() - taskDeviceTimeLast;
     taskDeviceTimeMax = (taskDeviceTimeMax > taskDeviceTime) ? taskDeviceTimeMax : taskDeviceTime;
 
